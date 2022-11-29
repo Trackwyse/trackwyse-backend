@@ -1,10 +1,23 @@
 import express from 'express';
+import cors from 'cors';
+import db from './db';
+import config from './config';
 
 const app = express();
-const port = 5000;
 
-app.get('/', (_, res) => {
-  res.status(200).send();
-});
+const init = async () => {
+  app.use(cors());
+  app.use(express.json());
 
-app.listen(port, () => console.log(`Running on port ${port}`));
+  await db.connect();
+};
+
+const start = async () => {
+  await init();
+
+  app.listen(config.Port, () => {
+    console.log(`Example app listening at ${config.Origin}`);
+  });
+};
+
+start();
