@@ -1,8 +1,13 @@
 import dotenv from 'dotenv';
+import appRoot from 'app-root-path';
 
 dotenv.config();
 
 export interface Config {
+  NodeEnv: string;
+  LogLevel: string;
+  AppRoot: string;
+
   Origin: string;
   Port: number;
 
@@ -18,6 +23,10 @@ export interface Config {
 }
 
 const config: Config = {
+  NodeEnv: process.env.NODE_ENV || 'development',
+  LogLevel: process.env.LOG_LEVEL || 'info',
+  AppRoot: appRoot.path,
+
   Origin: process.env.ORIGIN || 'http://localhost:3000',
   Port: parseInt(process.env.PORT) || 3000,
 

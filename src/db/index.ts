@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+
+import { logger } from '../utils/logger';
 import config from '../config';
 
 const connect = async () => {
@@ -7,15 +9,15 @@ const connect = async () => {
   });
 
   mongoose.connection.on('error', (err) => {
-    console.log('MongoDB connection error: ', err);
+    logger.error('MongoDB connection error: ', err);
     process.exit();
   });
 
   mongoose.connection.on('disconnected', () => {
-    console.log('MongoDB disconnected');
+    logger.info('MongoDB disconnected');
   });
 
-  console.log('MongoDB connected');
+  logger.info(`Connected to database in mode: ${config.NodeEnv}`);
 };
 
 const disconnect = () => {
