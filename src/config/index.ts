@@ -14,6 +14,7 @@ export interface Config {
   DBUri: string;
   DBName: string;
 
+  SaltFactor: number;
   AccessTokenPublicKey: string;
   AccessTokenPrivateKey: string;
   RefreshTokenPublicKey: string;
@@ -33,6 +34,7 @@ const config: Config = {
   DBUri: process.env.DB_URI || 'mongodb://localhost:27017',
   DBName: process.env.DB_NAME || 'staging',
 
+  SaltFactor: parseInt(process.env.SALT_FACTOR) || 10,
   AccessTokenPublicKey: process.env.ACCESS_TOKEN_PUBLIC,
   AccessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE,
   RefreshTokenPublicKey: process.env.REFRESH_TOKEN_PUBLIC,

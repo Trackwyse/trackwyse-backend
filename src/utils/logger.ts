@@ -67,8 +67,7 @@ const morganLogger = morgan(
   {
     stream: {
       write: (message) => {
-        const data = JSON.parse(message);
-        logger.http(data.trim());
+        logger.http(message.trim());
       },
     },
   }
