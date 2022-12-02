@@ -1,3 +1,9 @@
+declare namespace Express {
+  export interface Request {
+    user?: SanitizedUser;
+  }
+}
+
 interface User {
   firstName: string;
   lastName: string;
@@ -11,6 +17,7 @@ interface User {
 }
 
 interface SanitizedUser {
+  id: string;
   firstName: string;
   lastName: string;
   email: string;

@@ -7,7 +7,15 @@ const login = (req: express.Request, res: express.Response) => {
   return res.status(200).json({ message: 'Login' });
 };
 
-const refresh = (req: express.Request, res: express.Response) => {};
+const refresh = (req: express.Request, res: express.Response) => {
+  if (req.user) {
+    const accessToken = jwt.createAccessToken(req.user);
+
+    return res.status(200).json({ error: false, message: 'Token refreshed', accessToken });
+  }
+
+  return res.status(401).json({ error: true, message: 'Unauthorized' });
+};
 
 const register = async (req: express.Request, res: express.Response) => {
   const { email, password, firstName, lastName } = req.body;
