@@ -13,7 +13,7 @@ const register = async (req: express.Request, res: express.Response) => {
   const { email, password, firstName, lastName } = req.body;
 
   if (!email || !password || !firstName || !lastName) {
-    return res.status(400).json({ message: 'Missing required fields' });
+    return res.status(400).json({ error: true, message: 'Missing required fields' });
   }
 
   const user = new User({
@@ -36,9 +36,10 @@ const register = async (req: express.Request, res: express.Response) => {
       secure: true,
       maxAge: config.RefreshTokenExpiration * 1000,
     });
-    return res.status(201).json({ message: 'User created', accessToken });
+
+    return res.status(201).json({ error: false, message: 'User created', accessToken });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ error: true, message: error.message });
   }
 };
 

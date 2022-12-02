@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema<UserSchema>({
   updatedAt: { type: Date, default: Date.now },
 });
 
+// Hash the password before saving
 userSchema.pre('save', function (next) {
   let user = this;
 
@@ -57,6 +58,16 @@ userSchema.pre('save', function (next) {
   });
 });
 
+// Modify the error message for duplicate email
+userSchema.post('save', function (err, doc, next) {
+  if (err.name === 'MongoServerError' && err.code === 11000) {
+    next(new Error('Email already exists'));
+  } else {
+    next(err);
+  }
+});
+
+// Return whether the password hash matches the password
 userSchema.methods.comparePassword = function (password: string, next: any) {
   bcrypt.compare(password, this.password, (err, isMatch) => {
     if (err) return next(err);
