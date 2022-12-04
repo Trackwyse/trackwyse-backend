@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import config from '../config';
 
 export interface UserSchema extends User, mongoose.Document {
-  comparePassword: (password: string, next: any) => boolean;
+  comparePassword: (password: string ) => Promise<boolean>;
   sanitize: () => SanitizedUser;
 }
 
@@ -68,12 +68,10 @@ userSchema.post('save', function (err, doc, next) {
 });
 
 // Return whether the password hash matches the password
-userSchema.methods.comparePassword = function (password: string, next: any) {
-  bcrypt.compare(password, this.password, (err, isMatch) => {
-    if (err) return next(err);
+userSchema.methods.comparePassword = async function (password: string): Promise<boolean> {
+  const isMatch = await bcrypt.compare(password, this.password)
 
-    next(null, isMatch);
-  });
+  return isMatch;
 };
 
 userSchema.methods.sanitize = function () {
