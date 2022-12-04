@@ -3,6 +3,19 @@ import express from 'express';
 import jwt from '../utils/jwt';
 import config from '../config';
 
+/*
+  POST /auth/vX/login
+  Logs in a user, sets a refresh token cookie, and returns an access token
+
+  Required Fields:
+    - email
+    - password
+
+  Returns:
+    - error
+    - message
+    - OPTIONAL: accessToken
+*/
 const login = async (req: express.Request, res: express.Response) => {
   const {email, password} = req.body;
 
@@ -35,6 +48,18 @@ const login = async (req: express.Request, res: express.Response) => {
   return res.status(200).json({error: false, message: 'User logged in', accessToken});
 };
 
+/*
+  POST /auth/vX/refresh
+  Refreshes the access token and returns a new one
+
+  Required Fields:
+    - jwt cookie (handled by authenticateRefreshToken middleware)
+
+  Returns:
+    - error
+    - message
+    - OPTIONAL: accessToken
+*/
 const refresh = (req: express.Request, res: express.Response) => {
   if (req.user) {
     const accessToken = jwt.createAccessToken(req.user);
@@ -45,6 +70,21 @@ const refresh = (req: express.Request, res: express.Response) => {
   return res.status(401).json({ error: true, message: 'Unauthorized' });
 };
 
+/*
+  POST /auth/vX/register
+  Registers a new user, sets a refresh token cookie, and returns an access token
+
+  Required Fields:
+    - email
+    - password
+    - firstName
+    - lastName
+  
+  Returns:
+    - error
+    - message
+    - OPTIONAL: accessToken
+*/
 const register = async (req: express.Request, res: express.Response) => {
   const { email, password, firstName, lastName } = req.body;
 
