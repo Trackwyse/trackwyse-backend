@@ -14,6 +14,13 @@ export interface Config {
   DBUri: string;
   DBName: string;
 
+  TimeToVerify: number;
+  SenderEmail: string;
+
+  AWSRegion: string;
+  AWSAccessKeyId: string;
+  AWSSecretAccessKey: string;
+
   SaltFactor: number;
   AccessTokenPublicKey: string;
   AccessTokenPrivateKey: string;
@@ -33,6 +40,13 @@ const config: Config = {
 
   DBUri: process.env.DB_URI || 'mongodb://localhost:27017',
   DBName: process.env.DB_NAME || 'staging',
+
+  TimeToVerify: parseInt(process.env.TIME_TO_VERIFY) || 86400,
+  SenderEmail: process.env.SENDER_EMAIL,
+
+  AWSRegion: process.env.AWS_REGION || 'us-east-1',
+  AWSAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  AWSSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 
   SaltFactor: parseInt(process.env.SALT_FACTOR) || 10,
   AccessTokenPublicKey: process.env.ACCESS_TOKEN_PUBLIC,

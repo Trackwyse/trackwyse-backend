@@ -4,7 +4,8 @@ import bcrypt from 'bcrypt';
 import config from '../config';
 
 export interface UserSchema extends User, mongoose.Document {
-  comparePassword: (password: string ) => Promise<boolean>;
+  comparePassword: (password: string) => Promise<boolean>;
+  generateVerificationToken: () => Promise<string>;
   sanitize: () => SanitizedUser;
 }
 
@@ -69,11 +70,27 @@ userSchema.post('save', function (err, doc, next) {
 
 // Return whether the password hash matches the password
 userSchema.methods.comparePassword = async function (password: string): Promise<boolean> {
-  const isMatch = await bcrypt.compare(password, this.password)
+  const isMatch = await bcrypt.compare(password, this.password);
 
   return isMatch;
 };
 
+// Generate a verification token and save it to the database
+userSchema.methods.generateVerificationToken = async function (): Promise<string> {
+  const token = Math.floor(Math.random() * 1000000).toString();
+
+  // Ensure that the number is 6 digits long by adding leading zeros if necessary
+  const sixDigitNumber = token.padStart(6, '0');
+
+  this.verificationToken = sixDigitNumber;
+  this.verificationTokenExpires = new Date(Date.now() + config.TimeToVerify); // Time to verify in milliseconds
+
+  await this.save();
+
+  return sixDigitNumber;
+};
+
+// Return a sanitized version of the user
 userSchema.methods.sanitize = function () {
   return {
     id: this._id,
