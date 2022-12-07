@@ -24,8 +24,8 @@ const start = async () => {
 
   app.use('/auth/v1', authRouter);
   app.use('/api/v1', geoRouter);
-  app.use('/api/v1', labelRouter);
   app.use('/api/v1', productRouter);
+  app.use('/api/v1/labels', labelRouter);
 
   app.listen(config.Port, () => {
     logger.info(`Application started in mode: ${config.NodeEnv}`);
