@@ -1,4 +1,39 @@
 import express from 'express';
+import { v4 as uuidv4 } from 'uuid';
+import { Label } from '../models/label.model';
+
+/*
+  POST /api/v1/labels/create
+  Creates a label (TEMPORARY)
+
+  Required Fields:
+    - none
+
+  Returns:
+    - error
+    - message
+    - label
+*/
+const createLabel = async (req: express.Request, res: express.Response) => {
+  const labelId = uuidv4();
+
+  const label = new Label({ id: labelId });
+
+  try {
+    const labelDocument = await label.save();
+
+    res.status(200).json({
+      error: false,
+      message: 'Label created successfully',
+      label: labelDocument,
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: true,
+      message: 'Error creating label',
+    });
+  }
+};
 
 /*
   GET /api/v1/labels
@@ -35,6 +70,7 @@ const addLabel = (req: express.Request, res: express.Response) => {};
     - labelId
     - labelName (optional)
     - labelColor (optional)
+    - labelMessage (optional)
     - phoneNumber (optional)
 
   Returns:
@@ -56,4 +92,4 @@ const modifyLabel = (req: express.Request, res: express.Response) => {};
 */
 const deleteLabel = (req: express.Request, res: express.Response) => {};
 
-export default { getLabels, addLabel, modifyLabel, deleteLabel };
+export default { getLabels, createLabel, addLabel, modifyLabel, deleteLabel };

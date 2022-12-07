@@ -12,37 +12,41 @@ export interface UserSchema extends User, mongoose.Document {
   sanitize: () => SanitizedUser;
 }
 
-const userSchema = new mongoose.Schema<UserSchema>({
-  firstName: {
-    type: String,
-    required: true,
-    validate: [validator.isAlpha, 'Name must contain only letters'],
+const userSchema = new mongoose.Schema<UserSchema>(
+  {
+    firstName: {
+      type: String,
+      required: true,
+      validate: [validator.isAlpha, 'Name must contain only letters'],
+    },
+    lastName: {
+      type: String,
+      required: true,
+      validate: [validator.isAlpha, 'Name must contain only letters'],
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      validate: [validator.isEmail, 'Must be a valid email'],
+    },
+    password: {
+      type: String,
+      required: true,
+      min: [8, 'Password must be 8 characters or longer'],
+      max: [128, 'Password must be 128 characters or less'],
+    },
+    verified: { type: Boolean, default: false },
+    verificationToken: { type: String, required: false },
+    verificationTokenExpires: { type: Date, required: false },
+    passwordResetToken: { type: String, required: false },
+    passwordResetTokenExpires: { type: Date, required: false },
+    labels: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Label' }],
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now },
   },
-  lastName: {
-    type: String,
-    required: true,
-    validate: [validator.isAlpha, 'Name must contain only letters'],
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    validate: [validator.isEmail, 'Must be a valid email'],
-  },
-  password: {
-    type: String,
-    required: true,
-    min: [8, 'Password must be 8 characters or longer'],
-    max: [128, 'Password must be 128 characters or less'],
-  },
-  verified: { type: Boolean, default: false },
-  verificationToken: { type: String, required: false },
-  verificationTokenExpires: { type: Date, required: false },
-  passwordResetToken: { type: String, required: false },
-  passwordResetTokenExpires: { type: Date, required: false },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
-});
+  { timestamps: true }
+);
 
 // Hash the password before saving
 userSchema.pre('save', function (next) {
