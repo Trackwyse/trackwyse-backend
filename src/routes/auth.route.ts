@@ -6,7 +6,9 @@ const authRouter = express.Router();
 
 authRouter.post('/login', authController.login);
 authRouter.post('/register', authController.register);
-authRouter.post('/logout', authMiddleware.authenticateAccessToken, authController.logout);
 authRouter.post('/refresh', authMiddleware.authenticateRefreshToken, authController.refresh);
+authRouter.post('/logout', authMiddleware.authenticateVerifiedAccessToken, authController.logout);
+authRouter.post('/verify', authMiddleware.authenticateUnverifiedAccessToken, authController.verify);
+authRouter.post('/reverify', authMiddleware.authenticateUnverifiedAccessToken, authController.reverify);
 
 export default authRouter;

@@ -116,6 +116,7 @@ const register = async (req: express.Request, res: express.Response) => {
       maxAge: config.RefreshTokenExpiration * 1000,
     });
 
+    // Send the generated verification token to the user's email
     const emailService = new MailService(sanitizedUser.email, 'Verify your email');
 
     try {
@@ -141,7 +142,7 @@ const register = async (req: express.Request, res: express.Response) => {
   Logs out a user, clears the refresh token cookie
 
   Required Fields:
-    - jwt cookie (handled by authenticateAccessToken middleware)
+    - authorization header (handled by authenticateAccessToken middleware)
 
   Returns:
     - error
@@ -153,9 +154,107 @@ const logout = async (req: express.Request, res: express.Response) => {
   return res.status(200).json({ error: false, message: 'User logged out' });
 };
 
+/*
+  POST /auth/vX/verify
+  Verifies a user's email
+
+  Required Fields:
+    - authorization header (handled by authenticateAccessToken middleware)
+
+  Returns:
+    - error
+    - message
+ */
+const verify = async (req: express.Request, res: express.Response) => {
+  if (req.user) {
+    const date = new Date();
+    const { verificationToken } = req.body;
+
+    if (!verificationToken) {
+      return res.status(400).json({ error: true, message: 'Missing required fields' });
+    }
+
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: true, message: 'Unauthorized' });
+    }
+
+    if (date.getTime() > user.verificationTokenExpires.getTime()) {
+      return res.status(401).json({ error: true, message: 'Verification token expired' });
+    }
+
+    if (user.verificationToken !== verificationToken) {
+      return res.status(401).json({ error: true, message: 'Invalid verification token' });
+    }
+
+    user.verified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpires = undefined;
+
+    try {
+      await user.save();
+
+      return res.status(200).json({ error: false, message: 'User verified' });
+    } catch (error) {
+      return res.status(500).json({ error: true, message: error.message });
+    }
+  }
+
+  return res.status(401).json({ error: true, message: 'Unauthorized' });
+};
+
+/*
+  POST /auth/vX/reverify
+  Resends a verification email to a user
+
+  Required Fields:
+    - authorization header (handled by authenticateAccessToken middleware)
+
+  Returns:
+    - error
+    - message
+*/
+const reverify = async (req: express.Request, res: express.Response) => {
+  if (req.user) {
+    const date = new Date();
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: true, message: 'Unauthorized' });
+    }
+
+    // If the previous verification token has not expired, do not send a new one
+    if (date.getTime() < user.verificationTokenExpires?.getTime() || user.verified) {
+      return res
+        .status(401)
+        .json({ error: true, message: 'User already has an active verification request' });
+    }
+
+    const verificationToken = await user.generateVerificationToken();
+
+    // Send the generated verification token to the user's email
+    const emailService = new MailService(user.email, 'Verify your email');
+
+    try {
+      await emailService.sendVerificationEmail(verificationToken);
+    } catch (error) {
+      logger.error(error);
+
+      return res.status(500).json({ error: true, message: 'Error sending verification email' });
+    }
+
+    return res.status(200).json({ error: false, message: 'Verification email sent' });
+  }
+
+  return res.status(401).json({ error: true, message: 'Unauthorized' });
+};
+
 export default {
   login,
   logout,
+  verify,
   refresh,
   register,
+  reverify,
 };

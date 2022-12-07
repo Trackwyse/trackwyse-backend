@@ -36,7 +36,7 @@ const authenticateRefreshToken = async (req: Request, res: Response, next: NextF
   If the header is valid, the user is attached to the request
   If the user is not verified, the request is rejected
 */
-const authenticateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+const authenticateVerifiedAccessToken = async (req: Request, res: Response, next: NextFunction) => {
   if (req.headers.authorization) {
     const accessToken = req.headers.authorization.split(' ')[1];
 
@@ -58,6 +58,50 @@ const authenticateAccessToken = async (req: Request, res: Response, next: NextFu
   }
 
   return res.status(401).json({ error: true, message: 'Unauthorized' });
-}
+};
 
-export default { authenticateRefreshToken, authenticateAccessToken };
+/*
+  Used for ONLY the /auth/vX/verify route
+  Verifies that the 'authorization' header is present and valid
+
+  If the header is valid, the user is attached to the request
+  If the user is verified, the request is rejected
+
+  This is used to prevent users from verifying their account multiple times
+
+  This is also used to prevent users from verifying their account before they have
+  created an account
+*/
+const authenticateUnverifiedAccessToken = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.headers.authorization) {
+    const accessToken = req.headers.authorization.split(' ')[1];
+
+    const payload = jwt.verifyAccessToken(accessToken);
+    const user = await User.findById(payload?.id);
+
+    if (user) {
+      const sanitizedUser = user.sanitize();
+
+      if (user.verified) {
+        return res.status(401).json({ error: true, message: 'Already Verified' });
+      }
+
+      req.user = sanitizedUser;
+      return next();
+    }
+
+    return res.status(401).json({ error: true, message: 'Unauthorized' });
+  }
+
+  return res.status(401).json({ error: true, message: 'Unauthorized' });
+};
+
+export default {
+  authenticateRefreshToken,
+  authenticateVerifiedAccessToken,
+  authenticateUnverifiedAccessToken,
+};
