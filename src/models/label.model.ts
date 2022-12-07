@@ -37,6 +37,12 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
     foundExactLocation: { type: String, required: false },
     foundRecoveryLocation: { type: String, required: false },
     foundRecoveryPossible: { type: Boolean, required: false },
+    finderPhoneNumber: {
+      type: String,
+      minlength: 1,
+      maxlength: 50,
+      validate: [validator.isMobilePhone, 'Must be a valid phone number'],
+    },
 
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

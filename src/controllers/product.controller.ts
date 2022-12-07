@@ -1,5 +1,6 @@
 import express from 'express';
-import { v4 as uuidv4 } from 'uuid';
+
+import geo from '../utils/geo';
 import { User } from '../models/user.model';
 import { Label } from '../models/label.model';
 import { logger } from '../utils/logger';
@@ -272,4 +273,130 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export default { getLabels, createLabel, addLabel, modifyLabel, deleteLabel };
+/*
+  GET /api/v1/labels/:labelId
+  Get label contact information if found
+
+  Required Fields:
+    - labelId
+
+  Returns:
+    - error
+    - message
+    - label
+*/
+const getLabel = async (req: express.Request, res: express.Response) => {
+  const ip = (req.headers['x-forwarded-for'] as string) || (req.connection.remoteAddress as string);
+
+  if (req.user?.labels.indexOf(req.params.labelId) !== -1 && req.user) {
+    return res.status(401).json({
+      error: true,
+      message: 'You cannot locate your own label',
+    });
+  }
+
+  const label = await Label.findById(req.params.labelId);
+
+  if (!label) {
+    return res.status(404).json({
+      error: true,
+      message: 'Label not found',
+    });
+  }
+
+  if (!label.activated) {
+    return res.status(400).json({
+      error: true,
+      message: 'Label not activated',
+    });
+  }
+
+  label.isLost = true;
+  label.foundNear = geo.getRelativeLocation(ip);
+
+  try {
+    await label.save();
+
+    return res.status(200).json({
+      error: false,
+      message: 'Label found',
+      label,
+    });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({
+      error: true,
+      message: 'Error finding label',
+    });
+  }
+};
+
+/*
+  POST /api/v1/labels/found/:labelId
+  Update contact's label to found
+
+  Required Fields:
+    - labelId
+    - phoneNumber (optional)
+    - exactLocation (optional)
+    - recoveryLocation (optional)
+*/
+const foundLabel = async (req: express.Request, res: express.Response) => {
+  if (req.user?.labels.indexOf(req.params.labelId) !== -1 && req.user) {
+    return res.status(401).json({
+      error: true,
+      message: 'You cannot locate your own label',
+    });
+  }
+
+  const label = await Label.findById(req.params.labelId);
+
+  if (!label) {
+    return res.status(404).json({
+      error: true,
+      message: 'Label not found',
+    });
+  }
+
+  if (!label.activated) {
+    return res.status(400).json({
+      error: true,
+      message: 'Label not activated',
+    });
+  }
+
+  if (!label.isLost) {
+    return res.status(400).json({
+      error: true,
+      message: 'Label not lost',
+    });
+  }
+
+  const { phoneNumber, exactLocation, recoveryLocation } = req.body;
+
+  if (phoneNumber) label.finderPhoneNumber = phoneNumber;
+  if (exactLocation) label.foundExactLocation = exactLocation;
+  if (recoveryLocation) {
+    label.foundRecoveryLocation = recoveryLocation;
+    label.foundRecoveryPossible = true;
+  }
+
+  label.foundDate = new Date();
+
+  try {
+    await label.save();
+
+    return res.status(200).json({
+      error: false,
+      message: 'Label found successfully',
+    });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({
+      error: true,
+      message: error.message,
+    });
+  }
+};
+
+export default { getLabels, getLabel, foundLabel, createLabel, addLabel, modifyLabel, deleteLabel };

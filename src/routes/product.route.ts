@@ -7,9 +7,24 @@ const productRouter = express.Router();
 
 const labelRouter = express.Router();
 labelRouter.post('/create', productController.createLabel); // TEMPORARY
+
+labelRouter.get('/:labelId', productController.getLabel);
+labelRouter.post('/found/:labelId', productController.foundLabel);
 labelRouter.get('/', authMiddleware.authenticateVerifiedAccessToken, productController.getLabels);
-labelRouter.post('/add/:labelId', authMiddleware.authenticateVerifiedAccessToken, productController.addLabel);
-labelRouter.patch('/modify/:labelId', authMiddleware.authenticateVerifiedAccessToken, productController.modifyLabel);
-labelRouter.delete('/delete/:labelId', authMiddleware.authenticateVerifiedAccessToken, productController.deleteLabel);
+labelRouter.post(
+  '/add/:labelId',
+  authMiddleware.authenticateVerifiedAccessToken,
+  productController.addLabel
+);
+labelRouter.patch(
+  '/modify/:labelId',
+  authMiddleware.authenticateVerifiedAccessToken,
+  productController.modifyLabel
+);
+labelRouter.delete(
+  '/delete/:labelId',
+  authMiddleware.authenticateVerifiedAccessToken,
+  productController.deleteLabel
+);
 
 export { productRouter, labelRouter };
