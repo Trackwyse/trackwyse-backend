@@ -7,8 +7,8 @@ export interface LabelSchema extends Label, mongoose.Document {}
 
 const labelSchema = new mongoose.Schema<LabelSchema>(
   {
-    activated: { type: Boolean, required: true },
-    isLost: { type: Boolean, required: true },
+    activated: { type: Boolean, default: false },
+    isLost: { type: Boolean, default: false },
 
     name: {
       type: String,

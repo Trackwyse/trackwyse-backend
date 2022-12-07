@@ -1,7 +1,8 @@
-import { User } from '@/models/user.model';
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import { User } from '../models/user.model';
 import { Label } from '../models/label.model';
+import { logger } from '../utils/logger';
 
 /*
   POST /api/v1/labels/create
@@ -16,9 +17,7 @@ import { Label } from '../models/label.model';
     - label
 */
 const createLabel = async (req: express.Request, res: express.Response) => {
-  const labelId = uuidv4();
-
-  const label = new Label({ id: labelId });
+  const label = new Label();
 
   try {
     const labelDocument = await label.save();
@@ -29,6 +28,7 @@ const createLabel = async (req: express.Request, res: express.Response) => {
       label: labelDocument,
     });
   } catch (error) {
+    logger.error(error);
     res.status(500).json({
       error: true,
       message: 'Error creating label',
@@ -118,6 +118,7 @@ const addLabel = async (req: express.Request, res: express.Response) => {
       message: 'Label added successfully',
     });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({
       error: true,
       message: 'Error adding label',
@@ -139,6 +140,7 @@ const addLabel = async (req: express.Request, res: express.Response) => {
   Returns:
     - error
     - message
+    - label
 */
 const modifyLabel = async (req: express.Request, res: express.Response) => {
   const labelId = req.params.labelId;
@@ -186,11 +188,13 @@ const modifyLabel = async (req: express.Request, res: express.Response) => {
     return res.status(200).json({
       error: false,
       message: 'Label modified successfully',
+      label,
     });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({
       error: true,
-      message: 'Error modifying label',
+      message: error.message,
     });
   }
 };
@@ -260,6 +264,7 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
       message: 'Label deleted successfully',
     });
   } catch (error) {
+    logger.error(error);
     return res.status(500).json({
       error: true,
       message: 'Error deleting label',
