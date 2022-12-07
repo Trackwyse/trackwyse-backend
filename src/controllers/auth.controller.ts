@@ -44,6 +44,8 @@ const login = async (req: express.Request, res: express.Response) => {
 
   res.cookie('jwt', refreshToken, {
     httpOnly: true,
+    secure: true,
+    sameSite: 'none',
     maxAge: config.RefreshTokenExpiration * 1000,
   });
 
@@ -250,10 +252,119 @@ const reverify = async (req: express.Request, res: express.Response) => {
   return res.status(401).json({ error: true, message: 'Unauthorized' });
 };
 
+/*
+  POST /auth/vX/forgot
+  Sends a password reset email to a user
+
+  Required Fields:
+    - email
+
+  Returns:
+    - error
+    - message
+*/
+const forgot = async (req: express.Request, res: express.Response) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: true, message: 'Missing required fields' });
+  }
+
+  const user = await User.findOne({
+    email,
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: true, message: 'User not found' });
+  }
+
+  try {
+    const resetToken = await user.generatePasswordResetToken();
+
+    // Send the generated reset token to the user's email
+    const emailService = new MailService(user.email, 'Reset your password');
+
+    await emailService.sendResetEmail(resetToken);
+
+    return res.status(200).json({ error: false, message: 'Password reset email sent' });
+  } catch (error) {
+    logger.error(error);
+
+    return res.status(500).json({ error: true, message: 'Error sending password reset email' });
+  }
+};
+
+/*
+  POST /auth/vX/reset
+  Resets a user's password
+
+  Required Fields:
+    - email
+    - password
+    - resetToken
+
+  Returns:
+    - error
+    - message
+    - accessToken
+*/
+const reset = async (req: express.Request, res: express.Response) => {
+  const { email, password, resetToken } = req.body;
+
+  if (!email || !password || !resetToken) {
+    return res.status(400).json({ error: true, message: 'Missing required fields' });
+  }
+
+  const user = await User.findOne({
+    email,
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: true, message: 'User not found' });
+  }
+
+  if (user.passwordResetToken !== resetToken) {
+    return res.status(401).json({ error: true, message: 'Invalid password reset token' });
+  }
+
+  const date = new Date();
+
+  if (date.getTime() > user.passwordResetTokenExpires.getTime()) {
+    return res.status(401).json({ error: true, message: 'Password reset token expired' });
+  }
+
+  try {
+    user.password = password;
+    user.passwordResetToken = undefined;
+    user.passwordResetTokenExpires = undefined;
+
+    const userDocument = await user.save();
+    const sanitizedUser = userDocument.sanitize();
+
+    const accessToken = jwt.createAccessToken(sanitizedUser);
+    const refreshToken = jwt.createRefreshToken(sanitizedUser);
+
+    res.cookie('jwt', refreshToken, {
+      httpOnly: true,
+      sameSite: 'none',
+      secure: true,
+      maxAge: config.RefreshTokenExpiration * 1000,
+    });
+
+    return res.status(200).json({ error: false, message: 'Password reset', accessToken });
+  } catch (error) {
+    logger.error(error);
+
+    return res.status(500).json({ error: true, message: 'Error resetting password' });
+  }
+};
+
 export default {
   login,
+  reset,
   logout,
   verify,
+  forgot,
   refresh,
   register,
   reverify,

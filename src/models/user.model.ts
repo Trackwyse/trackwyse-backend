@@ -1,11 +1,13 @@
 import validator from 'validator';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import config from '../config';
 
 export interface UserSchema extends User, mongoose.Document {
   comparePassword: (password: string) => Promise<boolean>;
   generateVerificationToken: () => Promise<string>;
+  generatePasswordResetToken: () => Promise<string>;
   sanitize: () => SanitizedUser;
 }
 
@@ -35,6 +37,8 @@ const userSchema = new mongoose.Schema<UserSchema>({
   verified: { type: Boolean, default: false },
   verificationToken: { type: String, required: false },
   verificationTokenExpires: { type: Date, required: false },
+  passwordResetToken: { type: String, required: false },
+  passwordResetTokenExpires: { type: Date, required: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
@@ -77,7 +81,7 @@ userSchema.methods.comparePassword = async function (password: string): Promise<
 
 // Generate a verification token and save it to the database
 userSchema.methods.generateVerificationToken = async function (): Promise<string> {
-  const token = Math.floor(Math.random() * 1000000).toString();
+  const token = crypto.randomInt(0, 1000000).toString();
 
   // Ensure that the number is 6 digits long by adding leading zeros if necessary
   const sixDigitNumber = token.padStart(6, '0');
@@ -88,6 +92,18 @@ userSchema.methods.generateVerificationToken = async function (): Promise<string
   await this.save();
 
   return sixDigitNumber;
+};
+
+// Generate a password reset token and save it to the database
+userSchema.methods.generatePasswordResetToken = async function (): Promise<string> {
+  const token = crypto.randomBytes(20).toString('hex');
+
+  this.passwordResetToken = token;
+  this.passwordResetTokenExpires = new Date(Date.now() + config.TimeToVerify); // Time to reset in milliseconds
+
+  await this.save();
+
+  return token;
 };
 
 // Return a sanitized version of the user

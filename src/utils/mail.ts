@@ -65,6 +65,36 @@ class MailService {
       logger.info(data);
     } catch (err) {
       logger.error(err);
+
+      throw err;
+    }
+  }
+
+  async sendResetEmail(token: string) {
+    this.params.Message.Body.Html.Data = `
+      <html>
+        <body>
+          <h1>Reset your password</h1>
+          <p>Please use the following link to reset your password:</p>
+          <p>${config.Origin}/auth/v1/reset/?token=${token}</p>
+        </body>
+      </html>
+    `;
+
+    this.params.Message.Body.Text.Data = `
+      Reset your password
+      Please use the following link to reset your password:
+      ${config.Origin}/auth/v1/reset?token=${token}
+    `;
+
+    try {
+      const data = await this.ses.sendEmail(this.params).promise();
+
+      logger.info(data);
+    } catch (err) {
+      logger.error(err);
+
+      throw err;
     }
   }
 }

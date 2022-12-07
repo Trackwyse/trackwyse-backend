@@ -12,6 +12,8 @@ interface User {
   verified: boolean;
   verificationToken: string;
   verificationTokenExpires: Date;
+  passwordResetToken: string;
+  passwordResetTokenExpires: Date;
   createdAt: Date;
   updatedAt: Date;
 }
