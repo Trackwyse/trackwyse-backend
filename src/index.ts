@@ -3,8 +3,10 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 
+import { productRouter, labelRouter } from './routes/product.route';
 import { logger, morganLogger } from './utils/logger';
 import authRouter from './routes/auth.route';
+import geoRouter from './routes/geo.route';
 import config from './config';
 import db from './db';
 
@@ -21,7 +23,9 @@ const start = async () => {
   await db.connect();
 
   app.use('/auth/v1', authRouter);
-  // app.use('/api/v1', apiRouter);
+  app.use('/api/v1', geoRouter);
+  app.use('/api/v1', labelRouter);
+  app.use('/api/v1', productRouter);
 
   app.listen(config.Port, () => {
     logger.info(`Application started in mode: ${config.NodeEnv}`);

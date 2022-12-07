@@ -1,9 +1,10 @@
-import { User } from '../models/user.model';
 import express from 'express';
-import jwt from '../utils/jwt';
-import config from '../config';
-import MailService from '../utils/mail';
+
+import { User } from '../models/user.model';
 import { logger } from '../utils/logger';
+import MailService from '../utils/mail';
+import config from '../config';
+import jwt from '../utils/jwt';
 
 /*
   POST /auth/vX/login

@@ -2,6 +2,7 @@ import validator from 'validator';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+
 import config from '../config';
 
 export interface UserSchema extends User, mongoose.Document {
