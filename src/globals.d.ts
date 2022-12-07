@@ -25,6 +25,7 @@ interface SanitizedUser {
   lastName: string;
   email: string;
   verified: boolean;
+  labels: string[];
   createdAt: Date;
 }
 

@@ -119,6 +119,7 @@ userSchema.methods.sanitize = function () {
     lastName: this.lastName,
     email: this.email,
     verified: this.verified,
+    labels: this.labels,
     createdAt: this.createdAt,
   };
 };
