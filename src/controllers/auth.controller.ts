@@ -158,6 +158,26 @@ const logout = async (req: express.Request, res: express.Response) => {
 };
 
 /*
+  POST /auth/vX/me
+  Returns the current user
+  
+  Required Fields:
+    - authorization header (handled by authenticateAccessToken middleware)
+
+  Returns:
+    - error
+    - message
+    - OPTIONAL: user
+*/
+const me = async (req: express.Request, res: express.Response) => {
+  if (req.user) {
+    return res.status(200).json({ error: false, message: 'User found', user: req.user });
+  }
+
+  return res.status(401).json({ error: true, message: 'Unauthorized' });
+};
+
+/*
   POST /auth/vX/verify
   Verifies a user's email
 
@@ -361,6 +381,7 @@ const reset = async (req: express.Request, res: express.Response) => {
 };
 
 export default {
+  me,
   login,
   reset,
   logout,
