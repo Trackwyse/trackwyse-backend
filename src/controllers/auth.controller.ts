@@ -176,6 +176,38 @@ const me = async (req: express.Request, res: express.Response) => {
 
   return res.status(401).json({ error: true, message: 'Unauthorized' });
 };
+/*
+  POST /auth/vX/checkEmail
+  Checks if an email is already in use
+
+  Required Fields:
+    - email
+
+  Returns:
+    - error
+    - message
+    - OPTIONAL: emailInUse
+
+  Note: This endpoint is not authenticated
+*/
+const checkEmail = async (req: express.Request, res: express.Response) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: true, message: 'Missing required fields' });
+  }
+
+  const user = await User.findOne({
+    email,
+  });
+
+  if (user) {
+    return res.status(200).json({ error: false, message: 'Email in use', emailInUse: true });
+  }
+
+  return res.status(200).json({ error: false, message: 'Email not in use', emailInUse: false });
+};
+
 
 /*
   POST /auth/vX/verify
@@ -390,4 +422,5 @@ export default {
   refresh,
   register,
   reverify,
+  checkEmail
 };

@@ -8,6 +8,7 @@ authRouter.post('/login', authController.login);
 authRouter.post('/reset', authController.reset);
 authRouter.post('/forgot', authController.forgot);
 authRouter.post('/register', authController.register);
+authRouter.post('/checkEmail', authController.checkEmail);
 authRouter.get('/me', authMiddleware.authenticateVerifiedAccessToken, authController.me);
 authRouter.post('/refresh', authMiddleware.authenticateRefreshToken, authController.refresh);
 authRouter.post('/logout', authMiddleware.authenticateVerifiedAccessToken, authController.logout);
