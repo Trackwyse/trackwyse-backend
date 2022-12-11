@@ -100,8 +100,36 @@ const authenticateUnverifiedAccessToken = async (
   return res.status(401).json({ error: true, message: 'Unauthorized' });
 };
 
+/*
+  Used for ONLY the /auth/vX/me route
+  Verifies that the 'authorization' header is present and valid
+
+  If the header is valid, the user is attached to the request
+  If the user is not verified, the request is rejected
+*/
+const authenticateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+  if (req.headers.authorization) {
+    const accessToken = req.headers.authorization.split(' ')[1];
+
+    const payload = jwt.verifyAccessToken(accessToken);
+    const user = await User.findById(payload?.id);
+
+    if (user) {
+      const sanitizedUser = user.sanitize();
+
+      req.user = sanitizedUser;
+      return next();
+    }
+
+    return res.status(401).json({ error: true, message: 'Unauthorized' });
+  }
+
+  return res.status(401).json({ error: true, message: 'Unauthorized' });
+};
+
 export default {
   authenticateRefreshToken,
+  authenticateAccessToken,
   authenticateVerifiedAccessToken,
   authenticateUnverifiedAccessToken,
 };
