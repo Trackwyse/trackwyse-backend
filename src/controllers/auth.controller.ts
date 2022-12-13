@@ -412,6 +412,39 @@ const reset = async (req: express.Request, res: express.Response) => {
   }
 };
 
+/*
+  POST /auth/v1/terms
+  Means that the user has accepted the terms of service
+
+  Required Fields:
+    - authorization header (handled by authenticateAccessToken middleware)
+
+  Returns:
+    - error
+    - message
+*/
+const acceptTerms = async (req: express.Request, res: express.Response) => {
+  if (req.user) {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: true, message: 'Unauthorized' });
+    }
+
+    user.termsAccepted = true;
+
+    try {
+      await user.save();
+
+      return res.status(200).json({ error: false, message: 'Terms accepted' });
+    } catch (error) {
+      return res.status(500).json({ error: true, message: error.message });
+    }
+  }
+
+  return res.status(401).json({ error: true, message: 'Unauthorized' });
+}
+
 export default {
   me,
   login,
@@ -422,5 +455,6 @@ export default {
   refresh,
   register,
   reverify,
-  checkEmail
+  checkEmail,
+  acceptTerms
 };

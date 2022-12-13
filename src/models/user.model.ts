@@ -42,6 +42,7 @@ const userSchema = new mongoose.Schema<UserSchema>(
     passwordResetToken: { type: String, required: false },
     passwordResetTokenExpires: { type: Date, required: false },
     labels: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Label' }],
+    termsAccepted: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },
@@ -119,6 +120,7 @@ userSchema.methods.sanitize = function () {
     lastName: this.lastName,
     email: this.email,
     verified: this.verified,
+    termsAccepted: this.termsAccepted,
     labels: this.labels,
     createdAt: this.createdAt,
   };

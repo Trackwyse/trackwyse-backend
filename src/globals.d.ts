@@ -14,6 +14,7 @@ interface User {
   verificationTokenExpires: Date;
   passwordResetToken: string;
   passwordResetTokenExpires: Date;
+  termsAccepted: boolean;
   labels: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -25,6 +26,7 @@ interface SanitizedUser {
   lastName: string;
   email: string;
   verified: boolean;
+  termsAccepted: boolean;
   labels: string[];
   createdAt: Date;
 }
