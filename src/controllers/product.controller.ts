@@ -52,6 +52,14 @@ const createLabel = async (req: express.Request, res: express.Response) => {
 const getLabels = async (req: express.Request, res: express.Response) => {
   const labels = req.user.labels;
 
+  if (!labels) {
+    return res.status(200).json({
+      error: false,
+      message: 'No labels found',
+      labels: [],
+    });
+  }
+
   const labelRecords = await Label.find({ id: { $in: labels } });
 
   return res.status(200).json({
