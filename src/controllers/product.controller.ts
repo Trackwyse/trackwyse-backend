@@ -52,8 +52,6 @@ const createLabel = async (req: express.Request, res: express.Response) => {
 const getLabels = async (req: express.Request, res: express.Response) => {
   const labels = req.user.labels;
 
-  console.log(labels);
-
   if (labels.length === 0 || !labels) {
     return res.status(200).json({
       error: false,
