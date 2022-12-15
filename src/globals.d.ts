@@ -36,7 +36,7 @@ interface Label {
   isLost: boolean;
 
   name: string;
-  color: string;
+  color: Color;
   message: string;
   phoneNumber: string;
 
@@ -49,4 +49,10 @@ interface Label {
 
   createdAt: Date;
   updatedAt: Date;
+}
+
+interface Color {
+  bg: string;
+  borderSelected: string;
+  borderUnselected: string;
 }

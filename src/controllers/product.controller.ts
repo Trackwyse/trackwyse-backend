@@ -1,6 +1,7 @@
 import express from 'express';
 
 import geo from '../utils/geo';
+import { colors } from '../lib/constants';
 import { User } from '../models/user.model';
 import { Label } from '../models/label.model';
 import { logger } from '../utils/logger';
@@ -117,6 +118,7 @@ const addLabel = async (req: express.Request, res: express.Response) => {
 
   user.labels.push(labelId);
   label.activated = true;
+  label.color = colors[0];
 
   try {
     await user.save();
@@ -187,9 +189,17 @@ const modifyLabel = async (req: express.Request, res: express.Response) => {
   const { labelName, labelColor, labelMessage, phoneNumber } = req.body;
 
   if (labelName) label.name = labelName;
-  if (labelColor) label.color = labelColor;
   if (labelMessage) label.message = labelMessage;
   if (phoneNumber) label.phoneNumber = phoneNumber;
+
+  // if label color is provided, check if it is a number and is in the range of the number of colors in the colors array
+  if (labelColor) {
+    // convert labelColor to a number
+    const color = parseInt(labelColor, 10);
+    if (typeof color === 'number' && color >= 0 && color < colors.length) {
+      label.color = colors[labelColor];
+    }
+  }
 
   try {
     await label.save();

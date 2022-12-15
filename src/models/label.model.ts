@@ -16,9 +16,9 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
       maxlength: 50,
     },
     color: {
-      type: String,
-      minlength: 1,
-      maxlength: 50,
+      bg: { type: String, required: true },
+      borderSelected: { type: String, required: true },
+      borderUnselected: { type: String, required: true },
     },
     message: {
       type: String,
