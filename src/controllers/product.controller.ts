@@ -271,7 +271,7 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
     });
   }
 
-  user.labels = user.labels.filter((label) => label !== labelId);
+  user.labels = user.labels.filter((id) => id.toString() !== labelId);
   label.activated = false;
 
   try {
