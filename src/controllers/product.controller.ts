@@ -272,7 +272,7 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
   }
 
   user.labels = user.labels.filter((id) => id.toString() !== labelId);
-  label.activated = false;
+  label.resetData();
 
   try {
     await user.save();
@@ -283,6 +283,7 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
       message: 'Label deleted successfully',
     });
   } catch (error) {
+    console.log(error);
     logger.error(error);
     return res.status(500).json({
       error: true,

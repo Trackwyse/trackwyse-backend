@@ -3,7 +3,9 @@ import validator from 'validator';
 
 import config from '../config';
 
-export interface LabelSchema extends Label, mongoose.Document {}
+export interface LabelSchema extends Label, mongoose.Document {
+  resetData: () => void;
+}
 
 const labelSchema = new mongoose.Schema<LabelSchema>(
   {
@@ -16,9 +18,12 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
       maxlength: 50,
     },
     color: {
-      bg: { type: String, required: true },
-      borderSelected: { type: String, required: true },
-      borderUnselected: { type: String, required: true },
+      type: {
+        bg: { type: String, required: true },
+        borderSelected: { type: String, required: true },
+        borderUnselected: { type: String, required: true },
+      },
+      required: false,
     },
     message: {
       type: String,
@@ -49,5 +54,25 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
   },
   { timestamps: true }
 );
+
+labelSchema.methods.resetData = function () {
+  this.activated = false;
+  this.isLost = false;
+
+  this.name = undefined;
+  this.color = undefined;
+  this.message = undefined;
+  this.phoneNumber = undefined;
+
+  this.foundNear = undefined;
+  this.foundDate = undefined;
+  this.foundExactLocation = undefined;
+  this.foundRecoveryLocation = undefined;
+  this.foundRecoveryPossible = undefined;
+  this.finderPhoneNumber = undefined;
+
+  this.createdAt = new Date();
+  this.updatedAt = new Date();
+};
 
 export const Label = mongoose.model<LabelSchema>('Label', labelSchema);
