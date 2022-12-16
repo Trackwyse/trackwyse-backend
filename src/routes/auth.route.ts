@@ -11,9 +11,17 @@ authRouter.post('/register', authController.register);
 authRouter.post('/checkEmail', authController.checkEmail);
 authRouter.get('/me', authMiddleware.authenticateAccessToken, authController.me);
 authRouter.post('/refresh', authMiddleware.authenticateRefreshToken, authController.refresh);
-authRouter.post('/logout', authMiddleware.authenticateVerifiedAccessToken, authController.logout);
+authRouter.post('/logout', authMiddleware.authenticateAccessToken, authController.logout);
 authRouter.post('/verify', authMiddleware.authenticateUnverifiedAccessToken, authController.verify);
-authRouter.post('/reverify', authMiddleware.authenticateUnverifiedAccessToken, authController.reverify);
-authRouter.post('/acceptTerms', authMiddleware.authenticateVerifiedAccessToken, authController.acceptTerms);
+authRouter.post(
+  '/reverify',
+  authMiddleware.authenticateUnverifiedAccessToken,
+  authController.reverify
+);
+authRouter.post(
+  '/acceptTerms',
+  authMiddleware.authenticateVerifiedAccessToken,
+  authController.acceptTerms
+);
 
 export default authRouter;
