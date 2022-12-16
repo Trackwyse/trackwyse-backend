@@ -311,4 +311,170 @@ describe('Authentication routes', () => {
       });
     });
   });
+
+  describe('POST /auth/v1/reverify', () => {
+    it('should error if there is no access token', async () => {
+      const response = await request.post('/auth/v1/reverify').send();
+
+      expect(response.status).toBe(401);
+      expect(response.body).toMatchObject({
+        error: true,
+      });
+    });
+
+    it('should error if the access token is invalid', async () => {
+      const response = await request
+        .post('/auth/v1/reverify')
+        .set('Authorization', 'Bearer invalidAccessToken')
+        .send();
+
+      expect(response.status).toBe(401);
+      expect(response.body).toMatchObject({
+        error: true,
+      });
+    });
+
+    it('should error if the user is already verified', async () => {
+      const response = await request
+        .post('/auth/v1/reverify')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+
+      expect(response.status).toBe(401);
+      expect(response.body).toMatchObject({
+        error: true,
+      });
+    });
+
+    it('should error if there is already an active verification code', async () => {
+      // get the verification code from the database
+      const user = await User.findOne({ email: config.verifiedAWSEmail });
+      // set the verification code to be active
+      await user.generateVerificationToken();
+
+      const response = await request
+        .post('/auth/v1/reverify')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+
+      expect(response.status).toBe(401);
+      expect(response.body).toMatchObject({
+        error: true,
+      });
+    });
+
+    it('should send a reverification code to the user', async () => {
+      // get the verification code from the database
+      const user = await User.findOne({ email: config.verifiedAWSEmail });
+      // set the verification code to be inactive
+      user.verified = false;
+      user.verificationToken = undefined;
+      user.verificationTokenExpires = undefined;
+
+      await user.save();
+
+      const response = await request
+        .post('/auth/v1/reverify')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        error: false,
+        message: expect.any(String),
+      });
+    });
+  });
+
+  describe('POST /auth/v1/checkEmail', () => {
+    it('should error if the email is not provided', async () => {
+      const response = await request.post('/auth/v1/checkEmail').send();
+
+      expect(response.status).toBe(400);
+      expect(response.body).toMatchObject({
+        error: true,
+        message: 'Missing required fields',
+      });
+    });
+
+    it('should return false if the email is not in use', async () => {
+      const response = await request
+        .post('/auth/v1/checkEmail')
+        .send({ email: 'unusedemail@mail.com' });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        error: false,
+        emailInUse: false,
+      });
+    });
+
+    it('should return true if the email is in use', async () => {
+      const response = await request
+        .post('/auth/v1/checkEmail')
+        .send({ email: config.verifiedAWSEmail });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        error: false,
+        emailInUse: true,
+      });
+    });
+  });
+
+  describe('POST /auth/v1/acceptTerms', () => {
+    it('should error if there is no access token', async () => {
+      const response = await request.post('/auth/v1/acceptTerms').send();
+
+      expect(response.status).toBe(401);
+      expect(response.body).toMatchObject({
+        error: true,
+      });
+    });
+
+    it('should error if the access token is invalid', async () => {
+      const response = await request
+        .post('/auth/v1/acceptTerms')
+        .set('Authorization', 'Bearer invalidAccessToken')
+        .send();
+
+      expect(response.status).toBe(401);
+      expect(response.body).toMatchObject({
+        error: true,
+      });
+    });
+
+    it('should error if the user is not verified', async () => {
+      const response = await request
+        .post('/auth/v1/acceptTerms')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+
+      expect(response.status).toBe(401);
+      expect(response.body).toMatchObject({
+        error: true,
+      });
+    });
+
+    it('should accept the terms and conditions', async () => {
+      // Verify the user
+      const user = await User.findOne({
+        email: config.verifiedAWSEmail,
+      });
+
+      user.verified = true;
+      await user.save();
+
+      const response = await request
+        .post('/auth/v1/acceptTerms')
+        .set('Authorization', `Bearer ${accessToken}`)
+        .send();
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        error: false,
+        message: expect.any(String),
+      });
+    });
+  });
 });
