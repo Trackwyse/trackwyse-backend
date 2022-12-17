@@ -76,8 +76,8 @@ class MailService {
       <html>
         <body>
           <h1>Reset your password</h1>
-          <p>Please use the following link to reset your password:</p>
-          <p>${config.Origin}/auth/v1/reset/?token=${token}</p>
+          <p>Please use the following code to reset your password:</p>
+          <p>${token}</p>
         </body>
       </html>
     `;

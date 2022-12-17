@@ -102,7 +102,7 @@ userSchema.methods.generateVerificationToken = async function (): Promise<string
 
 // Generate a password reset token and save it to the database
 userSchema.methods.generatePasswordResetToken = async function (): Promise<string> {
-  const token = crypto.randomBytes(20).toString('hex');
+  const token = crypto.randomInt(0, 1000000).toString();
 
   this.passwordResetToken = token;
   this.passwordResetTokenExpires = new Date(Date.now() + config.TimeToVerify); // Time to reset in milliseconds
