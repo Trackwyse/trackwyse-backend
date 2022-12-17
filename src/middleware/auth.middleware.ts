@@ -127,7 +127,35 @@ const authenticateAccessToken = async (req: Request, res: Response, next: NextFu
   return res.status(401).json({ error: true, message: 'Unauthorized' });
 };
 
+/*
+  Used for ONLY the routes used to find labels.
+  Verifies that the 'authorization' header is present and valid
+
+  If the header is valid, the user is attached to the request
+  If the user is not verified, the user is not attached to the request
+*/
+const attachAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+  if (req.headers.authorization) {
+    const accessToken = req.headers.authorization.split(' ')[1];
+
+    const payload = jwt.verifyAccessToken(accessToken);
+    const user = await User.findById(payload?.id);
+
+    if (user) {
+      const sanitizedUser = user.sanitize();
+
+      req.user = sanitizedUser;
+      return next();
+    }
+
+    return next();
+  }
+
+  return next();
+};
+
 export default {
+  attachAccessToken,
   authenticateRefreshToken,
   authenticateAccessToken,
   authenticateVerifiedAccessToken,

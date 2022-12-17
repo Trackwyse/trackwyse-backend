@@ -6,9 +6,9 @@ import productController from '../controllers/product.controller';
 const productRouter = express.Router();
 
 const labelRouter = express.Router();
-labelRouter.post('/create', productController.createLabel); // TEMPORARY
+labelRouter.post('/create', authMiddleware.attachAccessToken, productController.createLabel); // TEMPORARY
 
-labelRouter.get('/:labelId', productController.getLabel);
+labelRouter.get('/:labelId', authMiddleware.attachAccessToken, productController.getLabel);
 labelRouter.post('/found/:labelId', productController.foundLabel);
 labelRouter.get('/', authMiddleware.authenticateVerifiedAccessToken, productController.getLabels);
 labelRouter.post(
