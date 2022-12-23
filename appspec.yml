@@ -3,7 +3,7 @@ version: 0.0
 os: linux
 
 files:
-  - source: .
+  - source: /
     destination: /home/ubuntu/trackwyse-backend-node
 
 hooks:
