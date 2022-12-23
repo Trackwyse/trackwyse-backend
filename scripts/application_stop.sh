@@ -2,6 +2,6 @@
 
 # stop existing node servers
 
-echo “Stopping any existing node servers.”
+echo "Stopping node servers..."
 
-PKILL node
+pm2 stop trackwyse-backend-node
