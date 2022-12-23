@@ -14,4 +14,4 @@ sudo npm install -g pm2
 
 # Set node version to 16.14.0 on ubuntu
 sudo npm install -g n
-sudo n 16.14.0
+sudo n 16.16.0
