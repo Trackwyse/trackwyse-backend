@@ -1,0 +1,17 @@
+#!/bash/bin
+
+# Install the latest version of Node.js
+sudo apt install nodejs
+
+# Install the latest version of NPM
+sudo apt install npm
+
+# Install the latest version of Yarn
+sudo npm install -g yarn
+
+# Install the latest version of pm2
+sudo npm install -g pm2
+
+# Set node version to 16.14.0 on ubuntu
+sudo npm install -g n
+sudo n 16.14.0

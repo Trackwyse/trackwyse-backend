@@ -6,11 +6,15 @@ files:
     overwrite: true
 file_exists_behavior: OVERWRITE
 hooks:
+  BeforeInstall:
+    - location: scripts/before_install
+      timeout: 300
+      runas: ubuntu
   AfterInstall:
-    - location: scripts/install_app_dependencies
+    - location: scripts/after_install
       timeout: 300
       runas: ubuntu
   ApplicationStart:
-    - location: scripts/start_server
+    - location: scripts/application_start
       timeout: 300
       runas: ubuntu
