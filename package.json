@@ -6,9 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "tsc & node .",
-    "dev": "tsc -w & nodemon .",
-    "test": "jest",
-    "test:watch": "jest --watch --onlyChanged"
+    "dev": "tsc -w & nodemon ."
   },
   "author": "",
   "license": "ISC",
