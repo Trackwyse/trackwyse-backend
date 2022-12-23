@@ -3,3 +3,6 @@ cd /home/ubuntu/trackwyse-backend-node
 
 yarn build
 
+pm2 kill
+
+pm2 start npm --name "trackwyse-backend-node" -- start
