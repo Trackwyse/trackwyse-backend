@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Install dependencies
 cd /home/ubuntu/trackwyse-backend-node
 
