@@ -1,0 +1,14 @@
+version: 0.0
+os: linux
+files:
+  - source: .
+    destination: /home/ubuntu/trackwyse-backend-node
+hooks:
+  AfterInstall:
+    - location: scripts/install_app_dependencies
+      timeout: 300
+      runas: ubuntu
+  ApplicationStart:
+    - location: scripts/start_server
+      timeout: 300
+      runas: ubuntu

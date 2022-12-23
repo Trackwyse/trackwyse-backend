@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# Install dependencies
+cd /home/ubuntu/trackwyse-backend-node
+
+# Install dependencies
+yarn install
+
