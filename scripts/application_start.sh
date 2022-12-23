@@ -13,4 +13,6 @@ yarn build
 
 # start our node app in the background using pm2
 
+sudo pm2 kill
+
 sudo pm2 start npm --name "trackwyse-backend-node" -- start

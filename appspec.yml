@@ -7,10 +7,6 @@ files:
     destination: /home/ubuntu/trackwyse-backend-node
 
 hooks:
-  ApplicationStop:
-    - location: scripts/application_stop.sh
-      timeout: 300
-      runas: ubuntu
   ApplicationStart:
     - location: scripts/application_start.sh
       timeout: 300
