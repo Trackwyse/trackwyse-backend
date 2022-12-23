@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Install the latest version of Node.js
-sudo apt install nodejs
+sudo apt install nodejs -y
 
 # Install the latest version of NPM
-sudo apt install npm
+sudo apt install npm -y
 
 # Install the latest version of Yarn
 sudo npm install -g yarn
