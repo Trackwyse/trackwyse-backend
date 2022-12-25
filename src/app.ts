@@ -6,6 +6,7 @@ import cors from 'cors';
 import { productRouter, labelRouter } from './routes/product.route';
 import { morganLogger } from './utils/logger';
 import authRouter from './routes/auth.route';
+import userRouter from './routes/user.route';
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/auth/v1', authRouter);
 app.use('/api/v1', productRouter);
+app.use('/api/v1/user', userRouter);
 app.use('/api/v1/labels', labelRouter);
 
 export default app;

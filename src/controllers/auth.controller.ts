@@ -391,20 +391,9 @@ const reset = async (req: express.Request, res: express.Response) => {
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires = undefined;
 
-    const userDocument = await user.save();
-    const sanitizedUser = userDocument.sanitize();
+    await user.save();
 
-    const accessToken = jwt.createAccessToken(sanitizedUser);
-    const refreshToken = jwt.createRefreshToken(sanitizedUser);
-
-    res.cookie('jwt', refreshToken, {
-      httpOnly: true,
-      sameSite: 'none',
-      secure: true,
-      maxAge: config.RefreshTokenExpiration * 1000,
-    });
-
-    return res.status(200).json({ error: false, message: 'Password reset', accessToken });
+    return res.status(200).json({ error: false, message: 'Password reset' });
   } catch (error) {
     logger.error(error);
 

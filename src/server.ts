@@ -12,4 +12,5 @@ const startServer = async () => {
     logger.info(`Sending logs to: ${config.AppRoot}/logs`);
   });
 };
+
 startServer();
