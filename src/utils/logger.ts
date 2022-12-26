@@ -1,20 +1,21 @@
-import morgan from 'morgan';
-import winston from 'winston';
-import 'winston-daily-rotate-file';
+import morgan from "morgan";
+import winston, { format } from "winston";
+import "winston-daily-rotate-file";
 
-import config from '../config';
+import config from "../config";
 
 const { combine, timestamp, printf, colorize, align } = winston.format;
 
 const consoleFormat = combine(
   colorize({ all: true }),
-  timestamp({ format: 'YYYY-MM-DD hh:mm:ss.SSS A' }),
+  timestamp({ format: "YYYY-MM-DD hh:mm:ss.SSS A" }),
   align(),
   printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
 );
 
 const fileFormat = combine(
-  timestamp({ format: 'YYYY-MM-DD hh:mm:ss.SSS A' }),
+  format.errors({ stack: true }),
+  timestamp({ format: "YYYY-MM-DD hh:mm:ss.SSS A" }),
   align(),
   printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
 );
@@ -26,31 +27,31 @@ const logger = winston.createLogger({
     new winston.transports.DailyRotateFile({
       filename: `${config.AppRoot}/logs/combined.log`,
       format: fileFormat,
-      datePattern: 'YYYY-MM-DD',
-      maxFiles: '30d',
+      datePattern: "YYYY-MM-DD",
+      maxFiles: "30d",
     }),
     new winston.transports.DailyRotateFile({
       filename: `${config.AppRoot}/logs/error.log'`,
-      level: 'error',
+      level: "error",
       format: fileFormat,
-      datePattern: 'YYYY-MM-DD',
-      maxFiles: '30d',
+      datePattern: "YYYY-MM-DD",
+      maxFiles: "30d",
     }),
   ],
   exceptionHandlers: [
     new winston.transports.DailyRotateFile({
       filename: `${config.AppRoot}/logs/exceptions.log`,
       format: fileFormat,
-      datePattern: 'YYYY-MM-DD',
-      maxFiles: '30d',
+      datePattern: "YYYY-MM-DD",
+      maxFiles: "30d",
     }),
   ],
   rejectionHandlers: [
     new winston.transports.DailyRotateFile({
       filename: `${config.AppRoot}/logs/rejections.log`,
       format: fileFormat,
-      datePattern: 'YYYY-MM-DD',
-      maxFiles: '30d',
+      datePattern: "YYYY-MM-DD",
+      maxFiles: "30d",
     }),
   ],
 });
@@ -61,8 +62,8 @@ const morganLogger = morgan(
       method: tokens.method(req, res),
       url: tokens.url(req, res),
       status: Number.parseFloat(tokens.status(req, res)),
-      contentLength: tokens.res(req, res, 'content-length'),
-      responseTime: Number.parseFloat(tokens['response-time'](req, res)),
+      contentLength: tokens.res(req, res, "content-length"),
+      responseTime: Number.parseFloat(tokens["response-time"](req, res)),
     }),
   {
     stream: {
