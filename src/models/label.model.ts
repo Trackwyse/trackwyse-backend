@@ -1,7 +1,5 @@
-import mongoose from 'mongoose';
-import validator from 'validator';
-
-import config from '../config';
+import mongoose from "mongoose";
+import validator from "validator";
 
 export interface LabelSchema extends Label, mongoose.Document {
   resetData: () => void;
@@ -9,6 +7,7 @@ export interface LabelSchema extends Label, mongoose.Document {
 
 const labelSchema = new mongoose.Schema<LabelSchema>(
   {
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" } as any,
     activated: { type: Boolean, default: false },
     isLost: { type: Boolean, default: false },
 
@@ -34,7 +33,7 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
       type: String,
       minlength: 1,
       maxlength: 50,
-      validate: [validator.isMobilePhone, 'Must be a valid phone number'],
+      validate: [validator.isMobilePhone, "Must be a valid phone number"],
     },
 
     foundNear: { type: String, required: false },
@@ -46,7 +45,7 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
       type: String,
       minlength: 1,
       maxlength: 50,
-      validate: [validator.isMobilePhone, 'Must be a valid phone number'],
+      validate: [validator.isMobilePhone, "Must be a valid phone number"],
     },
 
     createdAt: { type: Date, default: Date.now },
@@ -56,6 +55,7 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
 );
 
 labelSchema.methods.resetData = function () {
+  this.owner = undefined;
   this.activated = false;
   this.isLost = false;
 
@@ -75,4 +75,4 @@ labelSchema.methods.resetData = function () {
   this.updatedAt = new Date();
 };
 
-export const Label = mongoose.model<LabelSchema>('Label', labelSchema);
+export const Label = mongoose.model<LabelSchema>("Label", labelSchema);

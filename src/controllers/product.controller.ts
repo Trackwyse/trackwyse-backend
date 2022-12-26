@@ -1,10 +1,11 @@
-import express from 'express';
+import express from "express";
 
-import geo from '../utils/geo';
-import { colors } from '../lib/constants';
-import { User } from '../models/user.model';
-import { Label } from '../models/label.model';
-import { logger } from '../utils/logger';
+import geo from "../utils/geo";
+import { colors } from "../lib/constants";
+import { User } from "../models/user.model";
+import { Label } from "../models/label.model";
+import { logger } from "../utils/logger";
+import NotificationService from "../utils/notifications";
 
 /*
   POST /api/v1/labels/create
@@ -26,14 +27,14 @@ const createLabel = async (req: express.Request, res: express.Response) => {
 
     res.status(200).json({
       error: false,
-      message: 'Label created successfully',
+      message: "Label created successfully",
       label: labelDocument,
     });
   } catch (error) {
     logger.error(error);
     res.status(500).json({
       error: true,
-      message: 'Error creating label',
+      message: "Error creating label",
     });
   }
 };
@@ -56,7 +57,7 @@ const getLabels = async (req: express.Request, res: express.Response) => {
   if (labels.length === 0 || !labels) {
     return res.status(200).json({
       error: false,
-      message: 'No labels found',
+      message: "No labels found",
       labels: [],
     });
   }
@@ -65,7 +66,7 @@ const getLabels = async (req: express.Request, res: express.Response) => {
 
   return res.status(200).json({
     error: false,
-    message: 'Labels retrieved successfully',
+    message: "Labels retrieved successfully",
     labels: labelRecords,
   });
 };
@@ -87,7 +88,7 @@ const addLabel = async (req: express.Request, res: express.Response) => {
   if (!labelId) {
     return res.status(400).json({
       error: true,
-      message: 'Label ID not provided',
+      message: "Label ID not provided",
     });
   }
 
@@ -96,14 +97,14 @@ const addLabel = async (req: express.Request, res: express.Response) => {
   if (!label) {
     return res.status(404).json({
       error: true,
-      message: 'Label not found',
+      message: "Label not found",
     });
   }
 
   if (label.activated) {
     return res.status(400).json({
       error: true,
-      message: 'Label already activated',
+      message: "Label already activated",
     });
   }
 
@@ -112,11 +113,12 @@ const addLabel = async (req: express.Request, res: express.Response) => {
   if (!user) {
     return res.status(401).json({
       error: true,
-      message: 'Unauthorized',
+      message: "Unauthorized",
     });
   }
 
   user.labels.push(labelId);
+  label.owner = user.id;
   label.activated = true;
   label.color = colors[0];
 
@@ -126,13 +128,13 @@ const addLabel = async (req: express.Request, res: express.Response) => {
 
     return res.status(200).json({
       error: false,
-      message: 'Label added successfully',
+      message: "Label added successfully",
     });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({
       error: true,
-      message: 'Error adding label',
+      message: "Error adding label",
     });
   }
 };
@@ -159,14 +161,14 @@ const modifyLabel = async (req: express.Request, res: express.Response) => {
   if (!labelId) {
     return res.status(400).json({
       error: true,
-      message: 'Label ID not provided',
+      message: "Label ID not provided",
     });
   }
 
   if (req.user.labels.indexOf(labelId) === -1) {
     return res.status(401).json({
       error: true,
-      message: 'Unauthorized',
+      message: "Unauthorized",
     });
   }
 
@@ -175,14 +177,14 @@ const modifyLabel = async (req: express.Request, res: express.Response) => {
   if (!label) {
     return res.status(404).json({
       error: true,
-      message: 'Label not found',
+      message: "Label not found",
     });
   }
 
   if (!label.activated) {
     return res.status(400).json({
       error: true,
-      message: 'Label not activated',
+      message: "Label not activated",
     });
   }
 
@@ -196,7 +198,7 @@ const modifyLabel = async (req: express.Request, res: express.Response) => {
   if (labelColor) {
     // convert labelColor to a number
     const color = parseInt(labelColor, 10);
-    if (typeof color === 'number' && color >= 0 && color < colors.length) {
+    if (typeof color === "number" && color >= 0 && color < colors.length) {
       label.color = colors[labelColor];
     }
   }
@@ -206,7 +208,7 @@ const modifyLabel = async (req: express.Request, res: express.Response) => {
 
     return res.status(200).json({
       error: false,
-      message: 'Label modified successfully',
+      message: "Label modified successfully",
       label,
     });
   } catch (error) {
@@ -235,14 +237,14 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
   if (!labelId) {
     return res.status(400).json({
       error: true,
-      message: 'Label ID not provided',
+      message: "Label ID not provided",
     });
   }
 
   if (req.user.labels.indexOf(labelId) === -1) {
     return res.status(401).json({
       error: true,
-      message: 'Unauthorized',
+      message: "Unauthorized",
     });
   }
 
@@ -251,14 +253,14 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
   if (!label) {
     return res.status(404).json({
       error: true,
-      message: 'Label not found',
+      message: "Label not found",
     });
   }
 
   if (!label.activated) {
     return res.status(400).json({
       error: true,
-      message: 'Label not activated',
+      message: "Label not activated",
     });
   }
 
@@ -267,7 +269,7 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
   if (!user) {
     return res.status(401).json({
       error: true,
-      message: 'Unauthorized',
+      message: "Unauthorized",
     });
   }
 
@@ -280,14 +282,14 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
 
     return res.status(200).json({
       error: false,
-      message: 'Label deleted successfully',
+      message: "Label deleted successfully",
     });
   } catch (error) {
     console.log(error);
     logger.error(error);
     return res.status(500).json({
       error: true,
-      message: 'Error deleting label',
+      message: "Error deleting label",
     });
   }
 };
@@ -305,12 +307,12 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
     - label
 */
 const getLabel = async (req: express.Request, res: express.Response) => {
-  const ip = (req.headers['x-forwarded-for'] as string) || (req.connection.remoteAddress as string);
+  const ip = (req.headers["x-forwarded-for"] as string) || (req.connection.remoteAddress as string);
 
   if (req.user?.labels.indexOf(req.params.labelId) !== -1 && req.user) {
     return res.status(401).json({
       error: true,
-      message: 'You cannot locate your own label',
+      message: "You cannot locate your own label",
     });
   }
 
@@ -319,33 +321,49 @@ const getLabel = async (req: express.Request, res: express.Response) => {
   if (!label) {
     return res.status(404).json({
       error: true,
-      message: 'Label not found',
+      message: "Label not found",
     });
   }
 
   if (!label.activated) {
     return res.status(400).json({
       error: true,
-      message: 'Label not activated',
+      message: "Label not activated",
     });
   }
 
   label.isLost = true;
   label.foundNear = geo.getRelativeLocation(ip);
 
+  // Send Notification to Label Owner
+  const user = await User.findById(label.owner);
+
+  if (user && user.notificationPushToken && user.notificationsEnabled) {
+    try {
+      const notifications = new NotificationService(user.notificationPushToken);
+
+      notifications.sendNotification({
+        title: "Your label has been located",
+        body: `Your label ${label.name} has been located near ${label.foundNear}`,
+      });
+    } catch (error) {
+      logger.error(error);
+    }
+  }
+
   try {
     await label.save();
 
     return res.status(200).json({
       error: false,
-      message: 'Label found',
+      message: "Label found",
       label,
     });
   } catch (error) {
     logger.error(error);
     return res.status(500).json({
       error: true,
-      message: 'Error finding label',
+      message: "Error finding label",
     });
   }
 };
@@ -364,7 +382,7 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
   if (req.user?.labels.indexOf(req.params.labelId) !== -1 && req.user) {
     return res.status(401).json({
       error: true,
-      message: 'You cannot locate your own label',
+      message: "You cannot locate your own label",
     });
   }
 
@@ -373,21 +391,21 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
   if (!label) {
     return res.status(404).json({
       error: true,
-      message: 'Label not found',
+      message: "Label not found",
     });
   }
 
   if (!label.activated) {
     return res.status(400).json({
       error: true,
-      message: 'Label not activated',
+      message: "Label not activated",
     });
   }
 
   if (!label.isLost) {
     return res.status(400).json({
       error: true,
-      message: 'Label not lost',
+      message: "Label not lost",
     });
   }
 
@@ -407,7 +425,7 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
 
     return res.status(200).json({
       error: false,
-      message: 'Label found successfully',
+      message: "Label found successfully",
     });
   } catch (error) {
     logger.error(error);

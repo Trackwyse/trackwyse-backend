@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';
-import appRoot from 'app-root-path';
+import dotenv from "dotenv";
+import appRoot from "app-root-path";
 
 dotenv.config();
 export interface Config {
@@ -16,6 +16,8 @@ export interface Config {
   TimeToVerify: number;
   SenderEmail: string;
 
+  ExpoAccessToken: string;
+
   AWSRegion: string;
   AWSAccessKeyId: string;
   AWSSecretAccessKey: string;
@@ -30,20 +32,22 @@ export interface Config {
 }
 
 const config: Config = {
-  NodeEnv: process.env.NODE_ENV || 'development',
-  LogLevel: process.env.LOG_LEVEL || 'info',
+  NodeEnv: process.env.NODE_ENV || "development",
+  LogLevel: process.env.LOG_LEVEL || "info",
   AppRoot: appRoot.path,
 
-  Origin: process.env.ORIGIN || 'http://localhost:3000',
+  Origin: process.env.ORIGIN || "http://localhost:3000",
   Port: parseInt(process.env.PORT) || 3000,
 
-  DBUri: process.env.DB_URI || 'mongodb://localhost:27017',
-  DBName: process.env.DB_NAME || 'staging',
+  DBUri: process.env.DB_URI || "mongodb://localhost:27017",
+  DBName: process.env.DB_NAME || "staging",
 
   TimeToVerify: parseInt(process.env.TIME_TO_VERIFY) || 86400,
   SenderEmail: process.env.SENDER_EMAIL,
 
-  AWSRegion: process.env.AWS_REGION || 'us-east-1',
+  ExpoAccessToken: process.env.EXPO_ACCESS_TOKEN,
+
+  AWSRegion: process.env.AWS_REGION || "us-east-1",
   AWSAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
   AWSSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 

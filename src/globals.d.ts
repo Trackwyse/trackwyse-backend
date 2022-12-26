@@ -39,6 +39,7 @@ interface SanitizedUser {
 }
 
 interface Label {
+  owner: string;
   activated: boolean;
   isLost: boolean;
 
