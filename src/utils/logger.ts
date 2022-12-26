@@ -11,7 +11,12 @@ const consoleFormat = combine(
   colorize({ all: true }),
   timestamp({ format: "YYYY-MM-DD hh:mm:ss.SSS A" }),
   align(),
-  printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
+  printf((info) => {
+    if (info.stack) {
+      return `${info.timestamp} ${info.level}: ${info.message} ${info.stack}`;
+    }
+    return `${info.timestamp} ${info.level}: ${info.message}`;
+  })
 );
 
 const fileFormat = combine(
