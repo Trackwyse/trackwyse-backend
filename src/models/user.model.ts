@@ -41,6 +41,8 @@ const userSchema = new mongoose.Schema<UserSchema>(
     verificationTokenExpires: { type: Date, required: false },
     passwordResetToken: { type: String, required: false },
     passwordResetTokenExpires: { type: Date, required: false },
+    notificationsEnabled: { type: Boolean, default: false },
+    notificationPushToken: { type: String, required: false },
     labels: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Label' }],
     termsAccepted: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
@@ -121,6 +123,7 @@ userSchema.methods.sanitize = function () {
     email: this.email,
     verified: this.verified,
     termsAccepted: this.termsAccepted,
+    notificationsEnabled: this.notificationsEnabled,
     labels: this.labels,
     createdAt: this.createdAt,
   };

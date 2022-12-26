@@ -44,11 +44,13 @@ const updateUser = async (req: express.Request, res: express.Response) => {
       return res.status(404).json({ error: true, message: 'Unauthorized' });
     }
 
-    const {firstName, lastName, email} = req.body;
+    const {firstName, lastName, email, notificationsEnabled, notificationPushToken} = req.body;
 
     try {
-      if (firstName) user.firstName = firstName;
       if (lastName) user.lastName = lastName
+      if (firstName) user.firstName = firstName;
+      if (notificationPushToken) user.notificationPushToken = notificationPushToken;
+      if (notificationsEnabled !== undefined) user.notificationsEnabled = Boolean(notificationsEnabled);
 
       // if email is changed, reverify the email
       if (email && email !== user.email) {

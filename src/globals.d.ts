@@ -5,15 +5,21 @@ declare namespace Express {
 }
 
 interface User {
-  firstName: string;
-  lastName: string;
   email: string;
   password: string;
+  firstName: string;
+  lastName: string;
+
   verified: boolean;
   verificationToken: string;
   verificationTokenExpires: Date;
+
   passwordResetToken: string;
   passwordResetTokenExpires: Date;
+
+  notificationsEnabled: boolean;
+  notificationPushToken: string;
+
   termsAccepted: boolean;
   labels: string[];
   createdAt: Date;
@@ -22,11 +28,12 @@ interface User {
 
 interface SanitizedUser {
   id: string;
+  email: string;
   firstName: string;
   lastName: string;
-  email: string;
   verified: boolean;
   termsAccepted: boolean;
+  notificationsEnabled: boolean;
   labels: string[];
   createdAt: Date;
 }

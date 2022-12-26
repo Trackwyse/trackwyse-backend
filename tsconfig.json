@@ -7,7 +7,10 @@
       "moduleResolution": "node",
       "sourceMap": true,
       "outDir": "dist",
-
+      "baseUrl": "."
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*"],
+    "ts-node": {
+      "files": true
+    }
   }

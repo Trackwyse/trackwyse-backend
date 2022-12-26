@@ -2,11 +2,11 @@
   "name": "codespaces-blank",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/server.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "tsc & node .",
-    "dev": "tsc -w & nodemon ."
+    "dev": "nodemon --exec ts-node src/index.ts"
   },
   "author": "",
   "license": "ISC",
