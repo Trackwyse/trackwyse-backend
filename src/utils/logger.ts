@@ -7,6 +7,7 @@ import config from "../config";
 const { combine, timestamp, printf, colorize, align } = winston.format;
 
 const consoleFormat = combine(
+  format.errors({ stack: true }),
   colorize({ all: true }),
   timestamp({ format: "YYYY-MM-DD hh:mm:ss.SSS A" }),
   align(),
