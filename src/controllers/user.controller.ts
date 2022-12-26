@@ -50,7 +50,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
       if (lastName) user.lastName = lastName
       if (firstName) user.firstName = firstName;
       if (notificationPushToken) user.notificationPushToken = notificationPushToken;
-      if (notificationsEnabled !== undefined) user.notificationsEnabled = Boolean(notificationsEnabled);
+      if (notificationsEnabled !== undefined) user.notificationsEnabled = notificationsEnabled === 'true';
 
       // if email is changed, reverify the email
       if (email && email !== user.email) {
@@ -65,9 +65,11 @@ const updateUser = async (req: express.Request, res: express.Response) => {
 
       await user.save();
 
-      return res.status(200).json({ error: false, message: 'User updated', user });
+      const sanitizedUser = user.sanitize();
+
+      return res.status(200).json({ error: false, message: 'User updated', user: sanitizedUser });
     } catch (err) {
-      return res.status(500).json({ error: true, message: err.message });
+      return res.status(500).json({ error: true, message: 'An internal error occurred' });
     }    
   } 
 
