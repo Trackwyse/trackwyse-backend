@@ -81,6 +81,7 @@ const getLabels = async (req: express.Request, res: express.Response) => {
   Returns:
     - error
     - message
+    - label
 */
 const addLabel = async (req: express.Request, res: express.Response) => {
   const labelId = req.params.labelId;
@@ -118,6 +119,7 @@ const addLabel = async (req: express.Request, res: express.Response) => {
   }
 
   user.labels.push(labelId);
+
   label.owner = user.id;
   label.activated = true;
   label.color = colors[0];
@@ -129,6 +131,7 @@ const addLabel = async (req: express.Request, res: express.Response) => {
     return res.status(200).json({
       error: false,
       message: "Label added successfully",
+      label,
     });
   } catch (error) {
     logger.error(error);
@@ -295,6 +298,69 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
 };
 
 /*
+  POST /api/v1/labels/recovered/:labelId
+  Mark a label as no longer lost
+
+  Required Fields:
+    - labelId
+
+  Returns:
+    - error
+    - message
+*/
+const recoveredLabel = async (req: express.Request, res: express.Response) => {
+  const labelId = req.params.labelId;
+
+  if (!labelId) {
+    return res.status(400).json({
+      error: true,
+      message: "Label ID not provided",
+    });
+  }
+
+  if (req.user.labels.indexOf(labelId) === -1) {
+    return res.status(401).json({
+      error: true,
+      message: "Unauthorized",
+    });
+  }
+
+  const label = await Label.findById(labelId);
+
+  if (!label) {
+    return res.status(404).json({
+      error: true,
+      message: "Label not found",
+    });
+  }
+
+  if (!label.activated) {
+    return res.status(400).json({
+      error: true,
+      message: "Label not activated",
+    });
+  }
+
+  label.removeLostData();
+
+  try {
+    await label.save();
+
+    return res.status(200).json({
+      error: false,
+      message: "Label recovered successfully",
+      label,
+    });
+  } catch (error) {
+    logger.error(error);
+    return res.status(500).json({
+      error: true,
+      message: "Error recovering label",
+    });
+  }
+};
+
+/*
   GET /api/v1/labels/:labelId
   Get label contact information if found
 
@@ -344,7 +410,7 @@ const getLabel = async (req: express.Request, res: express.Response) => {
 
       notifications.sendNotification({
         title: "Your label has been located",
-        body: `Your label ${label.name} has been located near ${label.foundNear}`,
+        body: `Your label "${label.name}" has been located near ${label.foundNear}`,
       });
     } catch (error) {
       logger.error(error);
@@ -436,4 +502,13 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
   }
 };
 
-export default { getLabels, getLabel, foundLabel, createLabel, addLabel, modifyLabel, deleteLabel };
+export default {
+  getLabels,
+  getLabel,
+  foundLabel,
+  createLabel,
+  addLabel,
+  recoveredLabel,
+  modifyLabel,
+  deleteLabel,
+};

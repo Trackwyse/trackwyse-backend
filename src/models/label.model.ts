@@ -3,6 +3,7 @@ import validator from "validator";
 
 export interface LabelSchema extends Label, mongoose.Document {
   resetData: () => void;
+  removeLostData: () => void;
 }
 
 const labelSchema = new mongoose.Schema<LabelSchema>(
@@ -73,6 +74,17 @@ labelSchema.methods.resetData = function () {
 
   this.createdAt = new Date();
   this.updatedAt = new Date();
+};
+
+labelSchema.methods.removeLostData = function () {
+  this.isLost = false;
+
+  this.foundNear = undefined;
+  this.foundDate = undefined;
+  this.foundExactLocation = undefined;
+  this.foundRecoveryLocation = undefined;
+  this.foundRecoveryPossible = undefined;
+  this.finderPhoneNumber = undefined;
 };
 
 export const Label = mongoose.model<LabelSchema>("Label", labelSchema);
