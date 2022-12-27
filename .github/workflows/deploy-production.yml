@@ -18,6 +18,7 @@ jobs:
           script: |
             cd /var/www/api.trackwyse.com
             git pull origin main
+            source ~/.nvm/nvm.sh
             nvm use node
             yarn install
             yarn build
