@@ -1,0 +1,24 @@
+name: deploy-development
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            cd /var/www/api.dev.trackwyse.com
+            git pull origin development
+            nvm use node
+            yarn install
+            yarn build
+            pm2 restart api.dev.trackwyse.com
