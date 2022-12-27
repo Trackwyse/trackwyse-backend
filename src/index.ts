@@ -32,6 +32,7 @@ const startServer = async () => {
     logger.info(`Application started in mode: ${config.NodeEnv}`);
     logger.info(`Application listening on port: ${config.Port}`);
     logger.info(`Sending logs to: ${config.AppRoot}/logs`);
+    logger.info(`Connected to database: ${config.DBName}`);
   });
 };
 
