@@ -411,6 +411,10 @@ const getLabel = async (req: express.Request, res: express.Response) => {
       notifications.sendNotification({
         title: "Your label has been located",
         body: `Your label "${label.name}" has been located near ${label.foundNear}`,
+        data: {
+          type: "labelLocated",
+          labelId: label.id,
+        },
       });
     } catch (error) {
       logger.error(error);

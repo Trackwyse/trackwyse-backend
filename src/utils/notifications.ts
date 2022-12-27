@@ -12,7 +12,7 @@ class NotificationService {
     this.pushToken = pushToken;
   }
 
-  async sendNotification({ title, body }: { title?: string; body?: string }) {
+  async sendNotification({ title, body, data }: { title?: string; body?: string; data?: any }) {
     if (!Expo.isExpoPushToken(this.pushToken)) {
       logger.error("Push token is not a valid Expo push token");
       return;
@@ -22,6 +22,7 @@ class NotificationService {
       to: this.pushToken,
       title,
       body,
+      data,
     };
 
     try {

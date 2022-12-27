@@ -1,7 +1,7 @@
-import aws from 'aws-sdk';
+import aws from "aws-sdk";
 
-import config from '../config';
-import { logger } from './logger';
+import config from "../config";
+import { logger } from "./logger";
 
 aws.config.update({ region: config.AWSRegion });
 
@@ -13,7 +13,7 @@ class MailService {
   params: any;
 
   constructor(to: string, subject: string) {
-    this.ses = new aws.SES({ apiVersion: '2010-12-01' });
+    this.ses = new aws.SES({ apiVersion: "2010-12-01" });
 
     this.to = to;
     this.subject = subject;
@@ -26,16 +26,16 @@ class MailService {
       Message: {
         Body: {
           Html: {
-            Charset: 'UTF-8',
-            Data: '',
+            Charset: "UTF-8",
+            Data: "",
           },
           Text: {
-            Charset: 'UTF-8',
-            Data: '',
+            Charset: "UTF-8",
+            Data: "",
           },
         },
         Subject: {
-          Charset: 'UTF-8',
+          Charset: "UTF-8",
           Data: this.subject,
         },
       },
@@ -56,7 +56,7 @@ class MailService {
 
     this.params.Message.Body.Text.Data = `
       Verify your email
-      Please use the following link to verify your email address:
+      Please use the following code to verify your email address:
       ${token}
     `;
 
@@ -84,8 +84,8 @@ class MailService {
 
     this.params.Message.Body.Text.Data = `
       Reset your password
-      Please use the following link to reset your password:
-      ${config.Origin}/auth/v1/reset?token=${token}
+      Please use the following code to reset your password:
+      ${token}
     `;
 
     try {
