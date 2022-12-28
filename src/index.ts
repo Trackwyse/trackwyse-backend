@@ -9,6 +9,7 @@ import authRouter from "./routes/auth.route";
 import userRouter from "./routes/user.route";
 import config from "./config";
 import db from "./db";
+import statusRouter from "./routes/status.route";
 
 const app = express();
 
@@ -26,6 +27,7 @@ const startServer = async () => {
   app.use("/api/v1", productRouter);
   app.use("/api/v1/user", userRouter);
   app.use("/api/v1/labels", labelRouter);
+  app.use("/status", statusRouter);
 
   app.listen(config.Port, () => {
     logger.info(`Application started in mode: ${config.NodeEnv}`);
