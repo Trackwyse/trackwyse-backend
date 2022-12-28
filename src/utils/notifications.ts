@@ -5,28 +5,35 @@ import { logger } from "./logger";
 
 class NotificationService {
   expo: Expo;
-  pushToken: string;
+  pushTokens: string[];
 
-  constructor(pushToken: string) {
+  constructor(pushTokens: string[]) {
     this.expo = new Expo({ accessToken: config.ExpoAccessToken });
-    this.pushToken = pushToken;
+    this.pushTokens = pushTokens;
   }
 
   async sendNotification({ title, body, data }: { title?: string; body?: string; data?: any }) {
-    if (!Expo.isExpoPushToken(this.pushToken)) {
-      logger.error("Push token is not a valid Expo push token");
+    if (!this.pushTokens.length) {
+      logger.error("No push tokens were provided");
       return;
     }
 
-    const message = {
-      to: this.pushToken,
-      title,
-      body,
-      data,
-    };
+    const messages = this.pushTokens.map((pushToken) => {
+      if (!Expo.isExpoPushToken(pushToken)) {
+        logger.error("Push token is not a valid Expo push token");
+        return;
+      }
+
+      return {
+        to: pushToken,
+        title,
+        body,
+        data,
+      };
+    });
 
     try {
-      const chunks = this.expo.chunkPushNotifications([message]);
+      const chunks = this.expo.chunkPushNotifications(messages);
       const tickets = [];
 
       for (const chunk of chunks) {

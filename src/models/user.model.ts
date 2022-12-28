@@ -1,9 +1,9 @@
-import validator from 'validator';
-import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import crypto from 'crypto';
+import validator from "validator";
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import crypto from "crypto";
 
-import config from '../config';
+import config from "../config";
 
 export interface UserSchema extends User, mongoose.Document {
   comparePassword: (password: string) => Promise<boolean>;
@@ -17,24 +17,24 @@ const userSchema = new mongoose.Schema<UserSchema>(
     firstName: {
       type: String,
       required: true,
-      validate: [validator.isAlpha, 'Name must contain only letters'],
+      validate: [validator.isAlpha, "Name must contain only letters"],
     },
     lastName: {
       type: String,
       required: true,
-      validate: [validator.isAlpha, 'Name must contain only letters'],
+      validate: [validator.isAlpha, "Name must contain only letters"],
     },
     email: {
       type: String,
       required: true,
       unique: true,
-      validate: [validator.isEmail, 'Must be a valid email'],
+      validate: [validator.isEmail, "Must be a valid email"],
     },
     password: {
       type: String,
       required: true,
-      min: [8, 'Password must be 8 characters or longer'],
-      max: [128, 'Password must be 128 characters or less'],
+      min: [8, "Password must be 8 characters or longer"],
+      max: [128, "Password must be 128 characters or less"],
     },
     verified: { type: Boolean, default: false },
     verificationToken: { type: String, required: false },
@@ -42,8 +42,8 @@ const userSchema = new mongoose.Schema<UserSchema>(
     passwordResetToken: { type: String, required: false },
     passwordResetTokenExpires: { type: Date, required: false },
     notificationsEnabled: { type: Boolean, default: false },
-    notificationPushToken: { type: String, required: false },
-    labels: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Label' }],
+    notificationPushTokens: [{ type: String, required: false }],
+    labels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Label" }],
     termsAccepted: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
@@ -52,10 +52,10 @@ const userSchema = new mongoose.Schema<UserSchema>(
 );
 
 // Hash the password before saving
-userSchema.pre('save', function (next) {
+userSchema.pre("save", function (next) {
   let user = this;
 
-  if (!user.isModified('password')) {
+  if (!user.isModified("password")) {
     return next();
   }
 
@@ -72,9 +72,9 @@ userSchema.pre('save', function (next) {
 });
 
 // Modify the error message for duplicate email
-userSchema.post('save', function (err, doc, next) {
-  if (err.name === 'MongoServerError' && err.code === 11000) {
-    next(new Error('Email already exists'));
+userSchema.post("save", function (err, doc, next) {
+  if (err.name === "MongoServerError" && err.code === 11000) {
+    next(new Error("Email already exists"));
   } else {
     next(err);
   }
@@ -92,7 +92,7 @@ userSchema.methods.generateVerificationToken = async function (): Promise<string
   const token = crypto.randomInt(0, 1000000).toString();
 
   // Ensure that the number is 6 digits long by adding leading zeros if necessary
-  const sixDigitNumber = token.padStart(6, '0');
+  const sixDigitNumber = token.padStart(6, "0");
 
   this.verificationToken = sixDigitNumber;
   this.verificationTokenExpires = new Date(Date.now() + config.TimeToVerify); // Time to verify in milliseconds
@@ -129,4 +129,4 @@ userSchema.methods.sanitize = function () {
   };
 };
 
-export const User = mongoose.model<UserSchema>('User', userSchema);
+export const User = mongoose.model<UserSchema>("User", userSchema);

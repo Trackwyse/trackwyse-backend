@@ -18,7 +18,7 @@ interface User {
   passwordResetTokenExpires: Date;
 
   notificationsEnabled: boolean;
-  notificationPushToken: string;
+  notificationPushTokens: string[];
 
   termsAccepted: boolean;
   labels: string[];
