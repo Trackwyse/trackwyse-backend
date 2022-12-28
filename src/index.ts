@@ -10,7 +10,6 @@ import userRouter from "./routes/user.route";
 import config from "./config";
 import db from "./db";
 
-// Test
 const app = express();
 
 const startServer = async () => {
