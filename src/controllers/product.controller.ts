@@ -404,9 +404,9 @@ const getLabel = async (req: express.Request, res: express.Response) => {
   // Send Notification to Label Owner
   const user = await User.findById(label.owner);
 
-  if (user && user.notificationPushToken && user.notificationsEnabled) {
+  if (user && user.notificationPushTokens.length && user.notificationsEnabled) {
     try {
-      const notifications = new NotificationService(user.notificationPushToken);
+      const notifications = new NotificationService(user.notificationPushTokens);
 
       notifications.sendNotification({
         title: "Your label has been located",

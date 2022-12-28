@@ -44,9 +44,17 @@ const updateUser = async (req: express.Request, res: express.Response) => {
   try {
     if (lastName) user.lastName = lastName;
     if (firstName) user.firstName = firstName;
-    if (notificationPushToken) user.notificationPushToken = notificationPushToken;
-    if (notificationsEnabled !== undefined)
+
+    if (
+      notificationPushToken &&
+      user.notificationPushTokens.indexOf(notificationPushToken) === -1
+    ) {
+      user.notificationPushTokens.push(notificationPushToken);
+    }
+
+    if (notificationsEnabled !== undefined) {
       user.notificationsEnabled = notificationsEnabled === "true";
+    }
 
     // if email is changed, reverify the email
     if (email && email !== user.email) {

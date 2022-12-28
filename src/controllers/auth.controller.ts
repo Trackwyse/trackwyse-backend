@@ -148,9 +148,24 @@ const register = async (req: express.Request, res: express.Response) => {
     - message
 */
 const logout = async (req: express.Request, res: express.Response) => {
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(404).json({ error: true, message: "User not found" });
+  }
+
+  // Clear the refresh token cookie
   res.clearCookie("jwt");
 
-  return res.status(200).json({ error: false, message: "User logged out" });
+  // Clear the push notification subscription
+  user.notificationPushTokens = [];
+
+  try {
+    await user.save();
+    return res.status(200).json({ error: false, message: "User logged out" });
+  } catch (error) {
+    return res.status(500).json({ error: true, message: error.message });
+  }
 };
 
 /*
