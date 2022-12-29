@@ -13,7 +13,7 @@ import express from "express";
     - versions: string[]
 */
 export const getValidClients = async (req: express.Request, res: express.Response) => {
-  const versions = ["010007"];
+  const versions = ["010070"];
 
   res.status(200).json({
     error: false,
