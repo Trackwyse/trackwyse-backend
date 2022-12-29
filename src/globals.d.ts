@@ -20,6 +20,8 @@ interface User {
   notificationsEnabled: boolean;
   notificationPushTokens: string[];
 
+  refreshToken: string;
+
   termsAccepted: boolean;
   labels: string[];
   createdAt: Date;

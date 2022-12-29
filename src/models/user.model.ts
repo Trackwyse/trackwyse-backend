@@ -7,6 +7,7 @@ import config from "../config";
 
 export interface UserSchema extends User, mongoose.Document {
   comparePassword: (password: string) => Promise<boolean>;
+  compareRefreshToken: (refreshToken: string) => Promise<boolean>;
   generateVerificationToken: () => Promise<string>;
   generatePasswordResetToken: () => Promise<string>;
   sanitize: () => SanitizedUser;
@@ -36,6 +37,7 @@ const userSchema = new mongoose.Schema<UserSchema>(
       min: [8, "Password must be 8 characters or longer"],
       max: [128, "Password must be 128 characters or less"],
     },
+    refreshToken: { type: String, required: false },
     verified: { type: Boolean, default: false },
     verificationToken: { type: String, required: false },
     verificationTokenExpires: { type: Date, required: false },
@@ -71,6 +73,31 @@ userSchema.pre("save", function (next) {
   });
 });
 
+// Hash the refresh token before saving
+userSchema.pre("save", function (next) {
+  let user = this;
+
+  if (!user.isModified("refreshToken")) {
+    return next();
+  }
+
+  // if the refresh token was deleted, don't hash it
+  if (user.refreshToken === undefined) {
+    return next();
+  }
+
+  bcrypt.genSalt(config.SaltFactor, (err, salt) => {
+    if (err) return next(err);
+
+    bcrypt.hash(user.refreshToken, salt, (err, hash) => {
+      if (err) return next(err);
+
+      user.refreshToken = hash;
+      next();
+    });
+  });
+});
+
 // Modify the error message for duplicate email
 userSchema.post("save", function (err, doc, next) {
   if (err.name === "MongoServerError" && err.code === 11000) {
@@ -83,6 +110,13 @@ userSchema.post("save", function (err, doc, next) {
 // Return whether the password hash matches the password
 userSchema.methods.comparePassword = async function (password: string): Promise<boolean> {
   const isMatch = await bcrypt.compare(password, this.password);
+
+  return isMatch;
+};
+
+// Return whether the refresh token hash matches the refresh token
+userSchema.methods.compareRefreshToken = async function (refreshToken: string): Promise<boolean> {
+  const isMatch = await bcrypt.compare(refreshToken, this.refreshToken);
 
   return isMatch;
 };
