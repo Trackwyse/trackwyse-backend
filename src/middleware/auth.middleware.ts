@@ -10,20 +10,29 @@ import jwt from "../utils/jwt";
   If the cookie is valid, the user is attached to the request
  */
 const authenticateRefreshToken = async (req: Request, res: Response, next: NextFunction) => {
-  if (req.cookies?.jwt) {
-    const refreshToken = req.cookies.jwt;
+  if (req.headers.authorization) {
+    const refreshToken = req.headers.authorization.split(" ")[1];
 
     const payload = jwt.verifyRefreshToken(refreshToken);
+
     const user = await User.findById(payload?.id);
 
-    if (user) {
-      const sanitizedUser = user.sanitize();
-
-      req.user = sanitizedUser;
-      return next();
+    if (!user) {
+      return res.status(401).json({ error: true, message: "Unauthorized" });
     }
 
-    return res.status(401).json({ error: true, message: "Unauthorized" });
+    // Verify that the refresh token matches the one in the database
+    const isRefreshTokenValid = await user.compareRefreshToken(refreshToken);
+
+    if (!isRefreshTokenValid) {
+      return res.status(401).json({ error: true, message: "Unauthorized" });
+    }
+
+    // Attach the user to the request, and continue
+    const sanitizedUser = user.sanitize();
+
+    req.user = sanitizedUser;
+    return next();
   }
 
   return res.status(401).json({ error: true, message: "Unauthorized" });

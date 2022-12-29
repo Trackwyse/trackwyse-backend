@@ -43,14 +43,20 @@ const login = async (req: express.Request, res: express.Response) => {
   const accessToken = jwt.createAccessToken(sanitizedUser);
   const refreshToken = jwt.createRefreshToken(sanitizedUser);
 
-  res.cookie("jwt", refreshToken, {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-    maxAge: config.RefreshTokenExpiration * 1000,
-  });
+  // Update the user's refresh token
+  user.refreshToken = refreshToken;
 
-  return res.status(200).json({ error: false, message: "User logged in", accessToken });
+  try {
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ error: false, message: "User logged in", accessToken, refreshToken });
+  } catch (err) {
+    logger.error(err);
+
+    return res.status(500).json({ error: true, message: "Internal server error" });
+  }
 };
 
 /*
@@ -108,12 +114,10 @@ const register = async (req: express.Request, res: express.Response) => {
     const accessToken = jwt.createAccessToken(sanitizedUser);
     const refreshToken = jwt.createRefreshToken(sanitizedUser);
 
-    res.cookie("jwt", refreshToken, {
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-      maxAge: config.RefreshTokenExpiration * 1000,
-    });
+    // Update the user's refresh token
+    userDocument.refreshToken = refreshToken;
+
+    await userDocument.save();
 
     // Send the generated verification token to the user's email
     const emailService = new MailService(sanitizedUser.email, "Verify your email");
@@ -130,7 +134,9 @@ const register = async (req: express.Request, res: express.Response) => {
       return res.status(500).json({ error: true, message: "Error sending verification email" });
     }
 
-    return res.status(201).json({ error: false, message: "User created", accessToken });
+    return res
+      .status(201)
+      .json({ error: false, message: "User created", accessToken, refreshToken });
   } catch (error) {
     return res.status(500).json({ error: true, message: error.message });
   }
@@ -154,11 +160,9 @@ const logout = async (req: express.Request, res: express.Response) => {
     return res.status(404).json({ error: true, message: "User not found" });
   }
 
-  // Clear the refresh token cookie
-  res.clearCookie("jwt");
-
   // Clear the push notification subscription
   user.notificationPushTokens = [];
+  user.refreshToken = undefined;
 
   try {
     await user.save();
