@@ -1,7 +1,7 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 
-import { User } from '../models/user.model';
-import jwt from '../utils/jwt';
+import { User } from "../models/user.model";
+import jwt from "../utils/jwt";
 
 /*
   Only used for the /auth/vX/refresh route
@@ -23,10 +23,10 @@ const authenticateRefreshToken = async (req: Request, res: Response, next: NextF
       return next();
     }
 
-    return res.status(401).json({ error: true, message: 'Unauthorized' });
+    return res.status(401).json({ error: true, message: "Unauthorized" });
   }
 
-  return res.status(401).json({ error: true, message: 'Unauthorized' });
+  return res.status(401).json({ error: true, message: "Unauthorized" });
 };
 
 /*
@@ -38,26 +38,31 @@ const authenticateRefreshToken = async (req: Request, res: Response, next: NextF
 */
 const authenticateVerifiedAccessToken = async (req: Request, res: Response, next: NextFunction) => {
   if (req.headers.authorization) {
-    const accessToken = req.headers.authorization.split(' ')[1];
+    const accessToken = req.headers.authorization.split(" ")[1];
 
     const payload = jwt.verifyAccessToken(accessToken);
+
+    if (payload === "expired") {
+      return res.status(401).json({ error: true, message: "EXPIRED_TOKEN" });
+    }
+
     const user = await User.findById(payload?.id);
 
     if (user) {
       const sanitizedUser = user.sanitize();
 
       if (!user.verified) {
-        return res.status(401).json({ error: true, message: 'Unverified Account' });
+        return res.status(401).json({ error: true, message: "Unverified Account" });
       }
 
       req.user = sanitizedUser;
       return next();
     }
 
-    return res.status(401).json({ error: true, message: 'Unauthorized' });
+    return res.status(401).json({ error: true, message: "Unauthorized" });
   }
 
-  return res.status(401).json({ error: true, message: 'Unauthorized' });
+  return res.status(401).json({ error: true, message: "Unauthorized" });
 };
 
 /*
@@ -78,26 +83,31 @@ const authenticateUnverifiedAccessToken = async (
   next: NextFunction
 ) => {
   if (req.headers.authorization) {
-    const accessToken = req.headers.authorization.split(' ')[1];
+    const accessToken = req.headers.authorization.split(" ")[1];
 
     const payload = jwt.verifyAccessToken(accessToken);
+
+    if (payload === "expired") {
+      return res.status(401).json({ error: true, message: "EXPIRED_TOKEN" });
+    }
+
     const user = await User.findById(payload?.id);
 
     if (user) {
       const sanitizedUser = user.sanitize();
 
       if (user.verified) {
-        return res.status(401).json({ error: true, message: 'Already Verified' });
+        return res.status(401).json({ error: true, message: "Already Verified" });
       }
 
       req.user = sanitizedUser;
       return next();
     }
 
-    return res.status(401).json({ error: true, message: 'Unauthorized' });
+    return res.status(401).json({ error: true, message: "Unauthorized" });
   }
 
-  return res.status(401).json({ error: true, message: 'Unauthorized' });
+  return res.status(401).json({ error: true, message: "Unauthorized" });
 };
 
 /*
@@ -109,9 +119,14 @@ const authenticateUnverifiedAccessToken = async (
 */
 const authenticateAccessToken = async (req: Request, res: Response, next: NextFunction) => {
   if (req.headers.authorization) {
-    const accessToken = req.headers.authorization.split(' ')[1];
+    const accessToken = req.headers.authorization.split(" ")[1];
 
     const payload = jwt.verifyAccessToken(accessToken);
+
+    if (payload === "expired") {
+      return res.status(401).json({ error: true, message: "EXPIRED_TOKEN" });
+    }
+
     const user = await User.findById(payload?.id);
 
     if (user) {
@@ -121,10 +136,10 @@ const authenticateAccessToken = async (req: Request, res: Response, next: NextFu
       return next();
     }
 
-    return res.status(401).json({ error: true, message: 'Unauthorized' });
+    return res.status(401).json({ error: true, message: "Unauthorized" });
   }
 
-  return res.status(401).json({ error: true, message: 'Unauthorized' });
+  return res.status(401).json({ error: true, message: "Unauthorized" });
 };
 
 /*
@@ -136,9 +151,14 @@ const authenticateAccessToken = async (req: Request, res: Response, next: NextFu
 */
 const attachAccessToken = async (req: Request, res: Response, next: NextFunction) => {
   if (req.headers.authorization) {
-    const accessToken = req.headers.authorization.split(' ')[1];
+    const accessToken = req.headers.authorization.split(" ")[1];
 
     const payload = jwt.verifyAccessToken(accessToken);
+
+    if (payload === "expired") {
+      return res.status(401).json({ error: true, message: "EXPIRED_TOKEN" });
+    }
+
     const user = await User.findById(payload?.id);
 
     if (user) {

@@ -1,15 +1,15 @@
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
-import config from '../config';
+import config from "../config";
 
 /*
   Create access token and return it
 */
 const createAccessToken = (payload: SanitizedUser) => {
-  const privateKey = Buffer.from(config.AccessTokenPrivateKey, 'base64').toString();
+  const privateKey = Buffer.from(config.AccessTokenPrivateKey, "base64").toString();
 
   const token = jwt.sign(payload, privateKey, {
-    algorithm: 'RS256',
+    algorithm: "RS256",
     expiresIn: config.AccessTokenExpiration,
   });
 
@@ -20,10 +20,10 @@ const createAccessToken = (payload: SanitizedUser) => {
   Create refresh token and return it
 */
 const createRefreshToken = (payload: SanitizedUser) => {
-  const privateKey = Buffer.from(config.RefreshTokenPrivateKey, 'base64').toString();
+  const privateKey = Buffer.from(config.RefreshTokenPrivateKey, "base64").toString();
 
   const token = jwt.sign(payload, privateKey, {
-    algorithm: 'RS256',
+    algorithm: "RS256",
     expiresIn: config.RefreshTokenExpiration,
   });
 
@@ -34,16 +34,16 @@ const createRefreshToken = (payload: SanitizedUser) => {
   Verify access token, if it's valid, return the payload, otherwise return null
 */
 const verifyAccessToken = (token: string) => {
-  const publicKey = Buffer.from(config.AccessTokenPublicKey, 'base64').toString();
+  const publicKey = Buffer.from(config.AccessTokenPublicKey, "base64").toString();
 
   try {
     const payload = jwt.verify(token, publicKey, {
-      algorithms: ['RS256'],
+      algorithms: ["RS256"],
     }) as SanitizedUser;
 
     return payload;
   } catch (error) {
-    return null;
+    return error.name === "TokenExpiredError" ? "expired" : null;
   }
 };
 
@@ -51,11 +51,11 @@ const verifyAccessToken = (token: string) => {
   Verify refresh token, if it's valid, return the payload, otherwise return null 
  */
 const verifyRefreshToken = (token: string) => {
-  const publicKey = Buffer.from(config.RefreshTokenPublicKey, 'base64').toString();
+  const publicKey = Buffer.from(config.RefreshTokenPublicKey, "base64").toString();
 
   try {
     const payload = jwt.verify(token, publicKey, {
-      algorithms: ['RS256'],
+      algorithms: ["RS256"],
     }) as SanitizedUser;
 
     return payload;
