@@ -44,8 +44,6 @@ interface SanitizedUser {
   notificationsEnabled: boolean;
 
   subscriptionActive: boolean;
-  subscriptionDate: Date;
-  subscriptionReceipt: SubscriptionReceipt;
 
   labels: string[];
   createdAt: Date;

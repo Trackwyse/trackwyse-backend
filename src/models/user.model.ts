@@ -189,9 +189,7 @@ userSchema.methods.sanitize = function () {
     termsAccepted: this.termsAccepted,
     notificationsEnabled: this.notificationsEnabled,
 
-    subscriptionDate: this.subscriptionDate,
     subscriptionActive: this.subscriptionActive,
-    subscriptionReceipt: this.subscriptionReceipt,
 
     labels: this.labels,
     createdAt: this.createdAt,

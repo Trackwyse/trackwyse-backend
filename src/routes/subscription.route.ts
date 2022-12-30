@@ -4,6 +4,11 @@ import subscriptionController from "../controllers/subscription.controller";
 
 const subscriptionRouter = express.Router();
 
+subscriptionRouter.get(
+  "/",
+  authMiddleware.authenticateVerifiedAccessToken,
+  subscriptionController.getSubscription
+);
 subscriptionRouter.post(
   "/create",
   authMiddleware.authenticateVerifiedAccessToken,
