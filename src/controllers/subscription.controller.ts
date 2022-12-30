@@ -86,9 +86,12 @@ const createSubscription = async (req: express.Request, res: express.Response) =
 
     await user.save();
 
+    const sanitizedUser = user.sanitize();
+
     return res.json({
       error: false,
       message: "Subscription created",
+      user: sanitizedUser,
     });
   } catch (error) {
     return res.status(400).json({
