@@ -22,6 +22,9 @@ export interface Config {
   AWSAccessKeyId: string;
   AWSSecretAccessKey: string;
 
+  AppleSharedSecret: string;
+  AppleAppStoreEnv: ("sandbox" | "production")[];
+
   SaltFactor: number;
   AccessTokenPublicKey: string;
   AccessTokenPrivateKey: string;
@@ -50,6 +53,9 @@ const config: Config = {
   AWSRegion: process.env.AWS_REGION || "us-east-1",
   AWSAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
   AWSSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+
+  AppleSharedSecret: process.env.APPLE_SHARED_SECRET,
+  AppleAppStoreEnv: [process.env.APPLE_APP_STORE_ENV as "sandbox" | "production"] || ["sandbox"],
 
   SaltFactor: parseInt(process.env.SALT_FACTOR) || 10,
   AccessTokenPublicKey: process.env.ACCESS_TOKEN_PUBLIC,
