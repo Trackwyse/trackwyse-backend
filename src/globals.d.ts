@@ -6,9 +6,14 @@ declare namespace Express {
 
 interface User {
   email: string;
+  address: string;
   password: string;
   firstName: string;
   lastName: string;
+
+  subscriptionDate: Date;
+  subscriptionActive: boolean;
+  subscriptionReceipt: SubscriptionReceipt;
 
   verified: boolean;
   verificationToken: string;
@@ -33,9 +38,15 @@ interface SanitizedUser {
   email: string;
   firstName: string;
   lastName: string;
+
   verified: boolean;
   termsAccepted: boolean;
   notificationsEnabled: boolean;
+
+  subscriptionActive: boolean;
+  subscriptionDate: Date;
+  subscriptionReceipt: SubscriptionReceipt;
+
   labels: string[];
   createdAt: Date;
 }
@@ -65,4 +76,19 @@ interface Color {
   bg: string;
   borderSelected: string;
   borderUnselected: string;
+}
+
+interface SubscriptionReceipt {
+  bundleId: string;
+  productId: string;
+  transactionId: string;
+  purchaseDate: number;
+  quantity: number;
+  expirationDate?: number;
+  isTrialPeriod?: boolean;
+  isIntroOfferPeriod?: boolean;
+  environment?: string;
+  originalPurchaseDate?: number;
+  applicationVersion?: string;
+  originalApplicationVersion?: string;
 }

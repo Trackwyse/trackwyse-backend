@@ -37,16 +37,45 @@ const userSchema = new mongoose.Schema<UserSchema>(
       min: [8, "Password must be 8 characters or longer"],
       max: [128, "Password must be 128 characters or less"],
     },
-    refreshToken: { type: String, required: false },
+    address: {
+      type: String,
+      required: false,
+    },
+
+    subscriptionDate: { type: Date, required: false },
+    subscriptionActive: { type: Boolean, default: false },
+    subscriptionReceipt: {
+      type: {
+        bundleId: { type: String, required: false },
+        productId: { type: String, required: false },
+        transactionId: { type: String, required: false },
+        purchaseDate: { type: Number, required: false },
+        quantity: { type: Number, required: false },
+        expirationDate: { type: Number, required: false },
+        isTrialPeriod: { type: Boolean, required: false },
+        isIntroOfferPeriod: { type: Boolean, required: false },
+        environment: { type: String, required: false },
+        originalPurchaseDate: { type: Number, required: false },
+        applicationVersion: { type: String, required: false },
+        originalApplicationVersion: { type: String, required: false },
+      },
+      required: false,
+    },
+
     verified: { type: Boolean, default: false },
     verificationToken: { type: String, required: false },
     verificationTokenExpires: { type: Date, required: false },
+
     passwordResetToken: { type: String, required: false },
     passwordResetTokenExpires: { type: Date, required: false },
+
     notificationsEnabled: { type: Boolean, default: false },
     notificationPushTokens: [{ type: String, required: false }],
-    labels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Label" }],
+
+    refreshToken: { type: String, required: false },
+
     termsAccepted: { type: Boolean, default: false },
+    labels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Label" }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
   },
@@ -155,9 +184,15 @@ userSchema.methods.sanitize = function () {
     firstName: this.firstName,
     lastName: this.lastName,
     email: this.email,
+
     verified: this.verified,
     termsAccepted: this.termsAccepted,
     notificationsEnabled: this.notificationsEnabled,
+
+    subscriptionDate: this.subscriptionDate,
+    subscriptionActive: this.subscriptionActive,
+    subscriptionReceipt: this.subscriptionReceipt,
+
     labels: this.labels,
     createdAt: this.createdAt,
   };
