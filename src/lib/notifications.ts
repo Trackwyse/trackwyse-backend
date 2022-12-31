@@ -42,6 +42,7 @@ class NotificationService {
         tickets.push(...ticketChunk);
       }
     } catch (err) {
+      console.log(err);
       logger.error(err);
     }
   }

@@ -415,6 +415,7 @@ const getLabel = async (req: express.Request, res: express.Response) => {
         },
       });
     } catch (error) {
+      console.log(error);
       logger.error(error);
     }
   }
