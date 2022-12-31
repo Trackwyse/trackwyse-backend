@@ -15,22 +15,29 @@ import MailService from "../lib/mail";
     - user: User
 */
 const getUser = async (req: express.Request, res: express.Response) => {
-  // const user = await User.findById(req.user.id);
+  const user = await User.findById(req.user.id);
 
-  // if (!user) {
-  //   return res.status(404).json({ error: true, message: "Unauthorized" });
-  // }
+  if (!user) {
+    return res.status(404).json({ error: true, message: "Unauthorized" });
+  }
 
-  // // If the user has a subscription, but it's expired, set the subscription to inactive
-  // if (user.subscriptionActive && new Date(user.subscriptionReceipt.expirationDate) < new Date()) {
-  //   user.subscriptionActive = false;
+  // If the user has a subscription, but it's expired, set the subscription to inactive
+  if (user.subscriptionActive) {
+    // Make sure that the expiration date exists
+    if (user.subscriptionReceipt && user.subscriptionReceipt?.expirationDate) {
+      const expirationDate = new Date(user.subscriptionReceipt.expirationDate);
+      const currentDate = new Date();
 
-  //   await user.save();
-  // }
+      if (expirationDate < currentDate) {
+        user.subscriptionActive = false;
+        await user.save();
+      }
+    }
+  }
 
-  // const sanitizedUser = user.sanitize();
+  const sanitizedUser = user.sanitize();
 
-  return res.status(200).json({ error: false, message: "User retrieved", user: req.user });
+  return res.status(200).json({ error: false, message: "User retrieved", user: sanitizedUser });
 };
 
 /*
