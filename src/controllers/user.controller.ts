@@ -26,7 +26,8 @@ const getUser = async (req: express.Request, res: express.Response) => {
     // Make sure that the expiration date exists
     if (user.subscriptionReceipt && user.subscriptionReceipt?.expirationDate) {
       const expirationDate = new Date(user.subscriptionReceipt.expirationDate);
-      const currentDate = new Date();
+      // Factor in 10 minutes of leeway
+      const currentDate = new Date(Date.now() - 10 * 60 * 1000);
 
       if (expirationDate < currentDate) {
         user.subscriptionActive = false;
