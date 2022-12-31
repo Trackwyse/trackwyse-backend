@@ -1,8 +1,8 @@
 import express from "express";
 
 import { User } from "../models/user.model";
-import { logger } from "../utils/logger";
-import MailService from "../utils/mail";
+import { logger } from "../lib/logger";
+import MailService from "../lib/mail";
 import config from "../config";
 import jwt from "../utils/jwt";
 
@@ -119,11 +119,8 @@ const register = async (req: express.Request, res: express.Response) => {
 
     await userDocument.save();
 
-    // Send the generated verification token to the user's email
-    const emailService = new MailService(sanitizedUser.email, "Verify your email");
-
     try {
-      await emailService.sendVerificationEmail(verificationToken);
+      await MailService.sendVerificationEmail(sanitizedUser.email, verificationToken);
     } catch (error) {
       logger.error(error);
 
@@ -278,11 +275,8 @@ const reverify = async (req: express.Request, res: express.Response) => {
 
   const verificationToken = await user.generateVerificationToken();
 
-  // Send the generated verification token to the user's email
-  const emailService = new MailService(user.email, "Verify your email");
-
   try {
-    await emailService.sendVerificationEmail(verificationToken);
+    await MailService.sendVerificationEmail(user.email, verificationToken);
   } catch (error) {
     logger.error(error);
 
@@ -321,10 +315,7 @@ const forgot = async (req: express.Request, res: express.Response) => {
   try {
     const resetToken = await user.generatePasswordResetToken();
 
-    // Send the generated reset token to the user's email
-    const emailService = new MailService(user.email, "Reset your password");
-
-    await emailService.sendResetEmail(resetToken);
+    await MailService.sendResetEmail(user.email, resetToken);
 
     return res.status(200).json({ error: false, message: "Password reset email sent" });
   } catch (error) {

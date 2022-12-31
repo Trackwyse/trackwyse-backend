@@ -1,6 +1,6 @@
 import { User } from "../models/user.model";
 import express from "express";
-import MailService from "../utils/mail";
+import MailService from "../lib/mail";
 
 /*
   GET /api/v1/user
@@ -77,9 +77,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
       user.email = email;
       const verificationToken = await user.generateVerificationToken();
 
-      // send verification email
-      const emailService = new MailService(user.email, "Verify your email");
-      await emailService.sendVerificationEmail(verificationToken);
+      await MailService.sendVerificationEmail(user.email, verificationToken);
     }
 
     await user.save();
