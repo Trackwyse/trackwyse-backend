@@ -15,7 +15,22 @@ import MailService from "../utils/mail";
     - user: User
 */
 const getUser = async (req: express.Request, res: express.Response) => {
-  return res.status(200).json({ error: false, message: "User found", user: req.user });
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(404).json({ error: true, message: "Unauthorized" });
+  }
+
+  // If the user has a subscription, but it's expired, set the subscription to inactive
+  if (user.subscriptionActive && new Date(user.subscriptionReceipt.expirationDate) < new Date()) {
+    user.subscriptionActive = false;
+
+    await user.save();
+  }
+
+  const sanitizedUser = user.sanitize();
+
+  return res.status(200).json({ error: false, message: "User retrieved", user: sanitizedUser });
 };
 
 /*
