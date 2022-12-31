@@ -5,20 +5,21 @@ import { logger } from "./logger";
 
 class NotificationService {
   expo: Expo;
-  pushTokens: string[];
 
-  constructor(pushTokens: string[]) {
+  constructor() {
     this.expo = new Expo({ accessToken: config.ExpoAccessToken });
-    this.pushTokens = pushTokens;
   }
 
-  async sendNotification({ title, body, data }: { title?: string; body?: string; data?: any }) {
-    if (!this.pushTokens.length) {
+  async sendNotification(
+    pushTokens: string[],
+    { title, body, data }: { title?: string; body?: string; data?: any }
+  ) {
+    if (!pushTokens.length) {
       logger.error("No push tokens were provided");
       return;
     }
 
-    const messages = this.pushTokens.map((pushToken) => {
+    const messages = pushTokens.map((pushToken) => {
       if (!Expo.isExpoPushToken(pushToken)) {
         logger.error("Push token is not a valid Expo push token");
         return;
@@ -41,9 +42,12 @@ class NotificationService {
         tickets.push(...ticketChunk);
       }
     } catch (err) {
+      console.log(err);
       logger.error(err);
     }
   }
 }
 
-export default NotificationService;
+const notificationService = new NotificationService();
+
+export default notificationService;

@@ -6,7 +6,7 @@ import cors from "cors";
 
 import { productRouter, labelRouter } from "./routes/product.route";
 import subscriptionRouter from "./routes/subscription.route";
-import { logger, morganLogger } from "./utils/logger";
+import { logger, morganLogger } from "./lib/logger";
 import statusRouter from "./routes/status.route";
 import authRouter from "./routes/auth.route";
 import userRouter from "./routes/user.route";

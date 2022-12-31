@@ -1,6 +1,6 @@
 import { User } from "../models/user.model";
 import express from "express";
-import MailService from "../utils/mail";
+import MailService from "../lib/mail";
 
 /*
   GET /api/v1/user
@@ -22,10 +22,17 @@ const getUser = async (req: express.Request, res: express.Response) => {
   }
 
   // If the user has a subscription, but it's expired, set the subscription to inactive
-  if (user.subscriptionActive && new Date(user.subscriptionReceipt.expirationDate) < new Date()) {
-    user.subscriptionActive = false;
+  if (user.subscriptionActive) {
+    // Make sure that the expiration date exists
+    if (user.subscriptionReceipt && user.subscriptionReceipt?.expirationDate) {
+      const expirationDate = new Date(user.subscriptionReceipt.expirationDate);
+      const currentDate = new Date();
 
-    await user.save();
+      if (expirationDate < currentDate) {
+        user.subscriptionActive = false;
+        await user.save();
+      }
+    }
   }
 
   const sanitizedUser = user.sanitize();
@@ -77,9 +84,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
       user.email = email;
       const verificationToken = await user.generateVerificationToken();
 
-      // send verification email
-      const emailService = new MailService(user.email, "Verify your email");
-      await emailService.sendVerificationEmail(verificationToken);
+      await MailService.sendVerificationEmail(user.email, verificationToken);
     }
 
     await user.save();

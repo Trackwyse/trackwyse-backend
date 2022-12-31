@@ -8,20 +8,15 @@ aws.config.update({ region: config.AWSRegion });
 class MailService {
   ses: aws.SES;
   from: string;
-  to: string;
-  subject: string;
   params: any;
 
-  constructor(to: string, subject: string) {
+  constructor() {
     this.ses = new aws.SES({ apiVersion: "2010-12-01" });
-
-    this.to = to;
-    this.subject = subject;
     this.from = config.SenderEmail;
 
     this.params = {
       Destination: {
-        ToAddresses: [this.to],
+        ToAddresses: [],
       },
       Message: {
         Body: {
@@ -36,14 +31,16 @@ class MailService {
         },
         Subject: {
           Charset: "UTF-8",
-          Data: this.subject,
         },
       },
       Source: this.from,
     };
   }
 
-  async sendVerificationEmail(token: string) {
+  async sendVerificationEmail(to: string, token: string) {
+    this.params.Destination.ToAddresses = [to];
+    this.params.Message.Subject.Data = "Verify your email";
+
     this.params.Message.Body.Html.Data = `
       <html>
         <body>
@@ -71,7 +68,10 @@ class MailService {
     }
   }
 
-  async sendResetEmail(token: string) {
+  async sendResetEmail(to: string, token: string) {
+    this.params.Destination.ToAddresses = [to];
+    this.params.Message.Subject.Data = "Reset your password";
+
     this.params.Message.Body.Html.Data = `
       <html>
         <body>
@@ -100,4 +100,6 @@ class MailService {
   }
 }
 
-export default MailService;
+const mailService = new MailService();
+
+export default mailService;

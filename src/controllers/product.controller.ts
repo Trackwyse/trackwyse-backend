@@ -4,8 +4,8 @@ import geo from "../utils/geo";
 import { colors } from "../lib/constants";
 import { User } from "../models/user.model";
 import { Label } from "../models/label.model";
-import { logger } from "../utils/logger";
-import NotificationService from "../utils/notifications";
+import { logger } from "../lib/logger";
+import NotificationService from "../lib/notifications";
 
 /*
   POST /api/v1/labels/create
@@ -406,9 +406,7 @@ const getLabel = async (req: express.Request, res: express.Response) => {
 
   if (user && user.notificationPushTokens.length && user.notificationsEnabled) {
     try {
-      const notifications = new NotificationService(user.notificationPushTokens);
-
-      notifications.sendNotification({
+      NotificationService.sendNotification(user.notificationPushTokens, {
         title: "Your label has been located",
         body: `Your label "${label.name}" has been located near ${label.foundNear}`,
         data: {
@@ -417,6 +415,7 @@ const getLabel = async (req: express.Request, res: express.Response) => {
         },
       });
     } catch (error) {
+      console.log(error);
       logger.error(error);
     }
   }
