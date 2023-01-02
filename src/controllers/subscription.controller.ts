@@ -81,7 +81,7 @@ const createSubscription = async (req: express.Request, res: express.Response) =
     }
 
     user.subscriptionActive = true;
-    user.subscriptionDate = new Date();
+    user.subscriptionDate = new Date(subscriptionReceipt.purchaseDate);
     user.subscriptionReceipt = subscriptionReceipt;
 
     await user.save();
