@@ -38,7 +38,13 @@ const userSchema = new mongoose.Schema<UserSchema>(
       max: [128, "Password must be 128 characters or less"],
     },
     address: {
-      type: String,
+      type: {
+        address1: { type: String, required: true },
+        address2: { type: String, required: false },
+        city: { type: String, required: true },
+        state: { type: String, required: true },
+        zip5: { type: String, required: true },
+      },
       required: false,
     },
 
@@ -184,6 +190,7 @@ userSchema.methods.sanitize = function () {
     firstName: this.firstName,
     lastName: this.lastName,
     email: this.email,
+    address: this.address,
 
     verified: this.verified,
     termsAccepted: this.termsAccepted,

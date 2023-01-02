@@ -6,10 +6,10 @@ declare namespace Express {
 
 interface User {
   email: string;
-  address: string;
   password: string;
   firstName: string;
   lastName: string;
+  address: Address;
 
   subscriptionDate: Date;
   subscriptionActive: boolean;
@@ -38,6 +38,7 @@ interface SanitizedUser {
   email: string;
   firstName: string;
   lastName: string;
+  address: Address;
 
   verified: boolean;
   termsAccepted: boolean;
@@ -89,4 +90,12 @@ interface SubscriptionReceipt {
   originalPurchaseDate?: number;
   applicationVersion?: string;
   originalApplicationVersion?: string;
+}
+
+interface Address {
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  zip5: string;
 }

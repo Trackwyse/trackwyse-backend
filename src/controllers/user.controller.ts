@@ -1,6 +1,9 @@
-import { User } from "../models/user.model";
 import express from "express";
+import usps from "../lib/usps";
+
+import config from "../config";
 import MailService from "../lib/mail";
+import { User } from "../models/user.model";
 
 /*
   GET /api/v1/user
@@ -27,7 +30,7 @@ const getUser = async (req: express.Request, res: express.Response) => {
     if (user.subscriptionReceipt && user.subscriptionReceipt?.expirationDate) {
       const expirationDate = new Date(user.subscriptionReceipt.expirationDate);
       // Factor in 10 minutes of leeway
-      const currentDate = new Date(Date.now() - 10 * 60 * 1000);
+      const currentDate = new Date(Date.now() - config.AppleSubscriptionRenewalLeeway);
 
       if (expirationDate < currentDate) {
         user.subscriptionActive = false;
@@ -62,39 +65,76 @@ const updateUser = async (req: express.Request, res: express.Response) => {
     return res.status(404).json({ error: true, message: "Unauthorized" });
   }
 
-  const { firstName, lastName, email, notificationsEnabled, notificationPushToken } = req.body;
+  const {
+    zip5,
+    city,
+    state,
+    email,
+    firstName,
+    lastName,
+    address1,
+    address2,
+    notificationsEnabled,
+    notificationPushToken,
+  } = req.body;
+
+  if (lastName) user.lastName = lastName;
+  if (firstName) user.firstName = firstName;
+
+  // If the user is updating their notification push token, ensure that it's not already in the array
+  if (notificationPushToken && !user.notificationPushTokens.includes(notificationPushToken)) {
+    user.notificationPushTokens.push(notificationPushToken);
+  }
+
+  // If the user provides a notificationsEnabled value, update it
+  if (notificationsEnabled !== undefined) {
+    user.notificationsEnabled = notificationsEnabled === "true";
+  }
+
+  // if email is changed, reverify the email
+  if (email && email !== user.email) {
+    user.verified = false;
+    user.email = email;
+    const verificationToken = await user.generateVerificationToken();
+
+    try {
+      await MailService.sendVerificationEmail(user.email, verificationToken);
+    } catch (err) {
+      return res.status(500).json({ error: true, message: "Error sending verification email" });
+    }
+  }
+
+  // If the user updates any part of their address, ensure that the address is valid
+  if (zip5 || city || state || address1 || address2) {
+    try {
+      const address = await usps.verify({
+        Address1: address1 ?? user.address?.address1 ?? "",
+        Address2: address2 ?? user.address?.address2 ?? "",
+        City: city ?? user.address?.city ?? "",
+        State: state ?? user.address?.state ?? "",
+        Zip5: zip5 ?? user.address?.zip5 ?? "",
+      });
+
+      user.address = {
+        address1: address.Address1,
+        address2: address.Address2,
+        city: address.City,
+        state: address.State,
+        zip5: address.Zip5,
+      };
+    } catch (err) {
+      return res.status(400).json({ error: true, message: "Invalid address" });
+    }
+  }
 
   try {
-    if (lastName) user.lastName = lastName;
-    if (firstName) user.firstName = firstName;
-
-    if (
-      notificationPushToken &&
-      user.notificationPushTokens.indexOf(notificationPushToken) === -1
-    ) {
-      user.notificationPushTokens.push(notificationPushToken);
-    }
-
-    if (notificationsEnabled !== undefined) {
-      user.notificationsEnabled = notificationsEnabled === "true";
-    }
-
-    // if email is changed, reverify the email
-    if (email && email !== user.email) {
-      user.verified = false;
-      user.email = email;
-      const verificationToken = await user.generateVerificationToken();
-
-      await MailService.sendVerificationEmail(user.email, verificationToken);
-    }
-
     await user.save();
 
     const sanitizedUser = user.sanitize();
 
     return res.status(200).json({ error: false, message: "User updated", user: sanitizedUser });
   } catch (err) {
-    return res.status(500).json({ error: true, message: "An internal error occurred" });
+    return res.status(500).json({ error: true, message: "Error updating user" });
   }
 };
 
