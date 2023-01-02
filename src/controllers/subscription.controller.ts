@@ -32,6 +32,7 @@ const getSubscription = async (req: express.Request, res: express.Response) => {
     subscriptionActive: user.subscriptionActive,
     subscriptionDate: user.subscriptionDate,
     subscriptionReceipt: user.subscriptionReceipt,
+    subscriptionPerks: user.subscriptionPerks,
   });
 };
 

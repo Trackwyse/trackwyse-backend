@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@shopify/shopify-api": "^6.0.2",
     "@types/cookie-parser": "^1.4.3",
     "app-root-path": "^3.1.0",
     "aws-sdk": "^2.1269.0",

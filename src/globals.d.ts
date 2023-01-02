@@ -14,6 +14,7 @@ interface User {
   subscriptionDate: Date;
   subscriptionActive: boolean;
   subscriptionReceipt: SubscriptionReceipt;
+  subscriptionPerks: SubscriptionPerks;
 
   verified: boolean;
   verificationToken: string;
@@ -90,6 +91,14 @@ interface SubscriptionReceipt {
   originalPurchaseDate?: number;
   applicationVersion?: string;
   originalApplicationVersion?: string;
+}
+
+interface SubscriptionPerks {
+  freeLabelsRedeemed: number;
+  freeLabelsLastRedeemed: Date;
+  freeLabelsNextRedeemable: Date;
+
+  secureRecoveriesEnabled: boolean;
 }
 
 interface Address {
