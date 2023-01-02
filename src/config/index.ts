@@ -18,12 +18,15 @@ export interface Config {
 
   ExpoAccessToken: string;
 
+  USPSUserId: string;
+
   AWSRegion: string;
   AWSAccessKeyId: string;
   AWSSecretAccessKey: string;
 
   AppleSharedSecret: string;
   AppleAppStoreEnv: ("sandbox" | "production")[];
+  AppleSubscriptionRenewalLeeway: number;
 
   SaltFactor: number;
   AccessTokenPublicKey: string;
@@ -50,12 +53,15 @@ const config: Config = {
 
   ExpoAccessToken: process.env.EXPO_ACCESS_TOKEN,
 
+  USPSUserId: process.env.USPS_USER_ID,
+
   AWSRegion: process.env.AWS_REGION || "us-east-1",
   AWSAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
   AWSSecretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 
   AppleSharedSecret: process.env.APPLE_SHARED_SECRET,
   AppleAppStoreEnv: [process.env.APPLE_APP_STORE_ENV as "sandbox" | "production"] || ["sandbox"],
+  AppleSubscriptionRenewalLeeway: parseInt(process.env.APPLE_SUBSCRIPTION_RENEWAL_LEEWAY) || 86400,
 
   SaltFactor: parseInt(process.env.SALT_FACTOR) || 10,
   AccessTokenPublicKey: process.env.ACCESS_TOKEN_PUBLIC,
