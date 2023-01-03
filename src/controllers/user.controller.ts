@@ -3,7 +3,6 @@ import usps from "../lib/usps";
 
 import config from "../config";
 import MailService from "../lib/mail";
-import { logger } from "../lib/logger";
 import { User } from "../models/user.model";
 
 /*
