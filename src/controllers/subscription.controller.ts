@@ -1,5 +1,6 @@
 import express from "express";
 import appleReceiptVerify from "node-apple-receipt-verify";
+import { logger } from "../lib/logger";
 import { User } from "../models/user.model";
 
 /*
@@ -95,6 +96,7 @@ const createSubscription = async (req: express.Request, res: express.Response) =
       user: sanitizedUser,
     });
   } catch (error) {
+    logger.error(error);
     return res.status(400).json({
       error: true,
       message: "Error validating subscription",

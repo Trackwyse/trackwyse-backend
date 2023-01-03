@@ -3,6 +3,7 @@ import usps from "../lib/usps";
 
 import config from "../config";
 import MailService from "../lib/mail";
+import { logger } from "../lib/logger";
 import { User } from "../models/user.model";
 
 /*
@@ -135,6 +136,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
 
     return res.status(200).json({ error: false, message: "User updated", user: sanitizedUser });
   } catch (err) {
+    logger.error(err);
     return res.status(500).json({ error: true, message: "Error updating user" });
   }
 };
