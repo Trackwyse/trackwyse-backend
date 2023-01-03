@@ -89,10 +89,22 @@ const createSubscription = async (req: express.Request, res: express.Response) =
   user.subscriptionReceipt = subscriptionReceipt;
   user.subscriptionDate = new Date(subscriptionReceipt.purchaseDate);
 
-  user["subscriptionPerks"]["freeLabelsRedeemable"] = true;
-  user["subscriptionPerks"]["freeLabelsNextRedeemable"] = new Date(
-    subscriptionReceipt.expirationDate
-  );
+  // make sure user has a subscriptions perks object
+  if (!user.subscriptionPerks) {
+    user.subscriptionPerks = {
+      freeLabelsRedeemed: 0,
+      freeLabelsRedeemable: true,
+      freeLabelsNextRedeemable: new Date(subscriptionReceipt.expirationDate),
+      freeLabelsLastRedeemed: undefined,
+
+      secureRecoveriesEnabled: false,
+    };
+  } else {
+    user["subscriptionPerks"]["freeLabelsRedeemable"] = true;
+    user["subscriptionPerks"]["freeLabelsNextRedeemable"] = new Date(
+      subscriptionReceipt.expirationDate
+    );
+  }
 
   try {
     await user.save();

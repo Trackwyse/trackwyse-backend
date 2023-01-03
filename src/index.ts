@@ -19,6 +19,7 @@ appleReceiptVerify.config({
   secret: config.AppleSharedSecret,
   environment: config.AppleAppStoreEnv,
   extended: true,
+  excludeOldTransactions: true,
 });
 
 const startServer = async () => {
