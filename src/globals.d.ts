@@ -102,6 +102,7 @@ interface SubscriptionPerks {
 }
 
 interface Address {
+  isValid: boolean;
   address1: string;
   address2: string;
   city: string;

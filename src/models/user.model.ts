@@ -39,6 +39,7 @@ const userSchema = new mongoose.Schema<UserSchema>(
     },
     address: {
       type: {
+        isValid: { type: Boolean, required: true },
         address1: { type: String, required: true },
         address2: { type: String, required: false },
         city: { type: String, required: true },

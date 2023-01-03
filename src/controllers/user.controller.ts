@@ -116,6 +116,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
       });
 
       user.address = {
+        isValid: true,
         address1: address.Address1,
         address2: address.Address2,
         city: address.City,

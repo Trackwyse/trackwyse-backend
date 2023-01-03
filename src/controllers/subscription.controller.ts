@@ -58,6 +58,15 @@ const createSubscription = async (req: express.Request, res: express.Response) =
     });
   }
 
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(400).json({
+      error: true,
+      message: "User not found",
+    });
+  }
+
   try {
     const products = await appleReceiptVerify.validate({
       receipt,
@@ -71,15 +80,6 @@ const createSubscription = async (req: express.Request, res: express.Response) =
     }
 
     let subscriptionReceipt = products[0];
-
-    const user = await User.findById(req.user.id);
-
-    if (!user) {
-      return res.status(400).json({
-        error: true,
-        message: "User not found",
-      });
-    }
 
     user.subscriptionActive = true;
     user.subscriptionDate = new Date(subscriptionReceipt.purchaseDate);
@@ -97,7 +97,7 @@ const createSubscription = async (req: express.Request, res: express.Response) =
   } catch (error) {
     return res.status(400).json({
       error: true,
-      message: "Invalid subscription receipt",
+      message: "Error validating subscription",
     });
   }
 };
