@@ -185,19 +185,29 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
     countryArea: user.address.state,
   };
 
-  const draftOrder = await saleor.DraftOrderCreate({
-    input: {
-      billingAddress: userAddress,
-      shippingAddress: userAddress,
-      userEmail: user.email,
-      customerNote: "Redeemed using Trackwyse plus",
-      lines: [
-        {
-          quantity: 1,
-          variantId: config.SaleorFreeLabelVariantId,
-        },
-      ],
-    },
+  try {
+    const draftOrder = await saleor.DraftOrderCreate({
+      input: {
+        billingAddress: userAddress,
+        shippingAddress: userAddress,
+        userEmail: user.email,
+        customerNote: "Redeemed using Trackwyse plus",
+        lines: [
+          {
+            quantity: 1,
+            variantId: config.SaleorFreeLabelVariantId,
+          },
+        ],
+      },
+    });
+    console.log(draftOrder);
+  } catch (err) {
+    console.log(err);
+  }
+
+  return res.json({
+    error: false,
+    message: "Free labels claimed",
   });
 };
 

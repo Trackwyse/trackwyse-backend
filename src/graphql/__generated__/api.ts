@@ -33544,7 +33544,7 @@ export type DraftOrderCreateMutationVariables = Exact<{
 }>;
 
 
-export type DraftOrderCreateMutation = { __typename?: 'Mutation', draftOrderCreate?: { __typename?: 'DraftOrderCreate', order?: { __typename?: 'Order', id: string, created: any, updatedAt: any, status: OrderStatus } | null } | null };
+export type DraftOrderCreateMutation = { __typename?: 'Mutation', draftOrderCreate?: { __typename?: 'DraftOrderCreate', order?: { __typename?: 'Order', id: string, created: any, updatedAt: any, status: OrderStatus } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
 
 export type ProductQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33583,6 +33583,9 @@ export const DraftOrderCreateDocument = gql`
       created
       updatedAt
       status
+    }
+    errors {
+      message
     }
   }
 }

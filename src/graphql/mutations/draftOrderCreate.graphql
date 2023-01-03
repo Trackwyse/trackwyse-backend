@@ -6,5 +6,8 @@ mutation DraftOrderCreate($input: DraftOrderCreateInput!) {
       updatedAt
       status
     }
+    errors {
+      message
+    }
   }
 }
