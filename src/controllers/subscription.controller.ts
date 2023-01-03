@@ -73,7 +73,7 @@ const createSubscription = async (req: express.Request, res: express.Response) =
       receipt,
     });
 
-    if (!Array.isArray(products)) {
+    if (!Array.isArray(products) || products.length === 0) {
       return res.status(400).json({
         error: true,
         message: "Invalid subscription receipt",
@@ -82,13 +82,17 @@ const createSubscription = async (req: express.Request, res: express.Response) =
 
     let subscriptionReceipt = products[0];
 
-    console.log(products);
-    console.log("---------------");
-    console.log(subscriptionReceipt);
+    if (
+      user.subscriptionDate &&
+      new Date(user.subscriptionDate) < new Date(subscriptionReceipt.purchaseDate)
+    ) {
+      user.subscriptionPerks.freeLabelsRedeemable = true;
+    }
 
     user.subscriptionActive = true;
-    user.subscriptionDate = new Date(subscriptionReceipt.purchaseDate);
     user.subscriptionReceipt = subscriptionReceipt;
+    user.subscriptionDate = new Date(subscriptionReceipt.purchaseDate);
+    user.subscriptionPerks.freeLabelsNextRedeemable = new Date(subscriptionReceipt.expirationDate);
 
     await user.save();
 
