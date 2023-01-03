@@ -39,12 +39,12 @@ const userSchema = new mongoose.Schema<UserSchema>(
     },
     address: {
       type: {
-        isValid: { type: Boolean, required: true },
-        address1: { type: String, required: true },
+        isValid: { type: Boolean, required: false },
+        address1: { type: String, required: false },
         address2: { type: String, required: false },
-        city: { type: String, required: true },
-        state: { type: String, required: true },
-        zip5: { type: String, required: true },
+        city: { type: String, required: false },
+        state: { type: String, required: false },
+        zip5: { type: String, required: false },
       },
       required: false,
     },

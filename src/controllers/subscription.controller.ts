@@ -82,6 +82,10 @@ const createSubscription = async (req: express.Request, res: express.Response) =
 
     let subscriptionReceipt = products[0];
 
+    console.log(products);
+    console.log("---------------");
+    console.log(subscriptionReceipt);
+
     user.subscriptionActive = true;
     user.subscriptionDate = new Date(subscriptionReceipt.purchaseDate);
     user.subscriptionReceipt = subscriptionReceipt;
@@ -96,7 +100,6 @@ const createSubscription = async (req: express.Request, res: express.Response) =
       user: sanitizedUser,
     });
   } catch (error) {
-    console.log(error);
     return res.status(400).json({
       error: true,
       message: "Error validating subscription",
