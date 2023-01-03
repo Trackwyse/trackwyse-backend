@@ -88,11 +88,10 @@ const createSubscription = async (req: express.Request, res: express.Response) =
   user.subscriptionReceipt = subscriptionReceipt;
   user.subscriptionDate = new Date(subscriptionReceipt.purchaseDate);
 
-  user.subscriptionPerks = {
-    ...user.subscriptionPerks,
-    freeLabelsRedeemable: true,
-    freeLabelsNextRedeemable: new Date(subscriptionReceipt.expirationDate),
-  };
+  user["subscriptionPerks"]["freeLabelsRedeemable"] = true;
+  user["subscriptionPerks"]["freeLabelsNextRedeemable"] = new Date(
+    subscriptionReceipt.expirationDate
+  );
 
   try {
     await user.save();
@@ -185,24 +184,27 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
     countryArea: user.address.state,
   };
 
-  try {
-    const draftOrder = await saleor.DraftOrderCreate({
-      input: {
-        billingAddress: userAddress,
-        shippingAddress: userAddress,
-        userEmail: user.email,
-        customerNote: "Redeemed using Trackwyse plus",
-        lines: [
-          {
-            quantity: 1,
-            variantId: config.SaleorFreeLabelVariantId,
-          },
-        ],
-      },
+  const draftOrder = await saleor.DraftOrderCreate({
+    input: {
+      billingAddress: userAddress,
+      shippingAddress: userAddress,
+      userEmail: user.email,
+      customerNote: "Redeemed using Trackwyse plus",
+      channelId: config.SaleorFreeLabelChannelId,
+      lines: [
+        {
+          quantity: 1,
+          variantId: config.SaleorFreeLabelVariantId,
+        },
+      ],
+    },
+  });
+
+  if (!draftOrder.draftOrderCreate?.order) {
+    return res.status(500).json({
+      error: true,
+      message: "Error creating draft order",
     });
-    console.log(draftOrder);
-  } catch (err) {
-    console.log(err);
   }
 
   return res.json({
