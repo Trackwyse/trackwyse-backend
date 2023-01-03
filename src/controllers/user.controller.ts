@@ -136,7 +136,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
 
     return res.status(200).json({ error: false, message: "User updated", user: sanitizedUser });
   } catch (err) {
-    logger.error(err);
+    console.log(err);
     return res.status(500).json({ error: true, message: "Error updating user" });
   }
 };

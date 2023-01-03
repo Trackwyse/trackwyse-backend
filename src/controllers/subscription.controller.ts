@@ -96,7 +96,7 @@ const createSubscription = async (req: express.Request, res: express.Response) =
       user: sanitizedUser,
     });
   } catch (error) {
-    logger.error(error);
+    console.log(error);
     return res.status(400).json({
       error: true,
       message: "Error validating subscription",
