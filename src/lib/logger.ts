@@ -9,6 +9,7 @@ const { combine, timestamp, printf, colorize, splat, align } = winston.format;
 const logFormat = printf(({ level, message, timestamp }) => `${timestamp} ${level}: ${message}`);
 
 const logger = winston.createLogger({
+  level: config.LogLevel,
   format: combine(timestamp(), logFormat),
   exitOnError: false,
   transports: [
