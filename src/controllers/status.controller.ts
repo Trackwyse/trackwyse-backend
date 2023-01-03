@@ -34,11 +34,10 @@ const getValidClients = async (req: express.Request, res: express.Response) => {
     - Any
 */
 const testConnection = async (req: express.Request, res: express.Response) => {
-  try {
-    throw new Error("Test error");
-  } catch (err) {
-    logger.error(err);
-  }
+  return res.status(200).json({
+    error: false,
+    message: "Connection successful",
+  });
 };
 
 export default { getValidClients, testConnection };
