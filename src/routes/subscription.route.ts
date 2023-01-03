@@ -14,5 +14,6 @@ subscriptionRouter.post(
   authMiddleware.authenticateVerifiedAccessToken,
   subscriptionController.createSubscription
 );
+subscriptionRouter.post("/claim/free-labels");
 
 export default subscriptionRouter;
