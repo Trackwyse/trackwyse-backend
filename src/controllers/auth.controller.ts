@@ -3,7 +3,6 @@ import express from "express";
 import { User } from "../models/user.model";
 import { logger } from "../lib/logger";
 import MailService from "../lib/mail";
-import config from "../config";
 import jwt from "../utils/jwt";
 
 /*
@@ -43,20 +42,21 @@ const login = async (req: express.Request, res: express.Response) => {
   const accessToken = jwt.createAccessToken(sanitizedUser);
   const refreshToken = jwt.createRefreshToken(sanitizedUser);
 
-  // Update the user's refresh token
   user.refreshToken = refreshToken;
 
   try {
     await user.save();
-
-    return res
-      .status(200)
-      .json({ error: false, message: "User logged in", accessToken, refreshToken });
   } catch (err) {
     logger.error(err);
-
-    return res.status(500).json({ error: true, message: "Internal server error" });
+    return res.status(500).json({ error: true, message: "Error saving user" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "User logged in",
+    accessToken,
+    refreshToken,
+  });
 };
 
 /*
@@ -106,37 +106,44 @@ const register = async (req: express.Request, res: express.Response) => {
     lastName,
   });
 
+  let userDocument;
+  let verificationToken;
+
   try {
-    const userDocument = await user.save();
-    const sanitizedUser = userDocument.sanitize();
-    const verificationToken = await userDocument.generateVerificationToken();
-
-    const accessToken = jwt.createAccessToken(sanitizedUser);
-    const refreshToken = jwt.createRefreshToken(sanitizedUser);
-
-    // Update the user's refresh token
-    userDocument.refreshToken = refreshToken;
-
-    await userDocument.save();
-
-    try {
-      await MailService.sendVerificationEmail(sanitizedUser.email, verificationToken);
-    } catch (error) {
-      logger.error(error);
-
-      // Delete the user if the verification email fails to send
-      // This is to prevent users from not being able to verify their email
-      await userDocument.deleteOne();
-
-      return res.status(500).json({ error: true, message: "Error sending verification email" });
-    }
-
-    return res
-      .status(201)
-      .json({ error: false, message: "User created", accessToken, refreshToken });
-  } catch (error) {
-    return res.status(500).json({ error: true, message: error.message });
+    userDocument = await user.save();
+    verificationToken = await userDocument.generateVerificationToken();
+  } catch (err) {
+    logger.error(err);
+    res.status(500).json({ error: true, message: "Error creating user" });
   }
+
+  const sanitizedUser = userDocument.sanitize();
+
+  const accessToken = jwt.createAccessToken(sanitizedUser);
+  const refreshToken = jwt.createRefreshToken(sanitizedUser);
+
+  // Update the user's refresh token
+  userDocument.refreshToken = refreshToken;
+
+  try {
+    await userDocument.save();
+    await MailService.sendVerificationEmail(sanitizedUser.email, verificationToken);
+  } catch (err) {
+    logger.error(err);
+
+    // Delete the user if the verification email fails to send
+    // This is to prevent users from not being able to verify their email
+    await userDocument.deleteOne();
+
+    return res.status(500).json({ error: true, message: "Error sending verification email" });
+  }
+
+  return res.status(201).json({
+    error: false,
+    message: "User created",
+    accessToken,
+    refreshToken,
+  });
 };
 
 /*
@@ -163,10 +170,15 @@ const logout = async (req: express.Request, res: express.Response) => {
 
   try {
     await user.save();
-    return res.status(200).json({ error: false, message: "User logged out" });
-  } catch (error) {
-    return res.status(500).json({ error: true, message: error.message });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error logging out user" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "User logged out",
+  });
 };
 
 /*
@@ -198,7 +210,11 @@ const checkEmail = async (req: express.Request, res: express.Response) => {
     return res.status(200).json({ error: false, message: "Email in use", emailInUse: true });
   }
 
-  return res.status(200).json({ error: false, message: "Email not in use", emailInUse: false });
+  return res.status(200).json({
+    error: false,
+    message: "Email not in use",
+    emailInUse: false,
+  });
 };
 
 /*
@@ -240,11 +256,15 @@ const verify = async (req: express.Request, res: express.Response) => {
 
   try {
     await user.save();
-
-    return res.status(200).json({ error: false, message: "User verified" });
-  } catch (error) {
-    return res.status(500).json({ error: true, message: error.message });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error verifying user" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "User verified",
+  });
 };
 
 /*
@@ -277,13 +297,15 @@ const reverify = async (req: express.Request, res: express.Response) => {
 
   try {
     await MailService.sendVerificationEmail(user.email, verificationToken);
-  } catch (error) {
-    logger.error(error);
-
+  } catch (err) {
+    logger.error(err);
     return res.status(500).json({ error: true, message: "Error sending verification email" });
   }
 
-  return res.status(200).json({ error: false, message: "Verification email sent" });
+  return res.status(200).json({
+    error: false,
+    message: "Verification email sent",
+  });
 };
 
 /*
@@ -316,13 +338,15 @@ const forgot = async (req: express.Request, res: express.Response) => {
     const resetToken = await user.generatePasswordResetToken();
 
     await MailService.sendResetEmail(user.email, resetToken);
-
-    return res.status(200).json({ error: false, message: "Password reset email sent" });
-  } catch (error) {
-    logger.error(error);
-
+  } catch (err) {
+    logger.error(err);
     return res.status(500).json({ error: true, message: "Error sending password reset email" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "Password reset email sent",
+  });
 };
 
 /*
@@ -364,19 +388,21 @@ const reset = async (req: express.Request, res: express.Response) => {
     return res.status(401).json({ error: true, message: "Password reset token expired" });
   }
 
+  user.password = password;
+  user.passwordResetToken = undefined;
+  user.passwordResetTokenExpires = undefined;
+
   try {
-    user.password = password;
-    user.passwordResetToken = undefined;
-    user.passwordResetTokenExpires = undefined;
-
     await user.save();
-
-    return res.status(200).json({ error: false, message: "Password reset" });
-  } catch (error) {
-    logger.error(error);
-
+  } catch (err) {
+    logger.error(err);
     return res.status(500).json({ error: true, message: "Error resetting password" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "Password reset",
+  });
 };
 
 /*
@@ -401,11 +427,15 @@ const acceptTerms = async (req: express.Request, res: express.Response) => {
 
   try {
     await user.save();
-
-    return res.status(200).json({ error: false, message: "Terms accepted" });
-  } catch (error) {
-    return res.status(500).json({ error: true, message: error.message });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error accepting terms" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "Terms accepted",
+  });
 };
 
 export default {

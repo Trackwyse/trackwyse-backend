@@ -1,4 +1,5 @@
 import express from "express";
+import { logger } from "../lib/logger";
 
 /*
   GET /status/validClients
@@ -32,6 +33,12 @@ const getValidClients = async (req: express.Request, res: express.Response) => {
   Response Body:
     - Any
 */
-const testConnection = async (req: express.Request, res: express.Response) => {};
+const testConnection = async (req: express.Request, res: express.Response) => {
+  try {
+    throw new Error("Test error");
+  } catch (err) {
+    logger.error(err);
+  }
+};
 
 export default { getValidClients, testConnection };

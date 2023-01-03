@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 
 import config from "../config";
+import { logger } from "../lib/logger";
 
 /*
   Create access token and return it
@@ -42,8 +43,9 @@ const verifyAccessToken = (token: string) => {
     }) as SanitizedUser;
 
     return payload;
-  } catch (error) {
-    return error.name === "TokenExpiredError" ? "expired" : null;
+  } catch (err) {
+    logger.error(err);
+    return err.name === "TokenExpiredError" ? "expired" : null;
   }
 };
 
@@ -59,7 +61,8 @@ const verifyRefreshToken = (token: string) => {
     }) as SanitizedUser;
 
     return payload;
-  } catch (error) {
+  } catch (err) {
+    logger.error(err);
     return null;
   }
 };

@@ -3,6 +3,7 @@ import appleReceiptVerify from "node-apple-receipt-verify";
 
 import config from "../config";
 import saleor from "../lib/saleor";
+import { logger } from "../lib/logger";
 import { User } from "../models/user.model";
 import { CountryCode, AddressInput } from "../graphql/__generated__/api";
 
@@ -95,16 +96,14 @@ const createSubscription = async (req: express.Request, res: express.Response) =
 
   try {
     await user.save();
-  } catch {
-    return res.status(500).json({
-      error: true,
-      message: "Error saving subscription",
-    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error saving subscription" });
   }
 
   const sanitizedUser = user.sanitize();
 
-  return res.json({
+  return res.status(200).json({
     error: false,
     message: "Subscription created",
     user: sanitizedUser,
@@ -142,7 +141,13 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
 
       if (expirationDate < currentDate) {
         user.subscriptionActive = false;
-        await user.save();
+
+        try {
+          await user.save();
+        } catch (err) {
+          logger.error(err);
+          return res.status(500).json({ error: true, message: "Error saving subscription" });
+        }
 
         return res.status(400).json({
           error: true,
@@ -224,11 +229,9 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
 
   try {
     await user.save();
-  } catch {
-    return res.status(500).json({
-      error: true,
-      message: "Error saving subscription",
-    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error saving subscription" });
   }
 
   return res.json({
