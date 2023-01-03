@@ -72,9 +72,15 @@ const createSubscription = async (req: express.Request, res: express.Response) =
     });
   }
 
-  const products = await appleReceiptVerify.validate({
-    receipt,
-  });
+  let products;
+  try {
+    products = await appleReceiptVerify.validate({
+      receipt,
+    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(400).json({ error: true, message: "INVALID_SUBSCRIPTION" });
+  }
 
   if (!Array.isArray(products) || products.length === 0) {
     return res.status(400).json({
