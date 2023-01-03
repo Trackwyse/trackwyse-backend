@@ -7,14 +7,10 @@ import config from "../config";
 const { combine, timestamp, printf, colorize, align } = winston.format;
 
 const consoleFormat = combine(
-  format.errors({ stack: true }),
   colorize({ all: true }),
   timestamp({ format: "YYYY-MM-DD hh:mm:ss.SSS A" }),
   align(),
   printf((info) => {
-    if (info.stack) {
-      return `${info.timestamp} ${info.level}: ${info.message} ${info.stack}`;
-    }
     return `${info.timestamp} ${info.level}: ${info.message}`;
   })
 );
@@ -36,28 +32,25 @@ const logger = winston.createLogger({
       datePattern: "YYYY-MM-DD",
       maxFiles: "30d",
     }),
-    new winston.transports.DailyRotateFile({
-      filename: `${config.AppRoot}/logs/error.log'`,
+    new winston.transports.Console({
       level: "error",
-      format: fileFormat,
-      datePattern: "YYYY-MM-DD",
-      maxFiles: "30d",
+      format: combine(
+        colorize({ all: true }),
+        timestamp({ format: "YYYY-MM-DD hh:mm:ss.SSS A" }),
+        align(),
+        printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
+      ),
+      handleExceptions: true,
+      handleRejections: true,
     }),
-  ],
-  exceptionHandlers: [
     new winston.transports.DailyRotateFile({
-      filename: `${config.AppRoot}/logs/exceptions.log`,
-      format: fileFormat,
+      filename: `${config.AppRoot}/logs/errors.log'`,
+      level: "error",
+      format: combine(printf((info) => info.message)),
       datePattern: "YYYY-MM-DD",
       maxFiles: "30d",
-    }),
-  ],
-  rejectionHandlers: [
-    new winston.transports.DailyRotateFile({
-      filename: `${config.AppRoot}/logs/rejections.log`,
-      format: fileFormat,
-      datePattern: "YYYY-MM-DD",
-      maxFiles: "30d",
+      handleExceptions: true,
+      handleRejections: true,
     }),
   ],
 });
