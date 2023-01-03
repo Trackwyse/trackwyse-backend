@@ -24,6 +24,7 @@ export interface Config {
   SaleorGraphQLURL: string;
   SaleorFreeLabelVariantId: string;
   SaleorFreeLabelChannelId: string;
+  SaleorFreeShippingZoneId: string;
 
   AWSRegion: string;
   AWSAccessKeyId: string;
@@ -64,6 +65,7 @@ const config: Config = {
   SaleorGraphQLURL: process.env.SALEOR_GRAPHQL_URL,
   SaleorFreeLabelVariantId: process.env.SALEOR_FREE_LABEL_VARIANT_ID,
   SaleorFreeLabelChannelId: process.env.SALEOR_FREE_LABEL_CHANNEL_ID,
+  SaleorFreeShippingZoneId: process.env.SALEOR_FREE_SHIPPING_ZONE_ID,
 
   AWSRegion: process.env.AWS_REGION || "us-east-1",
   AWSAccessKeyId: process.env.AWS_ACCESS_KEY_ID,

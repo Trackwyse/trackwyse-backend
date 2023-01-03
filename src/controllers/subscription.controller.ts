@@ -191,6 +191,7 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
       userEmail: user.email,
       customerNote: "Redeemed using Trackwyse plus",
       channelId: config.SaleorFreeLabelChannelId,
+      shippingMethod: config.SaleorFreeShippingZoneId,
       lines: [
         {
           quantity: 1,
