@@ -1,0 +1,11 @@
+query Product($id: ID, $slug: String, $channel: String) {
+  product(id: $id, slug: $slug, channel: $channel) {
+    id
+    name
+    description
+    channel
+    defaultVariant {
+      id
+    }
+  }
+}

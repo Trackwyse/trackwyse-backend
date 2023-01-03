@@ -58,12 +58,9 @@ class MailService {
     `;
 
     try {
-      const data = await this.ses.sendEmail(this.params).promise();
-
-      logger.info(data);
+      await this.ses.sendEmail(this.params).promise();
     } catch (err) {
       logger.error(err);
-
       throw err;
     }
   }
@@ -89,12 +86,9 @@ class MailService {
     `;
 
     try {
-      const data = await this.ses.sendEmail(this.params).promise();
-
-      logger.info(data);
+      await this.ses.sendEmail(this.params).promise();
     } catch (err) {
       logger.error(err);
-
       throw err;
     }
   }

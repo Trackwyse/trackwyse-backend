@@ -3,6 +3,7 @@ import usps from "../lib/usps";
 
 import config from "../config";
 import MailService from "../lib/mail";
+import { logger } from "../lib/logger";
 import { User } from "../models/user.model";
 
 /*
@@ -29,19 +30,29 @@ const getUser = async (req: express.Request, res: express.Response) => {
     // Make sure that the expiration date exists
     if (user.subscriptionReceipt && user.subscriptionReceipt?.expirationDate) {
       const expirationDate = new Date(user.subscriptionReceipt.expirationDate);
-      // Factor in 10 minutes of leeway
+      // Factor in X minutes of leeway
       const currentDate = new Date(Date.now() - config.AppleSubscriptionRenewalLeeway);
 
       if (expirationDate < currentDate) {
         user.subscriptionActive = false;
-        await user.save();
+
+        try {
+          await user.save();
+        } catch (err) {
+          logger.error(err);
+          return res.status(500).json({ error: true, message: "Error updating user" });
+        }
       }
     }
   }
 
   const sanitizedUser = user.sanitize();
 
-  return res.status(200).json({ error: false, message: "User retrieved", user: sanitizedUser });
+  return res.status(200).json({
+    error: false,
+    message: "User retrieved",
+    user: sanitizedUser,
+  });
 };
 
 /*
@@ -116,6 +127,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
       });
 
       user.address = {
+        isValid: true,
         address1: address.Address1,
         address2: address.Address2,
         city: address.City,
@@ -129,13 +141,14 @@ const updateUser = async (req: express.Request, res: express.Response) => {
 
   try {
     await user.save();
-
-    const sanitizedUser = user.sanitize();
-
-    return res.status(200).json({ error: false, message: "User updated", user: sanitizedUser });
   } catch (err) {
+    logger.error(err);
     return res.status(500).json({ error: true, message: "Error updating user" });
   }
+
+  const sanitizedUser = user.sanitize();
+
+  return res.status(200).json({ error: false, message: "User updated", user: sanitizedUser });
 };
 
 /*
@@ -169,15 +182,15 @@ const updatePassword = async (req: express.Request, res: express.Response) => {
     return res.status(401).json({ error: true, message: "Incorrect current password" });
   }
 
+  user.password = newPassword;
+
   try {
-    user.password = newPassword;
-
     await user.save();
-
-    return res.status(200).json({ error: false, message: "Password updated" });
   } catch (err) {
+    logger.error(err);
     return res.status(500).json({ error: true, message: err.message });
   }
+  return res.status(200).json({ error: false, message: "Password updated" });
 };
 
 export default {

@@ -39,11 +39,12 @@ const userSchema = new mongoose.Schema<UserSchema>(
     },
     address: {
       type: {
-        address1: { type: String, required: true },
+        isValid: { type: Boolean, required: false },
+        address1: { type: String, required: false },
         address2: { type: String, required: false },
-        city: { type: String, required: true },
-        state: { type: String, required: true },
-        zip5: { type: String, required: true },
+        city: { type: String, required: false },
+        state: { type: String, required: false },
+        zip5: { type: String, required: false },
       },
       required: false,
     },
@@ -66,6 +67,15 @@ const userSchema = new mongoose.Schema<UserSchema>(
         originalApplicationVersion: { type: String, required: false },
       },
       required: false,
+    },
+    subscriptionPerks: {
+      type: {
+        freeLabelsRedeemed: { type: Number, default: 0 },
+        freeLabelsRedeemable: { type: Boolean, default: true },
+        freeLabelsLastRedeemed: { type: Date, required: false },
+        freeLabelsNextRedeemable: { type: Date, default: Date.now },
+        secureRecoveriesEnabled: { type: Boolean, default: true },
+      },
     },
 
     verified: { type: Boolean, default: false },

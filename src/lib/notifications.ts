@@ -33,16 +33,15 @@ class NotificationService {
       };
     });
 
-    try {
-      const chunks = this.expo.chunkPushNotifications(messages);
-      const tickets = [];
+    const chunks = this.expo.chunkPushNotifications(messages);
+    const tickets = [];
 
+    try {
       for (const chunk of chunks) {
         const ticketChunk = await this.expo.sendPushNotificationsAsync(chunk);
         tickets.push(...ticketChunk);
       }
     } catch (err) {
-      console.log(err);
       logger.error(err);
     }
   }

@@ -1,4 +1,5 @@
 import express from "express";
+import { logger } from "../lib/logger";
 
 /*
   GET /status/validClients
@@ -12,8 +13,8 @@ import express from "express";
     - message: string
     - versions: string[]
 */
-export const getValidClients = async (req: express.Request, res: express.Response) => {
-  const version = "011020";
+const getValidClients = async (req: express.Request, res: express.Response) => {
+  const version = "011040";
 
   res.status(200).json({
     error: false,
@@ -22,4 +23,22 @@ export const getValidClients = async (req: express.Request, res: express.Respons
   });
 };
 
-export default { getValidClients };
+/*
+  GET /status/test-connection
+  Tests the connection to the database
+
+  Request Body:
+    - None
+
+  Response Body:
+    - Any
+*/
+const testConnection = async (req: express.Request, res: express.Response) => {
+  try {
+    throw new Error("Test error");
+  } catch (err) {
+    logger.error(err);
+  }
+};
+
+export default { getValidClients, testConnection };

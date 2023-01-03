@@ -1,10 +1,10 @@
 import express from "express";
 
 import geo from "../utils/geo";
+import { logger } from "../lib/logger";
 import { colors } from "../lib/constants";
 import { User } from "../models/user.model";
 import { Label } from "../models/label.model";
-import { logger } from "../lib/logger";
 import NotificationService from "../lib/notifications";
 
 /*
@@ -22,21 +22,23 @@ import NotificationService from "../lib/notifications";
 const createLabel = async (req: express.Request, res: express.Response) => {
   const label = new Label();
 
-  try {
-    const labelDocument = await label.save();
+  let labelDocument;
 
-    res.status(200).json({
-      error: false,
-      message: "Label created successfully",
-      label: labelDocument,
-    });
-  } catch (error) {
-    logger.error(error);
-    res.status(500).json({
+  try {
+    labelDocument = await label.save();
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({
       error: true,
       message: "Error creating label",
     });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "Label created successfully",
+    label: labelDocument,
+  });
 };
 
 /*
@@ -127,19 +129,19 @@ const addLabel = async (req: express.Request, res: express.Response) => {
   try {
     await user.save();
     await label.save();
-
-    return res.status(200).json({
-      error: false,
-      message: "Label added successfully",
-      label,
-    });
-  } catch (error) {
-    logger.error(error);
+  } catch (err) {
+    logger.error(err);
     return res.status(500).json({
       error: true,
       message: "Error adding label",
     });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "Label added successfully",
+    label,
+  });
 };
 
 /*
@@ -208,19 +210,16 @@ const modifyLabel = async (req: express.Request, res: express.Response) => {
 
   try {
     await label.save();
-
-    return res.status(200).json({
-      error: false,
-      message: "Label modified successfully",
-      label,
-    });
-  } catch (error) {
-    logger.error(error);
-    return res.status(500).json({
-      error: true,
-      message: error.message,
-    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error modifying label" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "Label modified successfully",
+    label,
+  });
 };
 
 /*
@@ -282,19 +281,15 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
   try {
     await user.save();
     await label.save();
-
-    return res.status(200).json({
-      error: false,
-      message: "Label deleted successfully",
-    });
-  } catch (error) {
-    console.log(error);
-    logger.error(error);
-    return res.status(500).json({
-      error: true,
-      message: "Error deleting label",
-    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error deleting label" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "Label deleted successfully",
+  });
 };
 
 /*
@@ -345,19 +340,16 @@ const recoveredLabel = async (req: express.Request, res: express.Response) => {
 
   try {
     await label.save();
-
-    return res.status(200).json({
-      error: false,
-      message: "Label recovered successfully",
-      label,
-    });
-  } catch (error) {
-    logger.error(error);
-    return res.status(500).json({
-      error: true,
-      message: "Error recovering label",
-    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error recovering label" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "Label recovered successfully",
+    label,
+  });
 };
 
 /*
@@ -414,27 +406,23 @@ const getLabel = async (req: express.Request, res: express.Response) => {
           labelId: label.id,
         },
       });
-    } catch (error) {
-      console.log(error);
-      logger.error(error);
+    } catch (err) {
+      logger.error(err);
     }
   }
 
   try {
     await label.save();
-
-    return res.status(200).json({
-      error: false,
-      message: "Label found",
-      label,
-    });
-  } catch (error) {
-    logger.error(error);
-    return res.status(500).json({
-      error: true,
-      message: "Error finding label",
-    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error finding label" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "Label found",
+    label,
+  });
 };
 
 /*
@@ -491,18 +479,15 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
 
   try {
     await label.save();
-
-    return res.status(200).json({
-      error: false,
-      message: "Label found successfully",
-    });
-  } catch (error) {
-    logger.error(error);
-    return res.status(500).json({
-      error: true,
-      message: error.message,
-    });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error finding label" });
   }
+
+  return res.status(200).json({
+    error: false,
+    message: "Label found successfully",
+  });
 };
 
 export default {

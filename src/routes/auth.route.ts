@@ -8,7 +8,7 @@ authRouter.post("/login", authController.login);
 authRouter.post("/reset", authController.reset);
 authRouter.post("/forgot", authController.forgot);
 authRouter.post("/register", authController.register);
-authRouter.post("/checkEmail", authController.checkEmail);
+authRouter.post("/check-email", authController.checkEmail);
 
 authRouter.post("/refresh", authMiddleware.authenticateRefreshToken, authController.refresh);
 authRouter.post("/logout", authMiddleware.authenticateAccessToken, authController.logout);
@@ -19,7 +19,7 @@ authRouter.post(
   authController.reverify
 );
 authRouter.post(
-  "/acceptTerms",
+  "/accept-terms",
   authMiddleware.authenticateVerifiedAccessToken,
   authController.acceptTerms
 );

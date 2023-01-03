@@ -4,63 +4,37 @@ import "winston-daily-rotate-file";
 
 import config from "../config";
 
-const { combine, timestamp, printf, colorize, align } = winston.format;
+const { combine, timestamp, printf, colorize, splat, align } = winston.format;
 
-const consoleFormat = combine(
-  format.errors({ stack: true }),
-  colorize({ all: true }),
-  timestamp({ format: "YYYY-MM-DD hh:mm:ss.SSS A" }),
-  align(),
-  printf((info) => {
-    if (info.stack) {
-      return `${info.timestamp} ${info.level}: ${info.message} ${info.stack}`;
-    }
-    return `${info.timestamp} ${info.level}: ${info.message}`;
-  })
-);
-
-const fileFormat = combine(
-  format.errors({ stack: true }),
-  timestamp({ format: "YYYY-MM-DD hh:mm:ss.SSS A" }),
-  align(),
-  printf((info) => `${info.timestamp} ${info.level}: ${info.message}`)
-);
+const logFormat = printf(({ level, message, timestamp }) => `${timestamp} ${level}: ${message}`);
 
 const logger = winston.createLogger({
-  level: config.LogLevel,
+  format: combine(timestamp(), logFormat),
+  exitOnError: false,
   transports: [
-    new winston.transports.Console({ format: consoleFormat }),
+    new winston.transports.DailyRotateFile({
+      filename: `${config.AppRoot}/logs/errors.log`,
+      level: "error",
+      datePattern: "YYYY-MM-DD",
+      maxFiles: "14d",
+      handleExceptions: true,
+      json: false,
+    }),
     new winston.transports.DailyRotateFile({
       filename: `${config.AppRoot}/logs/combined.log`,
-      format: fileFormat,
       datePattern: "YYYY-MM-DD",
-      maxFiles: "30d",
-    }),
-    new winston.transports.DailyRotateFile({
-      filename: `${config.AppRoot}/logs/error.log'`,
-      level: "error",
-      format: fileFormat,
-      datePattern: "YYYY-MM-DD",
-      maxFiles: "30d",
-    }),
-  ],
-  exceptionHandlers: [
-    new winston.transports.DailyRotateFile({
-      filename: `${config.AppRoot}/logs/exceptions.log`,
-      format: fileFormat,
-      datePattern: "YYYY-MM-DD",
-      maxFiles: "30d",
-    }),
-  ],
-  rejectionHandlers: [
-    new winston.transports.DailyRotateFile({
-      filename: `${config.AppRoot}/logs/rejections.log`,
-      format: fileFormat,
-      datePattern: "YYYY-MM-DD",
-      maxFiles: "30d",
+      maxFiles: "14d",
+      handleExceptions: true,
+      json: false,
     }),
   ],
 });
+
+logger.add(
+  new winston.transports.Console({
+    format: combine(splat(), align(), colorize()),
+  })
+);
 
 const morganLogger = morgan(
   (tokens, req, res) =>
