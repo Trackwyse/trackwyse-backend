@@ -15,7 +15,7 @@ import saleor from "../lib/saleor";
     - versions: string[]
 */
 const getValidClients = async (req: express.Request, res: express.Response) => {
-  const version = "011020";
+  const version = "011040";
 
   res.status(200).json({
     error: false,
