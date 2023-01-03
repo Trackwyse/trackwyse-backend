@@ -1,6 +1,4 @@
 import express from "express";
-import { logger } from "../lib/logger";
-import saleor from "../lib/saleor";
 
 /*
   GET /status/validClients

@@ -30,7 +30,7 @@ const getUser = async (req: express.Request, res: express.Response) => {
     // Make sure that the expiration date exists
     if (user.subscriptionReceipt && user.subscriptionReceipt?.expirationDate) {
       const expirationDate = new Date(user.subscriptionReceipt.expirationDate);
-      // Factor in 10 minutes of leeway
+      // Factor in X minutes of leeway
       const currentDate = new Date(Date.now() - config.AppleSubscriptionRenewalLeeway);
 
       if (expirationDate < currentDate) {

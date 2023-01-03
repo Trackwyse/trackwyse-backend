@@ -1,6 +1,10 @@
 import express from "express";
 import appleReceiptVerify from "node-apple-receipt-verify";
+
+import config from "../config";
+import saleor from "../lib/saleor";
 import { User } from "../models/user.model";
+import { CountryCode, AddressInput } from "../graphql/__generated__/api";
 
 /*
   GET /subscription
@@ -74,7 +78,7 @@ const createSubscription = async (req: express.Request, res: express.Response) =
   if (!Array.isArray(products) || products.length === 0) {
     return res.status(400).json({
       error: true,
-      message: "Invalid subscription receipt",
+      message: "INVALID_SUBSCRIPTION",
     });
   }
 
@@ -108,7 +112,97 @@ const createSubscription = async (req: express.Request, res: express.Response) =
   });
 };
 
+/*
+  POST /subscription/claim/free-labels
+  Claim free labels
+
+  Request body:
+    - none
+
+  Response body:
+    - error: boolean
+    - message: string
+*/
+const claimFreeLabels = async (req: express.Request, res: express.Response) => {
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(401).json({
+      error: true,
+      message: "Unauthorized",
+    });
+  }
+
+  // If the user has a subscription, but it's expired, set the subscription to inactive
+  if (user.subscriptionActive) {
+    // Make sure that the expiration date exists
+    if (user.subscriptionReceipt && user.subscriptionReceipt?.expirationDate) {
+      const expirationDate = new Date(user.subscriptionReceipt.expirationDate);
+      // Factor in X minutes of leeway
+      const currentDate = new Date(Date.now() - config.AppleSubscriptionRenewalLeeway);
+
+      if (expirationDate < currentDate) {
+        user.subscriptionActive = false;
+        await user.save();
+
+        return res.status(400).json({
+          error: true,
+          message: "Subscription expired",
+        });
+      }
+    }
+  }
+
+  if (!user.subscriptionActive) {
+    return res.status(400).json({
+      error: true,
+      message: "Subscription expired",
+    });
+  }
+
+  if (!user.subscriptionPerks?.freeLabelsRedeemable) {
+    return res.status(400).json({
+      error: true,
+      message: "No free labels available",
+    });
+  }
+
+  if (!user.address?.isValid) {
+    return res.status(400).json({
+      error: true,
+      message: "Invalid address",
+    });
+  }
+
+  const userAddress: AddressInput = {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    streetAddress1: user.address.address1,
+    streetAddress2: user.address.address2,
+    city: user.address.city,
+    postalCode: user.address.zip5,
+    country: CountryCode.Us, // TODO: Make this dynamic
+    countryArea: user.address.state,
+  };
+
+  const draftOrder = await saleor.DraftOrderCreate({
+    input: {
+      billingAddress: userAddress,
+      shippingAddress: userAddress,
+      userEmail: user.email,
+      customerNote: "Redeemed using Trackwyse plus",
+      lines: [
+        {
+          quantity: 1,
+          variantId: config.SaleorFreeLabelVariantId,
+        },
+      ],
+    },
+  });
+};
+
 export default {
   getSubscription,
   createSubscription,
+  claimFreeLabels,
 };
