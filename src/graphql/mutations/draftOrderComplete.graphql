@@ -5,6 +5,10 @@ mutation DraftOrderComplete($id: ID!) {
       created
       updatedAt
       status
+      statusDisplay
+    }
+    errors {
+      message
     }
   }
 }

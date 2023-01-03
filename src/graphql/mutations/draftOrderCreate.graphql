@@ -2,9 +2,6 @@ mutation DraftOrderCreate($input: DraftOrderCreateInput!) {
   draftOrderCreate(input: $input) {
     order {
       id
-      created
-      updatedAt
-      status
     }
     errors {
       message

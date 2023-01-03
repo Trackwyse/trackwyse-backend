@@ -207,6 +207,29 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
     });
   }
 
+  const completeOrder = await saleor.DraftOrderComplete({
+    id: draftOrder.draftOrderCreate.order.id,
+  });
+
+  if (!completeOrder.draftOrderComplete?.order) {
+    return res.status(500).json({
+      error: true,
+      message: "Error completing draft order",
+    });
+  }
+
+  user["subscriptionPerks"]["freeLabelsRedeemable"] = false;
+  user["subscriptionPerks"]["freeLabelsLastRedeemed"] = new Date();
+
+  try {
+    await user.save();
+  } catch {
+    return res.status(500).json({
+      error: true,
+      message: "Error saving subscription",
+    });
+  }
+
   return res.json({
     error: false,
     message: "Free labels claimed",

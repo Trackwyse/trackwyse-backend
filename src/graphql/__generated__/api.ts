@@ -33537,14 +33537,14 @@ export type DraftOrderCompleteMutationVariables = Exact<{
 }>;
 
 
-export type DraftOrderCompleteMutation = { __typename?: 'Mutation', draftOrderComplete?: { __typename?: 'DraftOrderComplete', order?: { __typename?: 'Order', id: string, created: any, updatedAt: any, status: OrderStatus } | null } | null };
+export type DraftOrderCompleteMutation = { __typename?: 'Mutation', draftOrderComplete?: { __typename?: 'DraftOrderComplete', order?: { __typename?: 'Order', id: string, created: any, updatedAt: any, status: OrderStatus, statusDisplay: string } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
 
 export type DraftOrderCreateMutationVariables = Exact<{
   input: DraftOrderCreateInput;
 }>;
 
 
-export type DraftOrderCreateMutation = { __typename?: 'Mutation', draftOrderCreate?: { __typename?: 'DraftOrderCreate', order?: { __typename?: 'Order', id: string, created: any, updatedAt: any, status: OrderStatus } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
+export type DraftOrderCreateMutation = { __typename?: 'Mutation', draftOrderCreate?: { __typename?: 'DraftOrderCreate', order?: { __typename?: 'Order', id: string } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
 
 export type ProductQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33571,6 +33571,10 @@ export const DraftOrderCompleteDocument = gql`
       created
       updatedAt
       status
+      statusDisplay
+    }
+    errors {
+      message
     }
   }
 }
@@ -33580,9 +33584,6 @@ export const DraftOrderCreateDocument = gql`
   draftOrderCreate(input: $input) {
     order {
       id
-      created
-      updatedAt
-      status
     }
     errors {
       message
