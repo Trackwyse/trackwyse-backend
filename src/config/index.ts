@@ -20,6 +20,9 @@ export interface Config {
 
   USPSUserId: string;
 
+  SaleorAccessToken: string;
+  SaleorGraphQLURL: string;
+
   AWSRegion: string;
   AWSAccessKeyId: string;
   AWSSecretAccessKey: string;
@@ -54,6 +57,9 @@ const config: Config = {
   ExpoAccessToken: process.env.EXPO_ACCESS_TOKEN,
 
   USPSUserId: process.env.USPS_USER_ID,
+
+  SaleorAccessToken: process.env.SALEOR_ACCESS_TOKEN,
+  SaleorGraphQLURL: process.env.SALEOR_GRAPHQL_URL,
 
   AWSRegion: process.env.AWS_REGION || "us-east-1",
   AWSAccessKeyId: process.env.AWS_ACCESS_KEY_ID,

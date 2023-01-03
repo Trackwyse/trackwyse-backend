@@ -1,0 +1,15 @@
+query Products($first: Int) {
+  products(first: $first) {
+    edges {
+      node {
+        id
+        name
+        description
+        channel
+        defaultVariant {
+          id
+        }
+      }
+    }
+  }
+}

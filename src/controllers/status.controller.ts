@@ -1,4 +1,5 @@
 import express from "express";
+import saleor from "../lib/saleor";
 
 /*
   GET /status/validClients
@@ -12,7 +13,7 @@ import express from "express";
     - message: string
     - versions: string[]
 */
-export const getValidClients = async (req: express.Request, res: express.Response) => {
+const getValidClients = async (req: express.Request, res: express.Response) => {
   const version = "011020";
 
   res.status(200).json({
@@ -22,4 +23,24 @@ export const getValidClients = async (req: express.Request, res: express.Respons
   });
 };
 
-export default { getValidClients };
+/*
+  GET /status/test-connection
+  Tests the connection to the database
+
+  Request Body:
+    - None
+
+  Response Body:
+    - Any
+*/
+const testConnection = async (req: express.Request, res: express.Response) => {
+  const test = await saleor.Products({ first: 10 });
+
+  res.status(200).json({
+    error: false,
+    message: "Connection successful",
+    test,
+  });
+};
+
+export default { getValidClients, testConnection };
