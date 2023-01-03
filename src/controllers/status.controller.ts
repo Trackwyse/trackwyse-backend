@@ -1,4 +1,5 @@
 import express from "express";
+import { logger } from "../lib/logger";
 import saleor from "../lib/saleor";
 
 /*
@@ -33,14 +34,6 @@ const getValidClients = async (req: express.Request, res: express.Response) => {
   Response Body:
     - Any
 */
-const testConnection = async (req: express.Request, res: express.Response) => {
-  const test = await saleor.Products({ first: 10 });
-
-  res.status(200).json({
-    error: false,
-    message: "Connection successful",
-    test,
-  });
-};
+const testConnection = async (req: express.Request, res: express.Response) => {};
 
 export default { getValidClients, testConnection };

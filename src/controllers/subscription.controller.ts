@@ -1,6 +1,5 @@
 import express from "express";
 import appleReceiptVerify from "node-apple-receipt-verify";
-import { logger } from "../lib/logger";
 import { User } from "../models/user.model";
 
 /*
@@ -68,46 +67,45 @@ const createSubscription = async (req: express.Request, res: express.Response) =
     });
   }
 
-  try {
-    const products = await appleReceiptVerify.validate({
-      receipt,
-    });
+  const products = await appleReceiptVerify.validate({
+    receipt,
+  });
 
-    if (!Array.isArray(products) || products.length === 0) {
-      return res.status(400).json({
-        error: true,
-        message: "Invalid subscription receipt",
-      });
-    }
-
-    let subscriptionReceipt = products[0];
-
-    user.subscriptionActive = true;
-    user.subscriptionReceipt = subscriptionReceipt;
-    user.subscriptionDate = new Date(subscriptionReceipt.purchaseDate);
-
-    user.subscriptionPerks = {
-      ...user.subscriptionPerks,
-      freeLabelsRedeemable: true,
-      freeLabelsNextRedeemable: new Date(subscriptionReceipt.expirationDate),
-    };
-
-    await user.save();
-
-    const sanitizedUser = user.sanitize();
-
-    return res.json({
-      error: false,
-      message: "Subscription created",
-      user: sanitizedUser,
-    });
-  } catch (error) {
-    console.log(error);
+  if (!Array.isArray(products) || products.length === 0) {
     return res.status(400).json({
       error: true,
-      message: "Error validating subscription",
+      message: "Invalid subscription receipt",
     });
   }
+
+  let subscriptionReceipt = products[0];
+
+  user.subscriptionActive = true;
+  user.subscriptionReceipt = subscriptionReceipt;
+  user.subscriptionDate = new Date(subscriptionReceipt.purchaseDate);
+
+  user.subscriptionPerks = {
+    ...user.subscriptionPerks,
+    freeLabelsRedeemable: true,
+    freeLabelsNextRedeemable: new Date(subscriptionReceipt.expirationDate),
+  };
+
+  try {
+    await user.save();
+  } catch {
+    return res.status(500).json({
+      error: true,
+      message: "Error saving subscription",
+    });
+  }
+
+  const sanitizedUser = user.sanitize();
+
+  return res.json({
+    error: false,
+    message: "Subscription created",
+    user: sanitizedUser,
+  });
 };
 
 export default {
