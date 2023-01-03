@@ -54,6 +54,9 @@ const getSubscription = async (req: express.Request, res: express.Response) => {
     - user: SanitizedUser
 */
 const createSubscription = async (req: express.Request, res: express.Response) => {
+  console.log(JSON.stringify(req, null, 2));
+  console.log(JSON.stringify(req.body, null, 2));
+  console.log(JSON.stringify(req.user, null, 2));
   const { receipt } = req.body;
 
   if (!receipt) {
