@@ -135,6 +135,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
         zip5: address.Zip5,
       };
     } catch (err) {
+      logger.error(err);
       return res.status(400).json({ error: true, message: "Invalid address" });
     }
   }

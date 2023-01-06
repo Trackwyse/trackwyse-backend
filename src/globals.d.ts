@@ -63,8 +63,8 @@ interface Label {
 
   foundNear: string; // Based on IP address
   foundDate: Date; // When the label was found
-  foundExactLocation: string; // Exact location of where the label was, if user provided it
-  foundRecoveryLocation: string; // Where the user can recover the label, if user provided it
+  foundExactLocation: Address; // Exact location of where the label was, if user provided it
+  foundRecoveryLocation: Address; // Where the user can recover the label, if user provided it
   foundRecoveryPossible: boolean; // If the user can recover the label
   finderPhoneNumber: string; // Phone number of the person who found the label
 

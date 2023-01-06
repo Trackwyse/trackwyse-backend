@@ -4,6 +4,6 @@ import statusController from "../controllers/status.controller";
 const statusRouter = express.Router();
 
 statusRouter.get("/valid-clients", statusController.getValidClients);
-statusRouter.get("/test-connection", statusController.testConnection);
+statusRouter.post("/test-connection", statusController.testConnection);
 
 export default statusRouter;

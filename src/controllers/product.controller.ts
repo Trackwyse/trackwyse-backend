@@ -6,6 +6,7 @@ import { colors } from "../lib/constants";
 import { User } from "../models/user.model";
 import { Label } from "../models/label.model";
 import NotificationService from "../lib/notifications";
+import usps from "../lib/usps";
 
 /*
   POST /api/v1/labels/create
@@ -469,10 +470,54 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
   const { phoneNumber, exactLocation, recoveryLocation } = req.body;
 
   if (phoneNumber) label.finderPhoneNumber = phoneNumber;
-  if (exactLocation) label.foundExactLocation = exactLocation;
+
+  if (exactLocation) {
+    try {
+      const address = await usps.verify({
+        Address1: exactLocation.address1 ?? label.foundExactLocation?.address1 ?? "",
+        Address2: exactLocation.address2 ?? label.foundExactLocation?.address2 ?? "",
+        City: exactLocation.city ?? label.foundExactLocation?.city ?? "",
+        State: exactLocation.state ?? label.foundExactLocation?.state ?? "",
+        Zip5: exactLocation.zip5 ?? label.foundExactLocation?.zip5 ?? "",
+      });
+
+      label.foundExactLocation = {
+        isValid: true,
+        address1: address.Address1,
+        address2: address.Address2,
+        city: address.City,
+        state: address.State,
+        zip5: address.Zip5,
+      };
+    } catch (err) {
+      logger.error(err);
+      return res.status(400).json({ error: true, message: "Invalid address" });
+    }
+  }
+
   if (recoveryLocation) {
-    label.foundRecoveryLocation = recoveryLocation;
-    label.foundRecoveryPossible = true;
+    try {
+      const address = await usps.verify({
+        Address1: recoveryLocation.address1 ?? label.foundRecoveryLocation?.address1 ?? "",
+        Address2: recoveryLocation.address2 ?? label.foundRecoveryLocation?.address2 ?? "",
+        City: recoveryLocation.city ?? label.foundRecoveryLocation?.city ?? "",
+        State: recoveryLocation.state ?? label.foundRecoveryLocation?.state ?? "",
+        Zip5: recoveryLocation.zip5 ?? label.foundRecoveryLocation?.zip5 ?? "",
+      });
+
+      label.foundRecoveryPossible = true;
+      label.foundRecoveryLocation = {
+        isValid: true,
+        address1: address.Address1,
+        address2: address.Address2,
+        city: address.City,
+        state: address.State,
+        zip5: address.Zip5,
+      };
+    } catch (err) {
+      logger.error(err);
+      return res.status(400).json({ error: true, message: "Invalid address" });
+    }
   }
 
   label.foundDate = new Date();
@@ -487,6 +532,7 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
   return res.status(200).json({
     error: false,
     message: "Label found successfully",
+    label,
   });
 };
 

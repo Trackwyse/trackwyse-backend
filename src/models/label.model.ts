@@ -39,8 +39,28 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
 
     foundNear: { type: String, required: false },
     foundDate: { type: Date, required: false },
-    foundExactLocation: { type: String, required: false },
-    foundRecoveryLocation: { type: String, required: false },
+    foundExactLocation: {
+      type: {
+        isValid: { type: Boolean, required: false },
+        address1: { type: String, required: false },
+        address2: { type: String, required: false },
+        city: { type: String, required: false },
+        state: { type: String, required: false },
+        zip5: { type: String, required: false },
+      },
+      required: false,
+    },
+    foundRecoveryLocation: {
+      type: {
+        isValid: { type: Boolean, required: false },
+        address1: { type: String, required: false },
+        address2: { type: String, required: false },
+        city: { type: String, required: false },
+        state: { type: String, required: false },
+        zip5: { type: String, required: false },
+      },
+      required: false,
+    },
     foundRecoveryPossible: { type: Boolean, required: false },
     finderPhoneNumber: {
       type: String,
