@@ -354,79 +354,6 @@ const recoveredLabel = async (req: express.Request, res: express.Response) => {
 };
 
 /*
-  GET /api/v1/labels/:labelId
-  Get label contact information if found
-
-  Required Fields:
-    - labelId
-
-  Returns:
-    - error
-    - message
-    - label
-*/
-const getLabel = async (req: express.Request, res: express.Response) => {
-  const ip = (req.headers["x-forwarded-for"] as string) || (req.connection.remoteAddress as string);
-
-  if (req.user?.labels.indexOf(req.params.labelId) !== -1 && req.user) {
-    return res.status(401).json({
-      error: true,
-      message: "You cannot locate your own label",
-    });
-  }
-
-  const label = await Label.findById(req.params.labelId);
-
-  if (!label) {
-    return res.status(404).json({
-      error: true,
-      message: "Label not found",
-    });
-  }
-
-  if (!label.activated) {
-    return res.status(400).json({
-      error: true,
-      message: "Label not activated",
-    });
-  }
-
-  label.isLost = true;
-  label.foundNear = geo.getRelativeLocation(ip);
-
-  // Send Notification to Label Owner
-  const user = await User.findById(label.owner);
-
-  if (user && user.notificationPushTokens.length && user.notificationsEnabled) {
-    try {
-      NotificationService.sendNotification(user.notificationPushTokens, {
-        title: "Your label has been located",
-        body: `Your label "${label.name}" has been located near ${label.foundNear}`,
-        data: {
-          type: "labelLocated",
-          labelId: label.id,
-        },
-      });
-    } catch (err) {
-      logger.error(err);
-    }
-  }
-
-  try {
-    await label.save();
-  } catch (err) {
-    logger.error(err);
-    return res.status(500).json({ error: true, message: "Error finding label" });
-  }
-
-  return res.status(200).json({
-    error: false,
-    message: "Label found",
-    label,
-  });
-};
-
-/*
   POST /api/v1/labels/found/:labelId
   Update contact's label to found
 
@@ -437,6 +364,8 @@ const getLabel = async (req: express.Request, res: express.Response) => {
     - recoveryLocation (optional)
 */
 const foundLabel = async (req: express.Request, res: express.Response) => {
+  const ip = (req.headers["x-forwarded-for"] as string) || (req.connection.remoteAddress as string);
+
   if (req.user?.labels.indexOf(req.params.labelId) !== -1 && req.user) {
     return res.status(401).json({
       error: true,
@@ -465,6 +394,29 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
       error: true,
       message: "Label not lost",
     });
+  }
+
+  label.isLost = true;
+  label.foundNear = geo.getRelativeLocation(ip);
+
+  // Send Notification to Label Owner
+  const user = await User.findById(label.owner);
+
+  if (user && user.notificationPushTokens.length && user.notificationsEnabled) {
+    try {
+      NotificationService.sendNotification(user.notificationPushTokens, {
+        title: "Your label has been located",
+        body: `Your label "${label.name ?? "No Name"}" has been located near ${
+          label.foundNear ?? "Unknown"
+        }`,
+        data: {
+          type: "labelLocated",
+          labelId: label.id,
+        },
+      });
+    } catch (err) {
+      logger.error(err);
+    }
   }
 
   const { phoneNumber, exactLocation, recoveryLocation } = req.body;
@@ -538,7 +490,6 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
 
 export default {
   getLabels,
-  getLabel,
   foundLabel,
   createLabel,
   addLabel,

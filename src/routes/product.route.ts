@@ -8,7 +8,6 @@ const productRouter = express.Router();
 const labelRouter = express.Router();
 labelRouter.post("/create", authMiddleware.attachAccessToken, productController.createLabel); // TEMPORARY
 
-labelRouter.get("/:labelId", authMiddleware.attachAccessToken, productController.getLabel);
 labelRouter.post("/found/:labelId", authMiddleware.attachAccessToken, productController.foundLabel);
 
 labelRouter.get("/", authMiddleware.authenticateVerifiedAccessToken, productController.getLabels);
