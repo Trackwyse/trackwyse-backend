@@ -14,7 +14,7 @@ import { logger } from "../lib/logger";
     - versions: string[]
 */
 const getValidClients = async (req: express.Request, res: express.Response) => {
-  const version = "011040";
+  const version = "011080";
 
   res.status(200).json({
     error: false,
