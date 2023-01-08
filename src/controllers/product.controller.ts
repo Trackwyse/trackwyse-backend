@@ -389,13 +389,6 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
     });
   }
 
-  if (!label.isLost) {
-    return res.status(400).json({
-      error: true,
-      message: "Label not lost",
-    });
-  }
-
   label.isLost = true;
   label.foundNear = geo.getRelativeLocation(ip);
 
