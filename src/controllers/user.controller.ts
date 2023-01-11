@@ -5,6 +5,7 @@ import config from "../config";
 import MailService from "../lib/mail";
 import { logger } from "../lib/logger";
 import { User } from "../models/user.model";
+import AppleMaps from "../lib/applemaps";
 
 /*
   GET /api/v1/user
@@ -126,6 +127,14 @@ const updateUser = async (req: express.Request, res: express.Response) => {
         Zip5: zip5 ?? user.address?.zip5 ?? "",
       });
 
+      const geocodedAddress = await AppleMaps.geoCode({
+        address1: address.Address1,
+        address2: address.Address2,
+        city: address.City,
+        state: address.State,
+        zip5: address.Zip5,
+      });
+
       user.address = {
         isValid: true,
         address1: address.Address1,
@@ -133,6 +142,8 @@ const updateUser = async (req: express.Request, res: express.Response) => {
         city: address.City,
         state: address.State,
         zip5: address.Zip5,
+        latitude: geocodedAddress.latitude,
+        longitude: geocodedAddress.longitude,
       };
     } catch (err) {
       logger.error(err);

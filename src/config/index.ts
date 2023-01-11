@@ -33,6 +33,7 @@ export interface Config {
   AppleSharedSecret: string;
   AppleAppStoreEnv: ("sandbox" | "production")[];
   AppleSubscriptionRenewalLeeway: number;
+  AppleMapsAuthToken: string;
 
   SaltFactor: number;
   AccessTokenPublicKey: string;
@@ -74,6 +75,7 @@ const config: Config = {
   AppleSharedSecret: process.env.APPLE_SHARED_SECRET,
   AppleAppStoreEnv: [process.env.APPLE_APP_STORE_ENV as "sandbox" | "production"] || ["sandbox"],
   AppleSubscriptionRenewalLeeway: parseInt(process.env.APPLE_SUBSCRIPTION_RENEWAL_LEEWAY) || 86400,
+  AppleMapsAuthToken: process.env.APPLE_MAPS_AUTH_TOKEN,
 
   SaltFactor: parseInt(process.env.SALT_FACTOR) || 10,
   AccessTokenPublicKey: process.env.ACCESS_TOKEN_PUBLIC,

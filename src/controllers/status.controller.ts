@@ -1,4 +1,5 @@
 import express from "express";
+import AppleMaps from "../lib/applemaps";
 import { logger } from "../lib/logger";
 
 /*
@@ -34,13 +35,6 @@ const getValidClients = async (req: express.Request, res: express.Response) => {
     - Any
 */
 const testConnection = async (req: express.Request, res: express.Response) => {
-  const { test } = req.body;
 
-  res.status(200).json({
-    error: false,
-    message: "Test connection",
-    test,
-  });
-};
 
 export default { getValidClients, testConnection };

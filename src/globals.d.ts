@@ -103,10 +103,21 @@ interface SubscriptionPerks {
 }
 
 interface Address {
-  isValid: boolean;
+  isValid?: boolean;
   address1: string;
-  address2: string;
+  address2?: string;
   city: string;
   state: string;
   zip5: string;
+  latitude?: number;
+  longitude?: number;
+}
+
+interface Place {
+  country: string;
+  countryCode: string;
+  coordinate: {
+    latitude: number;
+    longitude: number;
+  };
 }
