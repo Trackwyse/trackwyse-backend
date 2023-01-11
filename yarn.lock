@@ -2719,6 +2719,14 @@ app-root-path@^3.1.0:
   resolved "https://registry.yarnpkg.com/app-root-path/-/app-root-path-3.1.0.tgz#5971a2fc12ba170369a7a1ef018c71e6e47c2e86"
   integrity sha512-biN3PwB2gUtjaYy/isrU3aNWI5w+fAfvHkSvCKeQGxhmYpwKFUxudR3Yya+KqVRHBmEDYh+/lTozYCFbmzX4nA==
 
+apple-maps-server-sdk@^1.0.7:
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/apple-maps-server-sdk/-/apple-maps-server-sdk-1.0.7.tgz#59cf113d45d1423ce83283354b84c14d5a2a8553"
+  integrity sha512-kzSuCFXAl7dpAjOxGE4sHwFO4B+Mhj8k7TngBWDB0AlGVs2wDJ0zizczIYuHfkpR33Nl/09vqqW9wtoTtwsmAw==
+  dependencies:
+    axios "^1.2.2"
+    qs "^6.11.0"
+
 "aproba@^1.0.3 || ^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/aproba/-/aproba-2.0.0.tgz#52520b8ae5b569215b354efc0caa3fe1e45a8adc"

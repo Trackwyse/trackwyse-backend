@@ -1,5 +1,5 @@
 import express from "express";
-import AppleMaps from "../lib/applemaps";
+import appleMaps from "../lib/applemaps";
 import { logger } from "../lib/logger";
 
 /*

@@ -8,6 +8,7 @@ import { Label } from "../models/label.model";
 import NotificationService from "../lib/notifications";
 import usps from "../lib/usps";
 import AppleMaps from "../lib/applemaps";
+import { getAddressString } from "../lib/textUtil";
 
 /*
   POST /api/v1/labels/create
@@ -427,12 +428,14 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
         Zip5: exactLocation.zip5 ?? label.foundExactLocation?.zip5 ?? "",
       });
 
-      const geocodedAddress = await AppleMaps.geoCode({
-        address1: address.Address1,
-        address2: address.Address2,
-        city: address.City,
-        state: address.State,
-        zip5: address.Zip5,
+      const geocodedAddress = await AppleMaps.geocode({
+        q: getAddressString({
+          address1: address.Address1,
+          address2: address.Address2,
+          city: address.City,
+          state: address.State,
+          zip5: address.Zip5,
+        }),
       });
 
       label.foundExactLocation = {
@@ -461,12 +464,14 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
         Zip5: recoveryLocation.zip5 ?? label.foundRecoveryLocation?.zip5 ?? "",
       });
 
-      const geocodedAddress = await AppleMaps.geoCode({
-        address1: address.Address1,
-        address2: address.Address2,
-        city: address.City,
-        state: address.State,
-        zip5: address.Zip5,
+      const geocodedAddress = await AppleMaps.geocode({
+        q: getAddressString({
+          address1: address.Address1,
+          address2: address.Address2,
+          city: address.City,
+          state: address.State,
+          zip5: address.Zip5,
+        }),
       });
 
       label.foundRecoveryPossible = true;
