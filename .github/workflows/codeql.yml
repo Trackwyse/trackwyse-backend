@@ -13,9 +13,25 @@ name: "CodeQL"
 
 on:
   push:
+    branches: ["development"]
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.txt"
+      - "**/*.json"
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.xml"
+      - "**/*.env"
+  pull_request:
     branches: ["main"]
-  schedule:
-    - cron: "31 14 * * 5"
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.txt"
+      - "**/*.json"
+      - "**/*.yml"
+      - "**/*.yaml"
+      - "**/*.xml"
+      - "**/*.env"
 
 jobs:
   analyze:
