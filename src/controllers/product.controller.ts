@@ -445,8 +445,8 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
         city: address.City,
         state: address.State,
         zip5: address.Zip5,
-        latitude: geocodedAddress[0].coordinate.latitude,
-        longitude: geocodedAddress[0].coordinate.longitude,
+        latitude: geocodedAddress.response[0].coordinate.latitude,
+        longitude: geocodedAddress.response[0].coordinate.longitude,
       };
     } catch (err) {
       logger.error(err);
@@ -482,8 +482,8 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
         city: address.City,
         state: address.State,
         zip5: address.Zip5,
-        latitude: geocodedAddress[0].coordinate.latitude,
-        longitude: geocodedAddress[0].coordinate.longitude,
+        latitude: geocodedAddress.response[0].coordinate.latitude,
+        longitude: geocodedAddress.response[0].coordinate.longitude,
       };
     } catch (err) {
       logger.error(err);
