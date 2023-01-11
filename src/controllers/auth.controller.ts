@@ -36,7 +36,7 @@ const login = async (req: express.Request, res: express.Response) => {
   // convert email to lowercase to prevent duplicate emails
   const emailLower = email.toLowerCase();
 
-  const user = await User.findOne({ email: emailLower });
+  const user = await User.findOne({ email: { $eq: email } });
 
   if (!user) {
     return res.status(404).json({ error: true, message: "User not found" });
@@ -217,7 +217,7 @@ const checkEmail = async (req: express.Request, res: express.Response) => {
   }
 
   const user = await User.findOne({
-    email,
+    email: { $eq: email },
   });
 
   if (user) {
@@ -341,7 +341,7 @@ const forgot = async (req: express.Request, res: express.Response) => {
   }
 
   const user = await User.findOne({
-    email,
+    email: { $eq: email },
   });
 
   if (!user) {
@@ -385,7 +385,7 @@ const reset = async (req: express.Request, res: express.Response) => {
   }
 
   const user = await User.findOne({
-    email,
+    email: { $eq: email },
   });
 
   if (!user) {
