@@ -34,7 +34,6 @@ const getValidClients = async (req: express.Request, res: express.Response) => {
   Response Body:
     - Any
 */
-const testConnection = async (req: express.Request, res: express.Response) => {
-
+const testConnection = async (req: express.Request, res: express.Response) => {};
 
 export default { getValidClients, testConnection };
