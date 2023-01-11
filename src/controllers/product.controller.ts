@@ -1,14 +1,14 @@
 import express from "express";
 
 import geo from "@/utils/geo";
-import usps from "@/lib/usps";
 import { logger } from "@/lib/logger";
-import AppleMaps from "@/lib/applemaps";
 import { colors } from "@/lib/constants";
 import { User } from "@/models/user.model";
 import { Label } from "@/models/label.model";
-import { getAddressString } from "@/lib/textUtil";
+import { getAddressString } from "@/utils/text";
 
+import USPS from "@/lib/usps";
+import AppleMaps from "@/lib/appleMaps";
 import NotificationService from "@/lib/notifications";
 
 /*
@@ -421,7 +421,7 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
 
   if (exactLocation) {
     try {
-      const address = await usps.verify({
+      const address = await USPS.verify({
         Address1: exactLocation.address1 ?? label.foundExactLocation?.address1 ?? "",
         Address2: exactLocation.address2 ?? label.foundExactLocation?.address2 ?? "",
         City: exactLocation.city ?? label.foundExactLocation?.city ?? "",
@@ -457,7 +457,7 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
 
   if (recoveryLocation) {
     try {
-      const address = await usps.verify({
+      const address = await USPS.verify({
         Address1: recoveryLocation.address1 ?? label.foundRecoveryLocation?.address1 ?? "",
         Address2: recoveryLocation.address2 ?? label.foundRecoveryLocation?.address2 ?? "",
         City: recoveryLocation.city ?? label.foundRecoveryLocation?.city ?? "",

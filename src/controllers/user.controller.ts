@@ -1,12 +1,13 @@
 import express from "express";
-import usps from "@/lib/usps";
 
 import config from "@/config";
-import MailService from "@/lib/mail";
 import { logger } from "@/lib/logger";
-import AppleMaps from "@/lib/applemaps";
 import { User } from "@/models/user.model";
-import { getAddressString } from "@/lib/textUtil";
+import { getAddressString } from "@/utils/text";
+
+import AppleMaps from "@/lib/appleMaps";
+import MailService from "@/lib/mail";
+import USPS from "@/lib/usps";
 
 /*
   GET /api/v1/user
@@ -120,7 +121,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
   // If the user updates any part of their address, ensure that the address is valid
   if (zip5 || city || state || address1 || address2) {
     try {
-      const address = await usps.verify({
+      const address = await USPS.verify({
         Address1: address1 ?? user.address?.address1 ?? "",
         Address2: address2 ?? user.address?.address2 ?? "",
         City: city ?? user.address?.city ?? "",

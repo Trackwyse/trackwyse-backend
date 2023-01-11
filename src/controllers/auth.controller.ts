@@ -1,9 +1,10 @@
 import express from "express";
 
 import jwt from "@/utils/jwt";
-import MailService from "@/lib/mail";
 import { logger } from "@/lib/logger";
 import { User } from "@/models/user.model";
+
+import MailService from "@/lib/mail";
 
 /*
   POST /auth/vX/login

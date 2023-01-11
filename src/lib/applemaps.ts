@@ -1,9 +1,9 @@
-import AppleMaps from "apple-maps-server-sdk";
+import AppleMapsSDK from "apple-maps-server-sdk";
 
 import config from "@/config";
 
-const appleMaps = new AppleMaps({
+const AppleMaps = new AppleMapsSDK({
   authorizationToken: config.AppleMapsAuthToken,
 });
 
-export default appleMaps;
+export default AppleMaps;

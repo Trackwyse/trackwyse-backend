@@ -1,11 +1,11 @@
-import USPS from "usps-webtools-promise";
+import UspsSDK from "usps-webtools-promise";
 
 import config from "@/config";
 
-const usps = new USPS({
+const USPS = new UspsSDK({
   properCase: true,
   staging: false,
   userId: config.USPSUserId,
 });
 
-export default usps;
+export default USPS;
