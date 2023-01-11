@@ -5,7 +5,7 @@ const config: CodegenConfig = {
   schema: "https://trackwyse.saleor.cloud/graphql/",
   documents: "src/graphql/**/*.graphql",
   generates: {
-    "src/graphql/__generated__/api.ts": {
+    "src/graphql/generated/api.ts": {
       plugins: [
         "typescript",
         "typescript-resolvers",

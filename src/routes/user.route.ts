@@ -23,5 +23,10 @@ userRouter.post(
   authMiddleware.authenticateVerifiedAccessToken,
   userController.updatePassword
 );
+userRouter.delete(
+  "/delete-account",
+  authMiddleware.authenticateVerifiedAccessToken,
+  userController.deleteAccount
+);
 
 export default userRouter;
