@@ -2719,10 +2719,10 @@ app-root-path@^3.1.0:
   resolved "https://registry.yarnpkg.com/app-root-path/-/app-root-path-3.1.0.tgz#5971a2fc12ba170369a7a1ef018c71e6e47c2e86"
   integrity sha512-biN3PwB2gUtjaYy/isrU3aNWI5w+fAfvHkSvCKeQGxhmYpwKFUxudR3Yya+KqVRHBmEDYh+/lTozYCFbmzX4nA==
 
-apple-maps-server-sdk@^1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/apple-maps-server-sdk/-/apple-maps-server-sdk-1.0.7.tgz#59cf113d45d1423ce83283354b84c14d5a2a8553"
-  integrity sha512-kzSuCFXAl7dpAjOxGE4sHwFO4B+Mhj8k7TngBWDB0AlGVs2wDJ0zizczIYuHfkpR33Nl/09vqqW9wtoTtwsmAw==
+apple-maps-server-sdk@^1.0.8:
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/apple-maps-server-sdk/-/apple-maps-server-sdk-1.0.8.tgz#a44a31616ecb75800079fd127536a20ec913bccb"
+  integrity sha512-fS0b0MVMoIFmcymPOkK9jeu95A/I0cvRxqNcc4hieDnn947BGLWnoibsRCpPrpIxPbaZWLEBd8ZcQDVR1VEItw==
   dependencies:
     axios "^1.2.2"
     qs "^6.11.0"

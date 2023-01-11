@@ -15,7 +15,7 @@
   "dependencies": {
     "@types/cookie-parser": "^1.4.3",
     "app-root-path": "^3.1.0",
-    "apple-maps-server-sdk": "^1.0.7",
+    "apple-maps-server-sdk": "^1.0.8",
     "aws-sdk": "^2.1269.0",
     "axios": "^1.2.2",
     "bcrypt": "^5.1.0",
