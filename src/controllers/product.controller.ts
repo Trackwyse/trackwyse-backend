@@ -14,7 +14,7 @@ import { getAddressString } from "@/utils/text";
 
 import USPS from "@/lib/usps";
 import User from "@/models/user.model";
-import AppleMaps from "@/lib/appleMaps";
+import AppleMaps from "@/lib/applemaps";
 import Label from "@/models/label.model";
 import NotificationService from "@/lib/notifications";
 
