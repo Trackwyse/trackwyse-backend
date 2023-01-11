@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
-import { User } from "../models/user.model";
-import jwt from "../utils/jwt";
+import jwt from "@/utils/jwt";
+import { User } from "@/models/user.model";
 
 /*
   Only used for the /auth/vX/refresh route

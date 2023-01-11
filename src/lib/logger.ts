@@ -1,8 +1,8 @@
 import morgan from "morgan";
-import winston, { format } from "winston";
+import winston from "winston";
 import "winston-daily-rotate-file";
 
-import config from "../config";
+import config from "@/config";
 
 const { combine, timestamp, printf, colorize, splat, align } = winston.format;
 

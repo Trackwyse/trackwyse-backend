@@ -1,9 +1,9 @@
 import express from "express";
 
-import { User } from "../models/user.model";
-import { logger } from "../lib/logger";
-import MailService from "../lib/mail";
-import jwt from "../utils/jwt";
+import jwt from "@/utils/jwt";
+import MailService from "@/lib/mail";
+import { logger } from "@/lib/logger";
+import { User } from "@/models/user.model";
 
 /*
   POST /auth/vX/login

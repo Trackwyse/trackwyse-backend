@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 
-import config from "../config";
+import config from "@/config";
 
 export interface UserSchema extends User, mongoose.Document {
   comparePassword: (password: string) => Promise<boolean>;

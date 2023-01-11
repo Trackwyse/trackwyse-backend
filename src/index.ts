@@ -1,17 +1,17 @@
-import appleReceiptVerify from "node-apple-receipt-verify";
-import cookieParser from "cookie-parser";
-import express from "express";
-import helmet from "helmet";
 import cors from "cors";
+import helmet from "helmet";
+import express from "express";
+import cookieParser from "cookie-parser";
+import appleReceiptVerify from "node-apple-receipt-verify";
 
-import { productRouter, labelRouter } from "./routes/product.route";
-import subscriptionRouter from "./routes/subscription.route";
-import { logger, morganLogger } from "./lib/logger";
-import statusRouter from "./routes/status.route";
-import authRouter from "./routes/auth.route";
-import userRouter from "./routes/user.route";
-import config from "./config";
-import db from "./db";
+import db from "@/db";
+import config from "@/config";
+import authRouter from "@/routes/auth.route";
+import userRouter from "@/routes/user.route";
+import statusRouter from "@/routes/status.route";
+import { logger, morganLogger } from "@/lib/logger";
+import subscriptionRouter from "@/routes/subscription.route";
+import { productRouter, labelRouter } from "@/routes/product.route";
 
 const app = express();
 

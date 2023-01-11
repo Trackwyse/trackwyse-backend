@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
-import config from "../config";
-import { logger } from "../lib/logger";
+import config from "@/config";
+import { logger } from "@/lib/logger";
 
 /*
   Create access token and return it

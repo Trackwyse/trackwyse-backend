@@ -1,7 +1,7 @@
 import { GraphQLClient } from "graphql-request";
 
-import config from "../config";
-import { getSdk } from "../graphql/__generated__/api";
+import config from "@/config";
+import { getSdk } from "@/graphql/__generated__/api";
 
 const client = new GraphQLClient(config.SaleorGraphQLURL, {
   headers: {

@@ -1,12 +1,12 @@
 import express from "express";
-import usps from "../lib/usps";
+import usps from "@/lib/usps";
 
-import config from "../config";
-import MailService from "../lib/mail";
-import { logger } from "../lib/logger";
-import { User } from "../models/user.model";
-import AppleMaps from "../lib/applemaps";
-import { getAddressString } from "../lib/textUtil";
+import config from "@/config";
+import MailService from "@/lib/mail";
+import { logger } from "@/lib/logger";
+import AppleMaps from "@/lib/applemaps";
+import { User } from "@/models/user.model";
+import { getAddressString } from "@/lib/textUtil";
 
 /*
   GET /api/v1/user

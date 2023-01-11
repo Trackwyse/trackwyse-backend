@@ -1,6 +1,4 @@
 import express from "express";
-import appleMaps from "../lib/applemaps";
-import { logger } from "../lib/logger";
 
 /*
   GET /status/validClients

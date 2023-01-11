@@ -1,14 +1,15 @@
 import express from "express";
 
-import geo from "../utils/geo";
-import { logger } from "../lib/logger";
-import { colors } from "../lib/constants";
-import { User } from "../models/user.model";
-import { Label } from "../models/label.model";
-import NotificationService from "../lib/notifications";
-import usps from "../lib/usps";
-import AppleMaps from "../lib/applemaps";
-import { getAddressString } from "../lib/textUtil";
+import geo from "@/utils/geo";
+import usps from "@/lib/usps";
+import { logger } from "@/lib/logger";
+import AppleMaps from "@/lib/applemaps";
+import { colors } from "@/lib/constants";
+import { User } from "@/models/user.model";
+import { Label } from "@/models/label.model";
+import { getAddressString } from "@/lib/textUtil";
+
+import NotificationService from "@/lib/notifications";
 
 /*
   POST /api/v1/labels/create

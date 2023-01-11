@@ -1,7 +1,7 @@
 import { Expo } from "expo-server-sdk";
 
-import config from "../config";
-import { logger } from "./logger";
+import config from "@/config";
+import { logger } from "@/lib/logger";
 
 class NotificationService {
   expo: Expo;

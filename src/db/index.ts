@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
-import config from "../config";
-import { logger } from "../lib/logger";
+import config from "@/config";
+import { logger } from "@/lib/logger";
 
 const connect = async () => {
   await mongoose.connect(config.DBUri, {

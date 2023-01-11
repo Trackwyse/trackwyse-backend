@@ -1,7 +1,7 @@
 import aws from "aws-sdk";
 
-import config from "../config";
-import { logger } from "./logger";
+import config from "@/config";
+import { logger } from "@/lib/logger";
 
 aws.config.update({ region: config.AWSRegion });
 
