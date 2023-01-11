@@ -31,7 +31,7 @@ class AppleMaps {
       });
   }
 
-  async geoCode(address: Address) {
+  async geoCode(address: Address): Promise<Place[]> {
     const res = await axios.get(this.baseUrl + "geocode", {
       headers: {
         Authorization: "Bearer " + this.accessToken,
