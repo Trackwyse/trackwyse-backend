@@ -142,8 +142,8 @@ const updateUser = async (req: express.Request, res: express.Response) => {
         city: address.City,
         state: address.State,
         zip5: address.Zip5,
-        latitude: geocodedAddress.latitude,
-        longitude: geocodedAddress.longitude,
+        latitude: geocodedAddress[0].latitude,
+        longitude: geocodedAddress[0].longitude,
       };
     } catch (err) {
       logger.error(err);
