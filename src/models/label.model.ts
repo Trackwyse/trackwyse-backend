@@ -48,7 +48,6 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
     foundDate: { type: Date, required: false },
     foundExactLocation: {
       type: {
-        isValid: { type: Boolean, required: false },
         address1: { type: String, required: false },
         address2: { type: String, required: false },
         city: { type: String, required: false },
@@ -61,7 +60,6 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
     },
     foundRecoveryLocation: {
       type: {
-        isValid: { type: Boolean, required: false },
         address1: { type: String, required: false },
         address2: { type: String, required: false },
         city: { type: String, required: false },

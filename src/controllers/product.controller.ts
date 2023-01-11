@@ -447,7 +447,6 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
       });
 
       label.foundExactLocation = {
-        isValid: true,
         address1: address.Address1,
         address2: address.Address2,
         city: address.City,
@@ -484,7 +483,6 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
 
       label.foundRecoveryPossible = true;
       label.foundRecoveryLocation = {
-        isValid: true,
         address1: address.Address1,
         address2: address.Address2,
         city: address.City,
