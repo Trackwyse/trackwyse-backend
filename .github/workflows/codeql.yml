@@ -12,26 +12,17 @@
 name: "CodeQL"
 
 on:
-  push:
-    branches: ["development"]
-    paths-ignore:
-      - "**/*.md"
-      - "**/*.txt"
-      - "**/*.json"
-      - "**/*.yml"
-      - "**/*.yaml"
-      - "**/*.xml"
-      - "**/*.env"
-  pull_request:
-    branches: ["main"]
-    paths-ignore:
-      - "**/*.md"
-      - "**/*.txt"
-      - "**/*.json"
-      - "**/*.yml"
-      - "**/*.yaml"
-      - "**/*.xml"
-      - "**/*.env"
+  schedule:
+    #        ┌───────────── minute (0 - 59)
+    #        │  ┌───────────── hour (0 - 23)
+    #        │  │ ┌───────────── day of the month (1 - 31)
+    #        │  │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+    #        │  │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)
+    #        │  │ │ │ │
+    #        │  │ │ │ │
+    #        │  │ │ │ │
+    #        *  * * * *
+    - cron: "* 6 * * *"
 
 jobs:
   analyze:
