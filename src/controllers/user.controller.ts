@@ -9,12 +9,12 @@ import express from "express";
 
 import config from "@/config";
 import { logger } from "@/lib/logger";
-import { User } from "@/models/user.model";
 import { getAddressString } from "@/utils/text";
 
-import AppleMaps from "@/lib/appleMaps";
-import MailService from "@/lib/mail";
 import USPS from "@/lib/usps";
+import MailService from "@/lib/mail";
+import User from "@/models/user.model";
+import AppleMaps from "@/lib/appleMaps";
 
 /*
   GET /api/v1/user

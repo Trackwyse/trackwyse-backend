@@ -118,4 +118,4 @@ labelSchema.methods.removeLostData = function () {
   this.finderPhoneNumber = undefined;
 };
 
-export const Label = mongoose.model<LabelSchema>("Label", labelSchema);
+export default mongoose.model<LabelSchema>("Label", labelSchema);

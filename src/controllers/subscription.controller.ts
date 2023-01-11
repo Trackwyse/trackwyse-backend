@@ -11,8 +11,9 @@ import appleReceiptVerify from "node-apple-receipt-verify";
 import config from "@/config";
 import saleor from "@/lib/saleor";
 import { logger } from "@/lib/logger";
-import { User } from "@/models/user.model";
 import { CountryCode, AddressInput } from "@/graphql/__generated__/api";
+
+import User from "@/models/user.model";
 
 /*
   GET /subscription

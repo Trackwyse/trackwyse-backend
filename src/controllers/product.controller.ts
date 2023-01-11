@@ -10,12 +10,12 @@ import express from "express";
 import geo from "@/utils/geo";
 import { logger } from "@/lib/logger";
 import { colors } from "@/lib/constants";
-import { User } from "@/models/user.model";
-import { Label } from "@/models/label.model";
 import { getAddressString } from "@/utils/text";
 
 import USPS from "@/lib/usps";
 import AppleMaps from "@/lib/appleMaps";
+import User from "@/models/user.model";
+import Label from "@/models/label.model";
 import NotificationService from "@/lib/notifications";
 
 /*

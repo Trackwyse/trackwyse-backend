@@ -222,4 +222,4 @@ userSchema.methods.sanitize = function () {
   };
 };
 
-export const User = mongoose.model<UserSchema>("User", userSchema);
+export default mongoose.model<UserSchema>("User", userSchema);
