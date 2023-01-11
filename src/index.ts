@@ -9,6 +9,7 @@ import cors from "cors";
 import helmet from "helmet";
 import express from "express";
 import cookieParser from "cookie-parser";
+import mongoSanitize from "express-mongo-sanitize";
 import appleReceiptVerify from "node-apple-receipt-verify";
 
 import db from "@/db";
@@ -36,6 +37,7 @@ const startServer = async () => {
   app.use(express.json());
   app.use(cookieParser());
   app.use(express.urlencoded({ extended: false }));
+  app.use(mongoSanitize());
 
   await db.connect();
 

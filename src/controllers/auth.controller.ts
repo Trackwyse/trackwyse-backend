@@ -33,7 +33,10 @@ const login = async (req: express.Request, res: express.Response) => {
     return res.status(400).json({ error: true, message: "Missing required fields" });
   }
 
-  const user = await User.findOne({ email });
+  // convert email to lowercase to prevent duplicate emails
+  const emailLower = email.toLowerCase();
+
+  const user = await User.findOne({ email: emailLower });
 
   if (!user) {
     return res.status(404).json({ error: true, message: "User not found" });
@@ -107,8 +110,11 @@ const register = async (req: express.Request, res: express.Response) => {
     return res.status(400).json({ error: true, message: "Missing required fields" });
   }
 
+  // convert email to lowercase to prevent duplicate emails
+  const emailLower = email.toLowerCase();
+
   const user = new User({
-    email,
+    email: emailLower,
     password,
     firstName,
     lastName,
