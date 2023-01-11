@@ -138,8 +138,6 @@ const updateUser = async (req: express.Request, res: express.Response) => {
         }),
       });
 
-      console.log(geocodedAddress);
-
       user.address = {
         isValid: true,
         address1: address.Address1,
