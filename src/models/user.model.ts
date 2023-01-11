@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import validator from "validator";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";

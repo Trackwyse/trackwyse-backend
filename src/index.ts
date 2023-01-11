@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import cors from "cors";
 import helmet from "helmet";
 import express from "express";

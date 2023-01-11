@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import { Request, Response, NextFunction } from "express";
 
 import jwt from "@/utils/jwt";
