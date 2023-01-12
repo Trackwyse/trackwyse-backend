@@ -406,19 +406,21 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(label.owner);
 
   if (user && user.notificationPushTokens.length && user.notificationsEnabled) {
-    try {
-      NotificationService.sendNotification(user.notificationPushTokens, {
-        title: "Your label has been located",
-        body: `Your label "${label.name ?? "No Name"}" has been located near ${
-          label.foundNear ?? "Unknown"
-        }`,
-        data: {
-          type: "labelLocated",
-          labelId: label.id,
-        },
-      });
-    } catch (err) {
-      logger.error(err);
+    if (!label.hasBeenNotified) {
+      try {
+        NotificationService.sendNotification(user.notificationPushTokens, {
+          title: "Your label has been located",
+          body: `Your label "${label.name ?? "No Name"}" has been located near ${
+            label.foundNear ?? "Unknown"
+          }`,
+          data: {
+            type: "labelLocated",
+            labelId: label.id,
+          },
+        });
+      } catch (err) {
+        logger.error(err);
+      }
     }
   }
 
@@ -498,6 +500,7 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
   }
 
   label.foundDate = new Date();
+  label.hasBeenNotified = true;
 
   try {
     await label.save();
