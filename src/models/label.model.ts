@@ -55,6 +55,15 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
         zip5: { type: String, required: false },
         latitude: { type: Number, required: false },
         longitude: { type: Number, required: false },
+        displayMapRegion: {
+          type: {
+            southLatitude: { type: Number, required: false },
+            westLongitude: { type: Number, required: false },
+            northLatitude: { type: Number, required: false },
+            eastLongitude: { type: Number, required: false },
+          },
+          required: false,
+        },
       },
       required: false,
     },
