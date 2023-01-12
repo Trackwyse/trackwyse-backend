@@ -17,10 +17,10 @@ import authRouter from "@/routes/auth.route";
 import userRouter from "@/routes/user.route";
 import statusRouter from "@/routes/status.route";
 import { logger, morganLogger } from "@/lib/logger";
+import locationRouter from "@/routes/location.route";
 import subscriptionRouter from "@/routes/subscription.route";
 import { productRouter, labelRouter } from "@/routes/product.route";
 
-//
 const app = express();
 
 appleReceiptVerify.config({
@@ -46,6 +46,7 @@ const startServer = async () => {
   app.use("/api/v1", productRouter);
   app.use("/api/v1/user", userRouter);
   app.use("/api/v1/labels", labelRouter);
+  app.use("/api/v1/location", locationRouter);
   app.use("/api/v1/subscription", subscriptionRouter);
 
   app.listen(config.Port, () => {
