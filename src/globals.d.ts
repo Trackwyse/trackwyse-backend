@@ -124,10 +124,4 @@ interface UserAddress extends Address {
 interface LabelAddress extends Address {
   latitude: number;
   longitude: number;
-  displayMapRegion: {
-    southLatitude: number;
-    westLongitude: number;
-    northLatitude: number;
-    eastLongitude: number;
-  };
 }
