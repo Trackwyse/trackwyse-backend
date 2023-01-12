@@ -18,6 +18,7 @@ import userRouter from "@/routes/user.route";
 import statusRouter from "@/routes/status.route";
 import { logger, morganLogger } from "@/lib/logger";
 import locationRouter from "@/routes/location.route";
+import rateLimit from "@/middleware/ratelimit.middleware";
 import subscriptionRouter from "@/routes/subscription.route";
 import { productRouter, labelRouter } from "@/routes/product.route";
 
@@ -41,13 +42,13 @@ const startServer = async () => {
   await db.connect();
 
   app.use("/status", statusRouter);
-  app.use("/auth/v1", authRouter);
+  app.use("/auth/v1", rateLimit.authLimiter, authRouter);
 
-  app.use("/api/v1", productRouter);
-  app.use("/api/v1/user", userRouter);
-  app.use("/api/v1/labels", labelRouter);
-  app.use("/api/v1/location", locationRouter);
-  app.use("/api/v1/subscription", subscriptionRouter);
+  app.use("/api/v1", rateLimit.apiLimiter, productRouter);
+  app.use("/api/v1/user", rateLimit.apiLimiter, userRouter);
+  app.use("/api/v1/labels", rateLimit.apiLimiter, labelRouter);
+  app.use("/api/v1/location", rateLimit.apiLimiter, locationRouter);
+  app.use("/api/v1/subscription", rateLimit.apiLimiter, subscriptionRouter);
 
   app.listen(config.Port, () => {
     logger.info(`Application started in mode: ${config.NodeEnv}`);

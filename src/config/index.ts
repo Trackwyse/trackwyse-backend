@@ -49,6 +49,11 @@ export interface Config {
   RefreshTokenPrivateKey: string;
   AccessTokenExpiration: number;
   RefreshTokenExpiration: number;
+
+  AuthWindowMs: number;
+  AuthMaxRequests: number;
+  APIWindowMs: number;
+  APIMaxRequests: number;
 }
 
 const config: Config = {
@@ -91,6 +96,11 @@ const config: Config = {
   RefreshTokenPrivateKey: process.env.REFRESH_TOKEN_PRIVATE,
   AccessTokenExpiration: parseInt(process.env.ACCESS_TOKEN_EXPIRATION) || 3600,
   RefreshTokenExpiration: parseInt(process.env.REFRESH_TOKEN_EXPIRATION) || 86400,
+
+  AuthWindowMs: parseInt(process.env.AUTH_WINDOW_MS) || 3600000,
+  AuthMaxRequests: parseInt(process.env.AUTH_MAX_REQUESTS) || 10,
+  APIWindowMs: parseInt(process.env.API_WINDOW_MS) || 60000,
+  APIMaxRequests: parseInt(process.env.API_MAX_REQUESTS) || 150,
 };
 
 export default config;
