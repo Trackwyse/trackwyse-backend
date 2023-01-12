@@ -1,7 +1,14 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import { Expo } from "expo-server-sdk";
 
-import config from "../config";
-import { logger } from "./logger";
+import config from "@/config";
+import { logger } from "@/lib/logger";
 
 class NotificationService {
   expo: Expo;

@@ -1,10 +1,19 @@
-import express from "express";
-import usps from "../lib/usps";
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
 
-import config from "../config";
-import MailService from "../lib/mail";
-import { logger } from "../lib/logger";
-import { User } from "../models/user.model";
+import express from "express";
+
+import config from "@/config";
+import { logger } from "@/lib/logger";
+
+import USPS from "@/lib/usps";
+import MailService from "@/lib/mail";
+import User from "@/models/user.model";
+import Label from "@/models/label.model";
 
 /*
   GET /api/v1/user
@@ -118,7 +127,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
   // If the user updates any part of their address, ensure that the address is valid
   if (zip5 || city || state || address1 || address2) {
     try {
-      const address = await usps.verify({
+      const address = await USPS.verify({
         Address1: address1 ?? user.address?.address1 ?? "",
         Address2: address2 ?? user.address?.address2 ?? "",
         City: city ?? user.address?.city ?? "",
@@ -135,6 +144,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
         zip5: address.Zip5,
       };
     } catch (err) {
+      logger.error(err);
       return res.status(400).json({ error: true, message: "Invalid address" });
     }
   }
@@ -193,8 +203,64 @@ const updatePassword = async (req: express.Request, res: express.Response) => {
   return res.status(200).json({ error: false, message: "Password updated" });
 };
 
+/*
+  DELETE /api/v1/user/delete-account
+
+  Required Fields:
+    - password: string
+
+  Returns:
+    - error: string
+    - message: string
+*/
+const deleteAccount = async (req: express.Request, res: express.Response) => {
+  const { password } = req.body;
+
+  if (!password) {
+    return res.status(400).json({ error: true, message: "Missing required fields" });
+  }
+
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(404).json({ error: true, message: "Unauthorized" });
+  }
+
+  const isPasswordValid = await user.comparePassword(password);
+
+  if (!isPasswordValid) {
+    return res.status(401).json({ error: true, message: "Invalid password" });
+  }
+
+  // first, remove all of the user's labels
+  user.labels.forEach(async (label) => {
+    const labelToDelete = await Label.findById(label);
+
+    if (labelToDelete) {
+      labelToDelete.resetData();
+
+      try {
+        await labelToDelete.save();
+      } catch (err) {
+        logger.error(err);
+      }
+    }
+  });
+
+  // then, remove the user
+  try {
+    await user.remove();
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error deleting account" });
+  }
+
+  return res.status(200).json({ error: false, message: "Account deleted" });
+};
+
 export default {
   getUser,
   updateUser,
   updatePassword,
+  deleteAccount,
 };

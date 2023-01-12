@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import dotenv from "dotenv";
 import appRoot from "app-root-path";
 
@@ -33,6 +40,7 @@ export interface Config {
   AppleSharedSecret: string;
   AppleAppStoreEnv: ("sandbox" | "production")[];
   AppleSubscriptionRenewalLeeway: number;
+  AppleMapsAuthToken: string;
 
   SaltFactor: number;
   AccessTokenPublicKey: string;
@@ -41,6 +49,11 @@ export interface Config {
   RefreshTokenPrivateKey: string;
   AccessTokenExpiration: number;
   RefreshTokenExpiration: number;
+
+  AuthWindowMs: number;
+  AuthMaxRequests: number;
+  APIWindowMs: number;
+  APIMaxRequests: number;
 }
 
 const config: Config = {
@@ -74,6 +87,7 @@ const config: Config = {
   AppleSharedSecret: process.env.APPLE_SHARED_SECRET,
   AppleAppStoreEnv: [process.env.APPLE_APP_STORE_ENV as "sandbox" | "production"] || ["sandbox"],
   AppleSubscriptionRenewalLeeway: parseInt(process.env.APPLE_SUBSCRIPTION_RENEWAL_LEEWAY) || 86400,
+  AppleMapsAuthToken: process.env.APPLE_MAPS_AUTH_TOKEN,
 
   SaltFactor: parseInt(process.env.SALT_FACTOR) || 10,
   AccessTokenPublicKey: process.env.ACCESS_TOKEN_PUBLIC,
@@ -82,6 +96,11 @@ const config: Config = {
   RefreshTokenPrivateKey: process.env.REFRESH_TOKEN_PRIVATE,
   AccessTokenExpiration: parseInt(process.env.ACCESS_TOKEN_EXPIRATION) || 3600,
   RefreshTokenExpiration: parseInt(process.env.REFRESH_TOKEN_EXPIRATION) || 86400,
+
+  AuthWindowMs: parseInt(process.env.AUTH_WINDOW_MS) || 3600000,
+  AuthMaxRequests: parseInt(process.env.AUTH_MAX_REQUESTS) || 10,
+  APIWindowMs: parseInt(process.env.API_WINDOW_MS) || 60000,
+  APIMaxRequests: parseInt(process.env.API_MAX_REQUESTS) || 150,
 };
 
 export default config;

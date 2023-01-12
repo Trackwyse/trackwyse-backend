@@ -1,7 +1,14 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import { Request, Response, NextFunction } from "express";
 
-import { User } from "../models/user.model";
-import jwt from "../utils/jwt";
+import jwt from "@/utils/jwt";
+import User from "@/models/user.model";
 
 /*
   Only used for the /auth/vX/refresh route

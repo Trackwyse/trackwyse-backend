@@ -1,9 +1,17 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import express from "express";
 
-import { User } from "../models/user.model";
-import { logger } from "../lib/logger";
-import MailService from "../lib/mail";
-import jwt from "../utils/jwt";
+import jwt from "@/utils/jwt";
+import { logger } from "@/lib/logger";
+
+import MailService from "@/lib/mail";
+import User from "@/models/user.model";
 
 /*
   POST /auth/vX/login
@@ -25,7 +33,10 @@ const login = async (req: express.Request, res: express.Response) => {
     return res.status(400).json({ error: true, message: "Missing required fields" });
   }
 
-  const user = await User.findOne({ email });
+  // convert email to lowercase to prevent duplicate emails
+  const emailLower = email.toLowerCase();
+
+  const user = await User.findOne({ email: { $eq: email } });
 
   if (!user) {
     return res.status(404).json({ error: true, message: "User not found" });
@@ -99,8 +110,11 @@ const register = async (req: express.Request, res: express.Response) => {
     return res.status(400).json({ error: true, message: "Missing required fields" });
   }
 
+  // convert email to lowercase to prevent duplicate emails
+  const emailLower = email.toLowerCase();
+
   const user = new User({
-    email,
+    email: emailLower,
     password,
     firstName,
     lastName,
@@ -203,7 +217,7 @@ const checkEmail = async (req: express.Request, res: express.Response) => {
   }
 
   const user = await User.findOne({
-    email,
+    email: { $eq: email },
   });
 
   if (user) {
@@ -327,7 +341,7 @@ const forgot = async (req: express.Request, res: express.Response) => {
   }
 
   const user = await User.findOne({
-    email,
+    email: { $eq: email },
   });
 
   if (!user) {
@@ -371,7 +385,7 @@ const reset = async (req: express.Request, res: express.Response) => {
   }
 
   const user = await User.findOne({
-    email,
+    email: { $eq: email },
   });
 
   if (!user) {

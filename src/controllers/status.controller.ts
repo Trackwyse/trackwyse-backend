@@ -1,5 +1,11 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import express from "express";
-import { logger } from "../lib/logger";
 
 /*
   GET /status/validClients
@@ -14,7 +20,7 @@ import { logger } from "../lib/logger";
     - versions: string[]
 */
 const getValidClients = async (req: express.Request, res: express.Response) => {
-  const version = "011040";
+  const version = "011080";
 
   res.status(200).json({
     error: false,
@@ -33,11 +39,6 @@ const getValidClients = async (req: express.Request, res: express.Response) => {
   Response Body:
     - Any
 */
-const testConnection = async (req: express.Request, res: express.Response) => {
-  return res.status(200).json({
-    error: false,
-    message: "Connection successful",
-  });
-};
+const testConnection = async (req: express.Request, res: express.Response) => {};
 
 export default { getValidClients, testConnection };

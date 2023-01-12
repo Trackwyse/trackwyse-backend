@@ -1,14 +1,20 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import express from "express";
 
-import authMiddleware from "../middleware/auth.middleware";
-import productController from "../controllers/product.controller";
+import authMiddleware from "@/middleware/auth.middleware";
+import productController from "@/controllers/product.controller";
 
 const productRouter = express.Router();
 
 const labelRouter = express.Router();
 labelRouter.post("/create", authMiddleware.attachAccessToken, productController.createLabel); // TEMPORARY
 
-labelRouter.get("/:labelId", authMiddleware.attachAccessToken, productController.getLabel);
 labelRouter.post("/found/:labelId", authMiddleware.attachAccessToken, productController.foundLabel);
 
 labelRouter.get("/", authMiddleware.authenticateVerifiedAccessToken, productController.getLabels);

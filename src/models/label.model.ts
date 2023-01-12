@@ -1,3 +1,10 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import mongoose from "mongoose";
 import validator from "validator";
 
@@ -39,8 +46,30 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
 
     foundNear: { type: String, required: false },
     foundDate: { type: Date, required: false },
-    foundExactLocation: { type: String, required: false },
-    foundRecoveryLocation: { type: String, required: false },
+    foundExactLocation: {
+      type: {
+        address1: { type: String, required: false },
+        address2: { type: String, required: false },
+        city: { type: String, required: false },
+        state: { type: String, required: false },
+        zip5: { type: String, required: false },
+        latitude: { type: Number, required: false },
+        longitude: { type: Number, required: false },
+      },
+      required: false,
+    },
+    foundRecoveryLocation: {
+      type: {
+        address1: { type: String, required: false },
+        address2: { type: String, required: false },
+        city: { type: String, required: false },
+        state: { type: String, required: false },
+        zip5: { type: String, required: false },
+        latitude: { type: Number, required: false },
+        longitude: { type: Number, required: false },
+      },
+      required: false,
+    },
     foundRecoveryPossible: { type: Boolean, required: false },
     finderPhoneNumber: {
       type: String,
@@ -87,4 +116,4 @@ labelSchema.methods.removeLostData = function () {
   this.finderPhoneNumber = undefined;
 };
 
-export const Label = mongoose.model<LabelSchema>("Label", labelSchema);
+export default mongoose.model<LabelSchema>("Label", labelSchema);

@@ -1,9 +1,16 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import validator from "validator";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 
-import config from "../config";
+import config from "@/config";
 
 export interface UserSchema extends User, mongoose.Document {
   comparePassword: (password: string) => Promise<boolean>;
@@ -213,4 +220,4 @@ userSchema.methods.sanitize = function () {
   };
 };
 
-export const User = mongoose.model<UserSchema>("User", userSchema);
+export default mongoose.model<UserSchema>("User", userSchema);

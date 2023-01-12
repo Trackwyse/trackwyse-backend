@@ -1,11 +1,19 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import express from "express";
 import appleReceiptVerify from "node-apple-receipt-verify";
 
-import config from "../config";
-import saleor from "../lib/saleor";
-import { logger } from "../lib/logger";
-import { User } from "../models/user.model";
-import { CountryCode, AddressInput } from "../graphql/__generated__/api";
+import config from "@/config";
+import saleor from "@/lib/saleor";
+import { logger } from "@/lib/logger";
+import { CountryCode, AddressInput } from "@/graphql/generated/api";
+
+import User from "@/models/user.model";
 
 /*
   GET /subscription

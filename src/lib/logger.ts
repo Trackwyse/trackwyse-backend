@@ -1,8 +1,15 @@
+/*
+ * Created on Wed Jan 11 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
 import morgan from "morgan";
-import winston, { format } from "winston";
+import winston from "winston";
 import "winston-daily-rotate-file";
 
-import config from "../config";
+import config from "@/config";
 
 const { combine, timestamp, printf, colorize, splat, align } = winston.format;
 
