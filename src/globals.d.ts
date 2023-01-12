@@ -74,6 +74,7 @@ interface Label {
   foundRecoveryLocation: LabelAddress; // Where the user can recover the label, if user provided it
   foundRecoveryPossible: boolean; // If the user can recover the label
   finderPhoneNumber: string; // Phone number of the person who found the label
+  hasBeenNotified: boolean; // If the user has been notified of the label being found
 
   createdAt: Date;
   updatedAt: Date;

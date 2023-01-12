@@ -77,6 +77,7 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
       maxlength: 50,
       validate: [validator.isMobilePhone, "Must be a valid phone number"],
     },
+    hasBeenNotified: { type: Boolean, default: false },
 
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
@@ -100,6 +101,7 @@ labelSchema.methods.resetData = function () {
   this.foundRecoveryLocation = undefined;
   this.foundRecoveryPossible = undefined;
   this.finderPhoneNumber = undefined;
+  this.hasBeenNotified = undefined;
 
   this.createdAt = new Date();
   this.updatedAt = new Date();
@@ -114,6 +116,7 @@ labelSchema.methods.removeLostData = function () {
   this.foundRecoveryLocation = undefined;
   this.foundRecoveryPossible = undefined;
   this.finderPhoneNumber = undefined;
+  this.hasBeenNotified = undefined;
 };
 
 export default mongoose.model<LabelSchema>("Label", labelSchema);
