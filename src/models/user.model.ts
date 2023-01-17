@@ -99,8 +99,8 @@ const userSchema = new mongoose.Schema<UserSchema>(
 
     termsAccepted: { type: Boolean, default: false },
 
-    labels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Label" }],
-    transactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Transaction" }],
+    labels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Label", default: [] }],
+    transactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Transaction", default: [] }],
   },
   { timestamps: true }
 );

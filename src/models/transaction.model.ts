@@ -34,28 +34,19 @@ const transactionSchema = new mongoose.Schema<TransactionSchema>(
       },
       required: true,
     },
-    items: {
-      type: [
-        {
-          type: {
-            name: { type: String, required: true },
-            quantity: { type: Number, required: true },
-          },
-          required: true,
-        },
-      ],
-    },
-    events: {
-      type: [
-        {
-          type: {
-            date: { type: Date, required: true },
-            type: { type: String, required: true },
-          },
-          required: true,
-        },
-      ],
-    },
+    items: [
+      {
+        name: String,
+        quantity: Number,
+      },
+    ],
+
+    events: [
+      {
+        date: Date,
+        type: { type: String },
+      },
+    ],
     total: {
       type: {
         gross: { type: Number, required: true },
