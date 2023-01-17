@@ -33532,6 +33532,21 @@ export type Resolvers<ContextType = any> = {
 };
 
 
+export type CustomerCreateMutationVariables = Exact<{
+  input: UserCreateInput;
+}>;
+
+
+export type CustomerCreateMutation = { __typename?: 'Mutation', customerCreate?: { __typename?: 'CustomerCreate', user?: { __typename?: 'User', id: string } | null } | null };
+
+export type CustomerUpdateMutationVariables = Exact<{
+  id: Scalars['ID'];
+  input: CustomerInput;
+}>;
+
+
+export type CustomerUpdateMutation = { __typename?: 'Mutation', customerUpdate?: { __typename?: 'CustomerUpdate', user?: { __typename?: 'User', id: string } | null } | null };
+
 export type AddressFragment = { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string };
 
 export type DraftOrderCompleteMutationVariables = Exact<{
@@ -33578,6 +33593,24 @@ export const AddressFragmentDoc = gql`
   city
   countryArea
   postalCode
+}
+    `;
+export const CustomerCreateDocument = gql`
+    mutation CustomerCreate($input: UserCreateInput!) {
+  customerCreate(input: $input) {
+    user {
+      id
+    }
+  }
+}
+    `;
+export const CustomerUpdateDocument = gql`
+    mutation CustomerUpdate($id: ID!, $input: CustomerInput!) {
+  customerUpdate(id: $id, input: $input) {
+    user {
+      id
+    }
+  }
 }
     `;
 export const DraftOrderCompleteDocument = gql`
@@ -33705,6 +33738,12 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    CustomerCreate(variables: CustomerCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CustomerCreateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CustomerCreateMutation>(CustomerCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CustomerCreate', 'mutation');
+    },
+    CustomerUpdate(variables: CustomerUpdateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CustomerUpdateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CustomerUpdateMutation>(CustomerUpdateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CustomerUpdate', 'mutation');
+    },
     DraftOrderComplete(variables: DraftOrderCompleteMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DraftOrderCompleteMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DraftOrderCompleteMutation>(DraftOrderCompleteDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'DraftOrderComplete', 'mutation');
     },

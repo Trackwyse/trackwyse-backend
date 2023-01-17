@@ -11,6 +11,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 import config from "@/config";
+import saleor from "@/lib/saleor";
 
 export interface UserSchema extends User, mongoose.Document {
   comparePassword: (password: string) => Promise<boolean>;
@@ -56,6 +57,8 @@ const userSchema = new mongoose.Schema<UserSchema>(
       required: false,
     },
     role: { type: String, default: "user" },
+
+    customerID: { type: String, required: false },
 
     subscriptionDate: { type: Date, required: false },
     subscriptionActive: { type: Boolean, default: false },
@@ -148,6 +151,44 @@ userSchema.pre("save", function (next) {
       next();
     });
   });
+});
+
+// Update the saleor user when email is changed
+userSchema.post("save", async function (err, doc, next) {
+  let user = this;
+
+  if (!user.isModified("email")) {
+    return next();
+  }
+
+  if (user.customerID === undefined) {
+    const customer = await saleor.CustomerCreate({
+      input: {
+        email: user.email,
+      },
+    });
+
+    if (!customer.customerCreate.user) {
+      return next(new Error("Failed to create customer"));
+    }
+
+    user.customerID = customer.customerCreate.user.id;
+
+    return next();
+  }
+
+  const customer = await saleor.CustomerUpdate({
+    id: user.customerID,
+    input: {
+      email: user.email,
+    },
+  });
+
+  if (!customer.customerUpdate.user) {
+    return next(new Error("Failed to update customer"));
+  }
+
+  next();
 });
 
 // Modify the error message for duplicate email

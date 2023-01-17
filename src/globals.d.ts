@@ -18,8 +18,10 @@ interface User {
   password: string;
   firstName: string;
   lastName: string;
-  address: UserAddress;
   role: UserRole;
+  address: UserAddress;
+
+  customerID: string; // Saleor customer ID
 
   subscriptionDate: Date;
   subscriptionActive: boolean;
@@ -37,7 +39,6 @@ interface User {
   notificationPushTokens: string[];
 
   refreshToken: string;
-
   termsAccepted: boolean;
 
   labels: string[];
