@@ -36,7 +36,10 @@ interface User {
   refreshToken: string;
 
   termsAccepted: boolean;
+
   labels: string[];
+  transactions: string[];
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -80,6 +83,21 @@ interface Label {
   updatedAt: Date;
 }
 
+interface Transaction {
+  transactionID: string;
+  created: Date;
+  status: string;
+  billingAddress: Address;
+  shippingAddress: Address;
+  items: TransactionItem[];
+  events: TransactionEvent[];
+  total: {
+    gross: number;
+    net: number;
+    tax: number;
+  };
+}
+
 interface Color {
   bg: string;
   borderSelected: string;
@@ -108,6 +126,16 @@ interface SubscriptionPerks {
   freeLabelsNextRedeemable: Date;
 
   secureRecoveriesEnabled: boolean;
+}
+
+interface TransactionEvent {
+  date: Date;
+  type: string;
+}
+
+interface TransactionItem {
+  name: string;
+  quantity: number;
 }
 
 interface Address {

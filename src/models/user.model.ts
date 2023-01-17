@@ -98,9 +98,9 @@ const userSchema = new mongoose.Schema<UserSchema>(
     refreshToken: { type: String, required: false },
 
     termsAccepted: { type: Boolean, default: false },
+
     labels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Label" }],
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
+    transactions: [{ type: mongoose.Schema.Types.ObjectId, ref: "Transaction" }],
   },
   { timestamps: true }
 );
