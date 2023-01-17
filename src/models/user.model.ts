@@ -55,6 +55,7 @@ const userSchema = new mongoose.Schema<UserSchema>(
       },
       required: false,
     },
+    role: { type: String, default: "user" },
 
     subscriptionDate: { type: Date, required: false },
     subscriptionActive: { type: Boolean, default: false },
@@ -73,7 +74,7 @@ const userSchema = new mongoose.Schema<UserSchema>(
         applicationVersion: { type: String, required: false },
         originalApplicationVersion: { type: String, required: false },
       },
-      required: false,
+      default: {},
     },
     subscriptionPerks: {
       type: {
@@ -83,6 +84,7 @@ const userSchema = new mongoose.Schema<UserSchema>(
         freeLabelsNextRedeemable: { type: Date, default: Date.now },
         secureRecoveriesEnabled: { type: Boolean, default: true },
       },
+      default: {},
     },
 
     verified: { type: Boolean, default: false },

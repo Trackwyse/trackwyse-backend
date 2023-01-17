@@ -11,12 +11,15 @@ declare namespace Express {
   }
 }
 
+type UserRole = "user" | "admin";
+
 interface User {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
   address: UserAddress;
+  role: UserRole;
 
   subscriptionDate: Date;
   subscriptionActive: boolean;

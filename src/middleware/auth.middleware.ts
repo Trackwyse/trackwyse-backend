@@ -159,6 +159,46 @@ const authenticateAccessToken = async (req: Request, res: Response, next: NextFu
 };
 
 /*
+  Used for ONLY the /admin/vX/* routes
+  Verifies that the 'authorization' header is present and valid
+
+  If the header is valid and the user has the admin tole, the user is attached to the request
+  If the user is not verified, the request is rejected
+*/
+const authenticateAdminAccessToken = async (req: Request, res: Response, next: NextFunction) => {
+  if (req.headers.authorization) {
+    const accessToken = req.headers.authorization.split(" ")[1];
+
+    const payload = jwt.verifyAccessToken(accessToken);
+
+    if (payload === "expired") {
+      return res.status(401).json({ error: true, message: "EXPIRED_TOKEN" });
+    }
+
+    const user = await User.findById(payload?.id);
+
+    if (user) {
+      const sanitizedUser = user.sanitize();
+
+      if (!user.verified) {
+        return res.status(401).json({ error: true, message: "Unverified Account" });
+      }
+
+      if (user.role !== "admin") {
+        return res.status(401).json({ error: true, message: "Unauthorized" });
+      }
+
+      req.user = sanitizedUser;
+      return next();
+    }
+
+    return res.status(401).json({ error: true, message: "Unauthorized" });
+  }
+
+  return res.status(401).json({ error: true, message: "Unauthorized" });
+};
+
+/*
   Used for ONLY the routes used to find labels.
   Verifies that the 'authorization' header is present and valid
 
@@ -194,6 +234,7 @@ export default {
   attachAccessToken,
   authenticateRefreshToken,
   authenticateAccessToken,
+  authenticateAdminAccessToken,
   authenticateVerifiedAccessToken,
   authenticateUnverifiedAccessToken,
 };
