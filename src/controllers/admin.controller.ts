@@ -56,6 +56,8 @@ const setPremium = async (req: express.Request, res: express.Response) => {
     logger.error(err);
     return res.status(500).json({ error: true, message: "Error saving subscription" });
   }
+
+  return res.status(200).json({ error: false, message: "Subscription saved" });
 };
 
 export default {
