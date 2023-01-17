@@ -33548,6 +33548,13 @@ export type DraftOrderCreateMutationVariables = Exact<{
 
 export type DraftOrderCreateMutation = { __typename?: 'Mutation', draftOrderCreate?: { __typename?: 'DraftOrderCreate', order?: { __typename?: 'Order', id: string } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
 
+export type OrderQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type OrderQuery = { __typename?: 'Query', order?: { __typename?: 'Order', id: string, created: any, status: OrderStatus, statusDisplay: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string } | null, lines: Array<{ __typename?: 'OrderLine', productName: string, quantity: number }>, events: Array<{ __typename?: 'OrderEvent', date?: any | null, type?: OrderEventsEnum | null }>, total: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number }, net: { __typename?: 'Money', amount: number }, tax: { __typename?: 'Money', amount: number } } } | null };
+
 export type ProductQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
   slug?: InputMaybe<Scalars['String']>;
@@ -33625,6 +33632,41 @@ export const DraftOrderCreateDocument = gql`
   }
 }
     `;
+export const OrderDocument = gql`
+    query Order($id: ID!) {
+  order(id: $id) {
+    id
+    created
+    status
+    statusDisplay
+    billingAddress {
+      ...Address
+    }
+    shippingAddress {
+      ...Address
+    }
+    lines {
+      productName
+      quantity
+    }
+    events {
+      date
+      type
+    }
+    total {
+      gross {
+        amount
+      }
+      net {
+        amount
+      }
+      tax {
+        amount
+      }
+    }
+  }
+}
+    ${AddressFragmentDoc}`;
 export const ProductDocument = gql`
     query Product($id: ID, $slug: String, $channel: String) {
   product(id: $id, slug: $slug, channel: $channel) {
@@ -33668,6 +33710,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     DraftOrderCreate(variables: DraftOrderCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DraftOrderCreateMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DraftOrderCreateMutation>(DraftOrderCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'DraftOrderCreate', 'mutation');
+    },
+    Order(variables: OrderQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<OrderQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<OrderQuery>(OrderDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'Order', 'query');
     },
     Product(variables?: ProductQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ProductQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ProductQuery>(ProductDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'Product', 'query');
