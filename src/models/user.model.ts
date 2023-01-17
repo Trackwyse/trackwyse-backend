@@ -154,7 +154,7 @@ userSchema.pre("save", function (next) {
 });
 
 // Update the saleor user when email is changed
-userSchema.post("save", async function (err, doc, next) {
+userSchema.pre("save", async function (next) {
   let user = this;
 
   if (!user.isModified("email")) {
@@ -173,8 +173,6 @@ userSchema.post("save", async function (err, doc, next) {
     }
 
     user.customerID = customer.customerCreate.user.id;
-
-    await user.save();
 
     return next();
   }
