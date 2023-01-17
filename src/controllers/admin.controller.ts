@@ -43,11 +43,9 @@ const setPremium = async (req: express.Request, res: express.Response) => {
   };
 
   user.subscriptionPerks = {
-    freeLabelsRedeemed: 0,
     freeLabelsRedeemable: true,
     freeLabelsNextRedeemable: new Date(new Date().getTime() + expiresIn * 1000),
     freeLabelsLastRedeemed: undefined,
-    secureRecoveriesEnabled: false,
   };
 
   try {

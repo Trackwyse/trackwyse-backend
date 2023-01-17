@@ -78,11 +78,9 @@ const userSchema = new mongoose.Schema<UserSchema>(
     },
     subscriptionPerks: {
       type: {
-        freeLabelsRedeemed: { type: Number, default: 0 },
         freeLabelsRedeemable: { type: Boolean, default: true },
         freeLabelsLastRedeemed: { type: Date, required: false },
         freeLabelsNextRedeemable: { type: Date, default: Date.now },
-        secureRecoveriesEnabled: { type: Boolean, default: true },
       },
       default: {},
     },
