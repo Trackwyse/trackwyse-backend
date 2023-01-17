@@ -174,6 +174,8 @@ userSchema.post("save", async function (err, doc, next) {
 
     user.customerID = customer.customerCreate.user.id;
 
+    await user.save();
+
     return next();
   }
 
