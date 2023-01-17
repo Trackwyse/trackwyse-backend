@@ -75,12 +75,12 @@ const getLabels = async (req: express.Request, res: express.Response) => {
     });
   }
 
-  const labelRecords = await Label.find({ _id: { $in: labels } });
+  const labelDocuments = await Label.find({ _id: { $in: labels } });
 
   return res.status(200).json({
     error: false,
     message: "Labels retrieved successfully",
-    labels: labelRecords,
+    labels: labelDocuments,
   });
 };
 
