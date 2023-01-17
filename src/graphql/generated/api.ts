@@ -33532,12 +33532,14 @@ export type Resolvers<ContextType = any> = {
 };
 
 
+export type AddressFragment = { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string };
+
 export type DraftOrderCompleteMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DraftOrderCompleteMutation = { __typename?: 'Mutation', draftOrderComplete?: { __typename?: 'DraftOrderComplete', order?: { __typename?: 'Order', id: string, created: any, updatedAt: any, status: OrderStatus, statusDisplay: string } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
+export type DraftOrderCompleteMutation = { __typename?: 'Mutation', draftOrderComplete?: { __typename?: 'DraftOrderComplete', order?: { __typename?: 'Order', id: string, created: any, status: OrderStatus, statusDisplay: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string } | null, lines: Array<{ __typename?: 'OrderLine', productName: string, quantity: number }>, events: Array<{ __typename?: 'OrderEvent', date?: any | null, type?: OrderEventsEnum | null }>, total: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number }, net: { __typename?: 'Money', amount: number }, tax: { __typename?: 'Money', amount: number } } } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
 
 export type DraftOrderCreateMutationVariables = Exact<{
   input: DraftOrderCreateInput;
@@ -33562,23 +33564,55 @@ export type ProductsQueryVariables = Exact<{
 
 export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'ProductCountableConnection', edges: Array<{ __typename?: 'ProductCountableEdge', node: { __typename?: 'Product', id: string, name: string, description?: any | null, channel?: string | null, defaultVariant?: { __typename?: 'ProductVariant', id: string } | null } }> } | null };
 
-
+export const AddressFragmentDoc = gql`
+    fragment Address on Address {
+  streetAddress1
+  streetAddress2
+  city
+  countryArea
+  postalCode
+}
+    `;
 export const DraftOrderCompleteDocument = gql`
     mutation DraftOrderComplete($id: ID!) {
   draftOrderComplete(id: $id) {
     order {
       id
       created
-      updatedAt
       status
       statusDisplay
+      billingAddress {
+        ...Address
+      }
+      shippingAddress {
+        ...Address
+      }
+      lines {
+        productName
+        quantity
+      }
+      events {
+        date
+        type
+      }
+      total {
+        gross {
+          amount
+        }
+        net {
+          amount
+        }
+        tax {
+          amount
+        }
+      }
     }
     errors {
       message
     }
   }
 }
-    `;
+    ${AddressFragmentDoc}`;
 export const DraftOrderCreateDocument = gql`
     mutation DraftOrderCreate($input: DraftOrderCreateInput!) {
   draftOrderCreate(input: $input) {

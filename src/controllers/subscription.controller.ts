@@ -14,6 +14,7 @@ import { logger } from "@/lib/logger";
 import { CountryCode, AddressInput } from "@/graphql/generated/api";
 
 import User from "@/models/user.model";
+import Transaction from "@/models/transaction.model";
 
 /*
   GET /subscription
@@ -244,6 +245,53 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
     });
   }
 
+  const order = completeOrder.draftOrderComplete.order;
+
+  const transaction = new Transaction({
+    transactionID: order.id,
+    created: new Date(order.created),
+    status: order.status,
+    billingAddress: {
+      address1: order.billingAddress?.streetAddress1,
+      address2: order.billingAddress?.streetAddress2,
+      city: order.billingAddress?.city,
+      state: order.billingAddress?.countryArea,
+      zip5: order.billingAddress?.postalCode,
+    },
+    shippingAddress: {
+      address1: order.shippingAddress?.streetAddress1,
+      address2: order.shippingAddress?.streetAddress2,
+      city: order.shippingAddress?.city,
+      state: order.shippingAddress?.countryArea,
+      zip5: order.shippingAddress?.postalCode,
+    },
+    items: order.lines.map((line) => {
+      return {
+        name: line.productName,
+        quantity: line.quantity,
+      };
+    }),
+    events: order.events.map((event) => {
+      return {
+        date: new Date(event.date),
+        type: event.type,
+      };
+    }),
+    total: {
+      gross: order.total.gross.amount,
+      net: order.total.net.amount,
+      tax: order.total.tax.amount,
+    },
+  });
+
+  try {
+    await transaction.save();
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error saving transaction" });
+  }
+
+  user.transactions.push(transaction.id);
   user["subscriptionPerks"]["freeLabelsRedeemable"] = false;
   user["subscriptionPerks"]["freeLabelsLastRedeemed"] = new Date();
 

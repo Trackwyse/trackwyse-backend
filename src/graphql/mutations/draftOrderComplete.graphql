@@ -1,11 +1,43 @@
+fragment Address on Address {
+  streetAddress1
+  streetAddress2
+  city
+  countryArea
+  postalCode
+}
+
 mutation DraftOrderComplete($id: ID!) {
   draftOrderComplete(id: $id) {
     order {
       id
       created
-      updatedAt
       status
       statusDisplay
+      billingAddress {
+        ...Address
+      }
+      shippingAddress {
+        ...Address
+      }
+      lines {
+        productName
+        quantity
+      }
+      events {
+        date
+        type
+      }
+      total {
+        gross {
+          amount
+        }
+        net {
+          amount
+        }
+        tax {
+          amount
+        }
+      }
     }
     errors {
       message
