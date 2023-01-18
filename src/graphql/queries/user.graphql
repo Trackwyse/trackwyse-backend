@@ -1,0 +1,46 @@
+fragment Address on Address {
+  streetAddress1
+  streetAddress2
+  city
+  postalCode
+  countryArea
+}
+
+query UserOrders($id: ID!, $first: Int, $last: Int, $before: String, $after: String) {
+  user(id: $id) {
+    orders(first: $first, last: $last, before: $before, after: $after) {
+      edges {
+        node {
+          id
+          created
+          status
+          billingAddress {
+            ...Address
+          }
+          shippingAddress {
+            ...Address
+          }
+          total {
+            gross {
+              amount
+            }
+            net {
+              amount
+            }
+            tax {
+              amount
+            }
+          }
+          lines {
+            productName
+            quantity
+          }
+          events {
+            date
+            type
+          }
+        }
+      }
+    }
+  }
+}

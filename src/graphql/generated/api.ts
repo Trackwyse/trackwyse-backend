@@ -33547,14 +33547,12 @@ export type CustomerUpdateMutationVariables = Exact<{
 
 export type CustomerUpdateMutation = { __typename?: 'Mutation', customerUpdate?: { __typename?: 'CustomerUpdate', user?: { __typename?: 'User', id: string } | null } | null };
 
-export type AddressFragment = { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string };
-
 export type DraftOrderCompleteMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type DraftOrderCompleteMutation = { __typename?: 'Mutation', draftOrderComplete?: { __typename?: 'DraftOrderComplete', order?: { __typename?: 'Order', id: string, created: any, status: OrderStatus, statusDisplay: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string } | null, lines: Array<{ __typename?: 'OrderLine', productName: string, quantity: number }>, events: Array<{ __typename?: 'OrderEvent', date?: any | null, type?: OrderEventsEnum | null }>, total: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number }, net: { __typename?: 'Money', amount: number }, tax: { __typename?: 'Money', amount: number } } } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
+export type DraftOrderCompleteMutation = { __typename?: 'Mutation', draftOrderComplete?: { __typename?: 'DraftOrderComplete', order?: { __typename?: 'Order', id: string, created: any, status: OrderStatus, statusDisplay: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, lines: Array<{ __typename?: 'OrderLine', productName: string, quantity: number }>, events: Array<{ __typename?: 'OrderEvent', date?: any | null, type?: OrderEventsEnum | null }>, total: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number }, net: { __typename?: 'Money', amount: number }, tax: { __typename?: 'Money', amount: number } } } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
 
 export type DraftOrderCreateMutationVariables = Exact<{
   input: DraftOrderCreateInput;
@@ -33562,13 +33560,6 @@ export type DraftOrderCreateMutationVariables = Exact<{
 
 
 export type DraftOrderCreateMutation = { __typename?: 'Mutation', draftOrderCreate?: { __typename?: 'DraftOrderCreate', order?: { __typename?: 'Order', id: string } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
-
-export type OrderQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type OrderQuery = { __typename?: 'Query', order?: { __typename?: 'Order', id: string, created: any, status: OrderStatus, statusDisplay: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, countryArea: string, postalCode: string } | null, lines: Array<{ __typename?: 'OrderLine', productName: string, quantity: number }>, events: Array<{ __typename?: 'OrderEvent', date?: any | null, type?: OrderEventsEnum | null }>, total: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number }, net: { __typename?: 'Money', amount: number }, tax: { __typename?: 'Money', amount: number } } } | null };
 
 export type ProductQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33586,13 +33577,26 @@ export type ProductsQueryVariables = Exact<{
 
 export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'ProductCountableConnection', edges: Array<{ __typename?: 'ProductCountableEdge', node: { __typename?: 'Product', id: string, name: string, description?: any | null, channel?: string | null, defaultVariant?: { __typename?: 'ProductVariant', id: string } | null } }> } | null };
 
+export type AddressFragment = { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string };
+
+export type UserOrdersQueryVariables = Exact<{
+  id: Scalars['ID'];
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  before?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UserOrdersQuery = { __typename?: 'Query', user?: { __typename?: 'User', orders?: { __typename?: 'OrderCountableConnection', edges: Array<{ __typename?: 'OrderCountableEdge', node: { __typename?: 'Order', id: string, created: any, status: OrderStatus, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, total: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number }, net: { __typename?: 'Money', amount: number }, tax: { __typename?: 'Money', amount: number } }, lines: Array<{ __typename?: 'OrderLine', productName: string, quantity: number }>, events: Array<{ __typename?: 'OrderEvent', date?: any | null, type?: OrderEventsEnum | null }> } }> } | null } | null };
+
 export const AddressFragmentDoc = gql`
     fragment Address on Address {
   streetAddress1
   streetAddress2
   city
-  countryArea
   postalCode
+  countryArea
 }
     `;
 export const CustomerCreateDocument = gql`
@@ -33665,41 +33669,6 @@ export const DraftOrderCreateDocument = gql`
   }
 }
     `;
-export const OrderDocument = gql`
-    query Order($id: ID!) {
-  order(id: $id) {
-    id
-    created
-    status
-    statusDisplay
-    billingAddress {
-      ...Address
-    }
-    shippingAddress {
-      ...Address
-    }
-    lines {
-      productName
-      quantity
-    }
-    events {
-      date
-      type
-    }
-    total {
-      gross {
-        amount
-      }
-      net {
-        amount
-      }
-      tax {
-        amount
-      }
-    }
-  }
-}
-    ${AddressFragmentDoc}`;
 export const ProductDocument = gql`
     query Product($id: ID, $slug: String, $channel: String) {
   product(id: $id, slug: $slug, channel: $channel) {
@@ -33730,6 +33699,46 @@ export const ProductsDocument = gql`
   }
 }
     `;
+export const UserOrdersDocument = gql`
+    query UserOrders($id: ID!, $first: Int, $last: Int, $before: String, $after: String) {
+  user(id: $id) {
+    orders(first: $first, last: $last, before: $before, after: $after) {
+      edges {
+        node {
+          id
+          created
+          status
+          billingAddress {
+            ...Address
+          }
+          shippingAddress {
+            ...Address
+          }
+          total {
+            gross {
+              amount
+            }
+            net {
+              amount
+            }
+            tax {
+              amount
+            }
+          }
+          lines {
+            productName
+            quantity
+          }
+          events {
+            date
+            type
+          }
+        }
+      }
+    }
+  }
+}
+    ${AddressFragmentDoc}`;
 
 export type SdkFunctionWrapper = <T>(action: (requestHeaders?:Record<string, string>) => Promise<T>, operationName: string, operationType?: string) => Promise<T>;
 
@@ -33750,14 +33759,14 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     DraftOrderCreate(variables: DraftOrderCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DraftOrderCreateMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DraftOrderCreateMutation>(DraftOrderCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'DraftOrderCreate', 'mutation');
     },
-    Order(variables: OrderQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<OrderQuery> {
-      return withWrapper((wrappedRequestHeaders) => client.request<OrderQuery>(OrderDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'Order', 'query');
-    },
     Product(variables?: ProductQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ProductQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ProductQuery>(ProductDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'Product', 'query');
     },
     Products(variables?: ProductsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ProductsQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ProductsQuery>(ProductsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'Products', 'query');
+    },
+    UserOrders(variables: UserOrdersQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UserOrdersQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UserOrdersQuery>(UserOrdersDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'UserOrders', 'query');
     }
   };
 }
