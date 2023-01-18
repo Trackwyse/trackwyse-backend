@@ -20,7 +20,6 @@ import statusRouter from "@/routes/status.route";
 import { logger, morganLogger } from "@/lib/logger";
 import locationRouter from "@/routes/location.route";
 import rateLimit from "@/middleware/ratelimit.middleware";
-import transactionsRouter from "@/routes/transactions.route";
 import subscriptionRouter from "@/routes/subscription.route";
 import { productRouter, labelRouter } from "@/routes/product.route";
 
@@ -51,7 +50,6 @@ const startServer = async () => {
   app.use("/api/v1/admin", rateLimit.apiLimiter, adminRouter);
   app.use("/api/v1/labels", rateLimit.apiLimiter, labelRouter);
   app.use("/api/v1/location", rateLimit.apiLimiter, locationRouter);
-  app.use("/api/v1/transactions", rateLimit.apiLimiter, transactionsRouter);
   app.use("/api/v1/subscription", rateLimit.apiLimiter, subscriptionRouter);
 
   app.listen(config.Port, () => {
