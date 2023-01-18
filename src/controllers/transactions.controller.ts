@@ -11,6 +11,8 @@ import saleor from "@/lib/saleor";
 import User from "@/models/user.model";
 
 const getTransactions = async (req: express.Request, res: express.Response) => {
+  const { first, after, last, before } = req.query;
+
   const user = await User.findById(req.user.id);
 
   if (!user) {
@@ -20,7 +22,29 @@ const getTransactions = async (req: express.Request, res: express.Response) => {
     });
   }
 
-  const response = await saleor.UserOrders({ id: user.customerID, first: 10 });
+  if (first && last) {
+    return res.status(400).json({
+      error: true,
+      message: "You can't use first and last at the same time",
+    });
+  }
+
+  if (after && before) {
+    return res.status(400).json({
+      error: true,
+      message: "You can't use after and before at the same time",
+    });
+  }
+
+  // convert first and last to number
+  const params = {
+    first: first ? Number(first) : 10,
+    last: last ? Number(last) : null,
+    after: after ? (after as string) : null,
+    before: before ? (before as string) : null,
+  };
+
+  const response = await saleor.UserOrders({ id: user.customerID, ...params });
 
   return res.status(200).json({
     error: false,
