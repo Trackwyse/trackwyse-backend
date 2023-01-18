@@ -14,33 +14,41 @@ query UserOrders($id: ID!, $first: Int, $last: Int, $before: String, $after: Str
           id
           created
           status
-          billingAddress {
-            ...Address
-          }
-          shippingAddress {
-            ...Address
-          }
-          total {
-            gross {
-              amount
-            }
-            net {
-              amount
-            }
-            tax {
-              amount
-            }
-          }
-          lines {
-            productName
-            quantity
-          }
-          events {
-            date
-            type
-          }
         }
       }
+    }
+  }
+}
+
+query UserOrderDetails($id: ID!) {
+  order(id: $id) {
+    id
+    created
+    status
+    billingAddress {
+      ...Address
+    }
+    shippingAddress {
+      ...Address
+    }
+    total {
+      gross {
+        amount
+      }
+      net {
+        amount
+      }
+      tax {
+        amount
+      }
+    }
+    lines {
+      productName
+      quantity
+    }
+    events {
+      date
+      type
     }
   }
 }

@@ -17,5 +17,10 @@ transactionsRouter.get(
   authMiddleware.authenticateVerifiedAccessToken,
   transactionsController.getTransactions
 );
+transactionsRouter.get(
+  "/:id",
+  authMiddleware.authenticateVerifiedAccessToken,
+  transactionsController.getTransaction
+);
 
 export default transactionsRouter;

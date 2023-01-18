@@ -1776,6 +1776,12 @@ export type AttributeValueInput = {
   references?: InputMaybe<Array<Scalars['ID']>>;
   /** Text content in JSON format. */
   richText?: InputMaybe<Scalars['JSONString']>;
+  /**
+   * Attribute value ID.
+   *
+   * Added in Saleor 3.9.
+   */
+  swatch?: InputMaybe<AttributeValueSelectableTypeInput>;
   /** The value or slug of an attribute to resolve. If the passed value is non-existent, it will be created. This field will be removed in Saleor 4.0. */
   values?: InputMaybe<Array<Scalars['String']>>;
 };
@@ -33588,7 +33594,14 @@ export type UserOrdersQueryVariables = Exact<{
 }>;
 
 
-export type UserOrdersQuery = { __typename?: 'Query', user?: { __typename?: 'User', orders?: { __typename?: 'OrderCountableConnection', edges: Array<{ __typename?: 'OrderCountableEdge', node: { __typename?: 'Order', id: string, created: any, status: OrderStatus, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, total: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number }, net: { __typename?: 'Money', amount: number }, tax: { __typename?: 'Money', amount: number } }, lines: Array<{ __typename?: 'OrderLine', productName: string, quantity: number }>, events: Array<{ __typename?: 'OrderEvent', date?: any | null, type?: OrderEventsEnum | null }> } }> } | null } | null };
+export type UserOrdersQuery = { __typename?: 'Query', user?: { __typename?: 'User', orders?: { __typename?: 'OrderCountableConnection', edges: Array<{ __typename?: 'OrderCountableEdge', node: { __typename?: 'Order', id: string, created: any, status: OrderStatus } }> } | null } | null };
+
+export type UserOrderDetailsQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type UserOrderDetailsQuery = { __typename?: 'Query', order?: { __typename?: 'Order', id: string, created: any, status: OrderStatus, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, total: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number }, net: { __typename?: 'Money', amount: number }, tax: { __typename?: 'Money', amount: number } }, lines: Array<{ __typename?: 'OrderLine', productName: string, quantity: number }>, events: Array<{ __typename?: 'OrderEvent', date?: any | null, type?: OrderEventsEnum | null }> } | null };
 
 export const AddressFragmentDoc = gql`
     fragment Address on Address {
@@ -33708,33 +33721,42 @@ export const UserOrdersDocument = gql`
           id
           created
           status
-          billingAddress {
-            ...Address
-          }
-          shippingAddress {
-            ...Address
-          }
-          total {
-            gross {
-              amount
-            }
-            net {
-              amount
-            }
-            tax {
-              amount
-            }
-          }
-          lines {
-            productName
-            quantity
-          }
-          events {
-            date
-            type
-          }
         }
       }
+    }
+  }
+}
+    `;
+export const UserOrderDetailsDocument = gql`
+    query UserOrderDetails($id: ID!) {
+  order(id: $id) {
+    id
+    created
+    status
+    billingAddress {
+      ...Address
+    }
+    shippingAddress {
+      ...Address
+    }
+    total {
+      gross {
+        amount
+      }
+      net {
+        amount
+      }
+      tax {
+        amount
+      }
+    }
+    lines {
+      productName
+      quantity
+    }
+    events {
+      date
+      type
     }
   }
 }
@@ -33767,6 +33789,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     UserOrders(variables: UserOrdersQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UserOrdersQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<UserOrdersQuery>(UserOrdersDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'UserOrders', 'query');
+    },
+    UserOrderDetails(variables: UserOrderDetailsQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UserOrderDetailsQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UserOrderDetailsQuery>(UserOrderDetailsDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'UserOrderDetails', 'query');
     }
   };
 }
