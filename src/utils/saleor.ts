@@ -9,14 +9,14 @@ export const formatTransaction = (transaction: UserOrderDetailsQuery) => {
       address2: transaction.order.billingAddress?.streetAddress2,
       city: toTitleCase(transaction.order.billingAddress?.city),
       state: transaction.order.billingAddress?.countryArea,
-      zip: transaction.order.billingAddress?.postalCode,
+      zip5: transaction.order.billingAddress?.postalCode,
     },
     shippingAddress: {
       address1: transaction.order.shippingAddress?.streetAddress1,
       address2: transaction.order.shippingAddress?.streetAddress2,
       city: toTitleCase(transaction.order.shippingAddress?.city),
       state: transaction.order.shippingAddress?.countryArea,
-      zip: transaction.order.shippingAddress?.postalCode,
+      zip5: transaction.order.shippingAddress?.postalCode,
     },
     total: {
       gross: transaction.order.total.gross.amount,
