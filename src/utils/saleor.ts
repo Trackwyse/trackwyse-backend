@@ -3,7 +3,7 @@ import { toTitleCase } from "./string";
 
 export const formatTransaction = (transaction: UserOrderDetailsQuery) => {
   return {
-    ...transaction,
+    ...transaction.order,
     billingAddress: {
       address1: transaction.order.billingAddress?.streetAddress1,
       address2: transaction.order.billingAddress?.streetAddress2,
