@@ -102,7 +102,7 @@ const userSchema = new mongoose.Schema<UserSchema>(
 
     termsAccepted: { type: Boolean, default: false },
 
-    labels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Label", default: [] }],
+    labels: [{ type: String, default: [] }],
   },
   { timestamps: true }
 );
