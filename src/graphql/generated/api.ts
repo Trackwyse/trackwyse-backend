@@ -33594,7 +33594,7 @@ export type UserOrdersQueryVariables = Exact<{
 }>;
 
 
-export type UserOrdersQuery = { __typename?: 'Query', user?: { __typename?: 'User', orders?: { __typename?: 'OrderCountableConnection', edges: Array<{ __typename?: 'OrderCountableEdge', node: { __typename?: 'Order', id: string, created: any, status: OrderStatus } }> } | null } | null };
+export type UserOrdersQuery = { __typename?: 'Query', user?: { __typename?: 'User', orders?: { __typename?: 'OrderCountableConnection', pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, startCursor?: string | null }, edges: Array<{ __typename?: 'OrderCountableEdge', node: { __typename?: 'Order', id: string, created: any, status: OrderStatus } }> } | null } | null };
 
 export type UserOrderDetailsQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -33716,6 +33716,10 @@ export const UserOrdersDocument = gql`
     query UserOrders($id: ID!, $first: Int, $last: Int, $before: String, $after: String) {
   user(id: $id) {
     orders(first: $first, last: $last, before: $before, after: $after) {
+      pageInfo {
+        hasNextPage
+        startCursor
+      }
       edges {
         node {
           id

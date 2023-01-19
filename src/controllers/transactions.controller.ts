@@ -64,6 +64,7 @@ const getTransactions = async (req: express.Request, res: express.Response) => {
   return res.status(200).json({
     error: false,
     message: "Transactions fetched successfully",
+    pageInfo: response.user.orders.pageInfo,
     transactions: response.user.orders.edges.map((edge: any) => edge.node),
   });
 };
