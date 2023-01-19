@@ -9,6 +9,7 @@ import express from "express";
 
 import saleor from "@/lib/saleor";
 import User from "@/models/user.model";
+import { formatTransaction } from "@/utils/saleor";
 
 /*
   GET /api/v1/transactions
@@ -99,10 +100,12 @@ const getTransaction = async (req: express.Request, res: express.Response) => {
 
   const response = await saleor.UserOrderDetails({ id });
 
+  const transaction = formatTransaction(response);
+
   return res.status(200).json({
     error: false,
     message: "Transaction fetched successfully",
-    transaction: response.order,
+    transaction,
   });
 };
 

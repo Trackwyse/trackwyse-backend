@@ -10,7 +10,7 @@ import express from "express";
 import geo from "@/utils/geo";
 import { logger } from "@/lib/logger";
 import { colors } from "@/lib/constants";
-import { getAddressString } from "@/utils/text";
+import { getAddressString } from "@/utils/string";
 
 import USPS from "@/lib/usps";
 import User from "@/models/user.model";
