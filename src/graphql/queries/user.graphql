@@ -11,7 +11,7 @@ query UserOrders($id: ID!, $first: Int, $last: Int, $before: String, $after: Str
     orders(first: $first, last: $last, before: $before, after: $after) {
       pageInfo {
         hasNextPage
-        startCursor
+        endCursor
       }
       edges {
         node {
