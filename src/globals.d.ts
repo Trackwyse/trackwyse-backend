@@ -68,6 +68,7 @@ interface Label {
   owner: string;
   activated: boolean;
   isLost: boolean;
+  uniqueID: string;
 
   name: string;
   color: Color;

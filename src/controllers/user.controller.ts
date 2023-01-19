@@ -234,7 +234,7 @@ const deleteAccount = async (req: express.Request, res: express.Response) => {
 
   // first, remove all of the user's labels
   user.labels.forEach(async (label) => {
-    const labelToDelete = await Label.findById(label);
+    const labelToDelete = await Label.findOne({ uniqueID: { $eq: label } });
 
     if (labelToDelete) {
       labelToDelete.resetData();
