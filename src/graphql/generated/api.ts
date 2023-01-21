@@ -33545,6 +33545,13 @@ export type CustomerCreateMutationVariables = Exact<{
 
 export type CustomerCreateMutation = { __typename?: 'Mutation', customerCreate?: { __typename?: 'CustomerCreate', user?: { __typename?: 'User', id: string } | null } | null };
 
+export type CustomerDeleteMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type CustomerDeleteMutation = { __typename?: 'Mutation', customerDelete?: { __typename?: 'CustomerDelete', user?: { __typename?: 'User', id: string } | null } | null };
+
 export type CustomerUpdateMutationVariables = Exact<{
   id: Scalars['ID'];
   input: CustomerInput;
@@ -33615,6 +33622,15 @@ export const AddressFragmentDoc = gql`
 export const CustomerCreateDocument = gql`
     mutation CustomerCreate($input: UserCreateInput!) {
   customerCreate(input: $input) {
+    user {
+      id
+    }
+  }
+}
+    `;
+export const CustomerDeleteDocument = gql`
+    mutation CustomerDelete($id: ID!) {
+  customerDelete(id: $id) {
     user {
       id
     }
@@ -33775,6 +33791,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
   return {
     CustomerCreate(variables: CustomerCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CustomerCreateMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CustomerCreateMutation>(CustomerCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CustomerCreate', 'mutation');
+    },
+    CustomerDelete(variables: CustomerDeleteMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CustomerDeleteMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CustomerDeleteMutation>(CustomerDeleteDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CustomerDelete', 'mutation');
     },
     CustomerUpdate(variables: CustomerUpdateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CustomerUpdateMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CustomerUpdateMutation>(CustomerUpdateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CustomerUpdate', 'mutation');

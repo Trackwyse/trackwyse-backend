@@ -8,6 +8,7 @@
 import express from "express";
 
 import config from "@/config";
+import saleor from "@/lib/saleor";
 import { logger } from "@/lib/logger";
 
 import USPS from "@/lib/usps";
@@ -246,6 +247,14 @@ const deleteAccount = async (req: express.Request, res: express.Response) => {
       }
     }
   });
+
+  // then, delete their saleor account
+  try {
+    await saleor.CustomerDelete({ id: user.customerID });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error deleting account" });
+  }
 
   // then, remove the user
   try {
