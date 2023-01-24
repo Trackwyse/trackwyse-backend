@@ -57,6 +57,37 @@ const getProducts = async (req: express.Request, res: express.Response) => {
   });
 };
 
+/*
+  GET /api/v1/store/product/:id
+
+  Request Params:
+    - id: string
+
+  Response:
+    - error: boolean
+    - message: string
+    - product: Product
+*/
+const getProductById = async (req: express.Request, res: express.Response) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return res.status(400).json({
+      error: true,
+      message: "Product ID is required",
+    });
+  }
+
+  const response = await saleor.Product({ id });
+
+  return res.status(200).json({
+    error: false,
+    message: "Product fetched successfully",
+    product: response.product,
+  });
+};
+
 export default {
+  getProductById,
   getProducts,
 };

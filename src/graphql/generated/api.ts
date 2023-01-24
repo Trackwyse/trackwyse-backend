@@ -33580,12 +33580,10 @@ export type DraftOrderCreateMutation = { __typename?: 'Mutation', draftOrderCrea
 
 export type ProductQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
-  slug?: InputMaybe<Scalars['String']>;
-  channel?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, description?: any | null, channel?: string | null, defaultVariant?: { __typename?: 'ProductVariant', id: string } | null } | null };
+export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, description?: any | null, thumbnail?: { __typename?: 'Image', url: string } | null, images?: Array<{ __typename?: 'ProductImage', url: string }> | null, variants?: Array<{ __typename?: 'ProductVariant', id: string, name: string, channelListings?: Array<{ __typename?: 'ProductVariantChannelListing', price?: { __typename?: 'Money', amount: number, currency: string } | null }> | null }> | null } | null };
 
 export type ProductsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -33712,14 +33710,26 @@ export const DraftOrderCreateDocument = gql`
 }
     `;
 export const ProductDocument = gql`
-    query Product($id: ID, $slug: String, $channel: String) {
-  product(id: $id, slug: $slug, channel: $channel) {
+    query Product($id: ID) {
+  product(id: $id) {
     id
     name
     description
-    channel
-    defaultVariant {
+    thumbnail {
+      url
+    }
+    images {
+      url
+    }
+    variants {
       id
+      name
+      channelListings {
+        price {
+          amount
+          currency
+        }
+      }
     }
   }
 }

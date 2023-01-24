@@ -16,5 +16,10 @@ storeRouter.get(
   authMiddleware.authenticateVerifiedAccessToken,
   storeController.getProducts
 );
+storeRouter.get(
+  "/products/:id",
+  authMiddleware.authenticateVerifiedAccessToken,
+  storeController.getProductById
+);
 
 export default storeRouter;
