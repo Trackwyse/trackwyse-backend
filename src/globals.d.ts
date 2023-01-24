@@ -22,6 +22,7 @@ interface User {
   address: UserAddress;
 
   customerID: string; // Saleor customer ID
+  checkoutID: string; // Saleor checkout ID
 
   subscriptionDate: Date;
   subscriptionActive: boolean;

@@ -33540,7 +33540,24 @@ export type Resolvers<ContextType = any> = {
 
 export type AddressFragment = { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string };
 
+export type CheckoutFragment = { __typename?: 'Checkout', id: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, lines: Array<{ __typename?: 'CheckoutLine', quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } };
+
 export type PageInfoFragment = { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null };
+
+export type CheckoutCreateMutationVariables = Exact<{
+  input: CheckoutCreateInput;
+}>;
+
+
+export type CheckoutCreateMutation = { __typename?: 'Mutation', checkoutCreate?: { __typename?: 'CheckoutCreate', checkout?: { __typename?: 'Checkout', id: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, lines: Array<{ __typename?: 'CheckoutLine', quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+
+export type CheckoutLinesAddMutationVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']>;
+  lines: Array<CheckoutLineInput> | CheckoutLineInput;
+}>;
+
+
+export type CheckoutLinesAddMutation = { __typename?: 'Mutation', checkoutLinesAdd?: { __typename?: 'CheckoutLinesAdd', checkout?: { __typename?: 'Checkout', id: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, lines: Array<{ __typename?: 'CheckoutLine', quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
 
 export type CustomerCreateMutationVariables = Exact<{
   input: UserCreateInput;
@@ -33577,6 +33594,13 @@ export type DraftOrderCreateMutationVariables = Exact<{
 
 
 export type DraftOrderCreateMutation = { __typename?: 'Mutation', draftOrderCreate?: { __typename?: 'DraftOrderCreate', order?: { __typename?: 'Order', id: string } | null, errors: Array<{ __typename?: 'OrderError', message?: string | null }> } | null };
+
+export type CheckoutQueryVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']>;
+}>;
+
+
+export type CheckoutQuery = { __typename?: 'Query', checkout?: { __typename?: 'Checkout', id: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, lines: Array<{ __typename?: 'CheckoutLine', quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null };
 
 export type ProductQueryVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33624,12 +33648,94 @@ export const AddressFragmentDoc = gql`
   countryArea
 }
     `;
+export const CheckoutFragmentDoc = gql`
+    fragment Checkout on Checkout {
+  id
+  billingAddress {
+    ...Address
+  }
+  shippingAddress {
+    ...Address
+  }
+  lines {
+    quantity
+    variant {
+      name
+      images {
+        url
+      }
+    }
+    totalPrice {
+      net {
+        amount
+        currency
+      }
+      tax {
+        amount
+        currency
+      }
+    }
+  }
+  subtotalPrice {
+    gross {
+      amount
+      currency
+    }
+  }
+  shippingPrice {
+    gross {
+      amount
+      currency
+    }
+  }
+  totalPrice {
+    gross {
+      amount
+      currency
+    }
+  }
+}
+    ${AddressFragmentDoc}`;
 export const PageInfoFragmentDoc = gql`
     fragment PageInfo on PageInfo {
   hasNextPage
   endCursor
 }
     `;
+export const CheckoutCreateDocument = gql`
+    mutation CheckoutCreate($input: CheckoutCreateInput!) {
+  checkoutCreate(input: $input) {
+    checkout {
+      ...Checkout
+    }
+    errors {
+      field
+      message
+    }
+    checkoutErrors {
+      field
+      message
+    }
+  }
+}
+    ${CheckoutFragmentDoc}`;
+export const CheckoutLinesAddDocument = gql`
+    mutation CheckoutLinesAdd($id: ID, $lines: [CheckoutLineInput!]!) {
+  checkoutLinesAdd(checkoutId: $id, lines: $lines) {
+    checkout {
+      ...Checkout
+    }
+    errors {
+      field
+      message
+    }
+    checkoutErrors {
+      field
+      message
+    }
+  }
+}
+    ${CheckoutFragmentDoc}`;
 export const CustomerCreateDocument = gql`
     mutation CustomerCreate($input: UserCreateInput!) {
   customerCreate(input: $input) {
@@ -33709,6 +33815,13 @@ export const DraftOrderCreateDocument = gql`
   }
 }
     `;
+export const CheckoutDocument = gql`
+    query Checkout($id: ID) {
+  checkout(id: $id) {
+    ...Checkout
+  }
+}
+    ${CheckoutFragmentDoc}`;
 export const ProductDocument = gql`
     query Product($id: ID) {
   product(id: $id) {
@@ -33830,6 +33943,12 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    CheckoutCreate(variables: CheckoutCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutCreateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CheckoutCreateMutation>(CheckoutCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutCreate', 'mutation');
+    },
+    CheckoutLinesAdd(variables: CheckoutLinesAddMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutLinesAddMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CheckoutLinesAddMutation>(CheckoutLinesAddDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutLinesAdd', 'mutation');
+    },
     CustomerCreate(variables: CustomerCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CustomerCreateMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CustomerCreateMutation>(CustomerCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CustomerCreate', 'mutation');
     },
@@ -33844,6 +33963,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     DraftOrderCreate(variables: DraftOrderCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<DraftOrderCreateMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<DraftOrderCreateMutation>(DraftOrderCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'DraftOrderCreate', 'mutation');
+    },
+    Checkout(variables?: CheckoutQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutQuery> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CheckoutQuery>(CheckoutDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'Checkout', 'query');
     },
     Product(variables?: ProductQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<ProductQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<ProductQuery>(ProductDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'Product', 'query');

@@ -1,4 +1,11 @@
-import { UserOrderDetailsQuery } from "@/graphql/generated/api";
+/*
+ * Created on Tue Jan 24 2023
+ * Created by JS00001
+ *
+ * Copyright (c) 2023 Trackwyse
+ */
+
+import { UserOrderDetailsQuery, CheckoutCreateInput } from "@/graphql/generated/api";
 import { toTitleCase } from "./string";
 
 export const formatTransaction = (transaction: UserOrderDetailsQuery) => {
@@ -24,4 +31,45 @@ export const formatTransaction = (transaction: UserOrderDetailsQuery) => {
       tax: transaction.order.total.tax.amount,
     },
   };
+};
+
+export const createCheckoutInput = (
+  user: User,
+  quantity: string,
+  variantId: string
+): CheckoutCreateInput => {
+  const input: CheckoutCreateInput = {
+    email: user.email,
+    lines: [
+      {
+        quantity: parseInt(quantity),
+        variantId,
+      },
+    ],
+  };
+
+  if (user.address?.isValid) {
+    input.shippingAddress = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+
+      streetAddress1: user.address.address1,
+      streetAddress2: user.address.address2,
+      city: user.address.city,
+      countryArea: user.address.state,
+      postalCode: user.address.zip5,
+    };
+
+    input.billingAddress = {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      streetAddress1: user.address.address1,
+      streetAddress2: user.address.address2,
+      city: user.address.city,
+      countryArea: user.address.state,
+      postalCode: user.address.zip5,
+    };
+  }
+
+  return input;
 };

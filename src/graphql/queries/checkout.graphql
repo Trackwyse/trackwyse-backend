@@ -1,0 +1,5 @@
+query Checkout($id: ID) {
+  checkout(id: $id) {
+    ...Checkout
+  }
+}

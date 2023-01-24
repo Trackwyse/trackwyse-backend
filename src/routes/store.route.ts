@@ -22,4 +22,14 @@ storeRouter.get(
   storeController.getProductById
 );
 
+storeRouter.get(
+  "/checkout",
+  authMiddleware.authenticateVerifiedAccessToken,
+  storeController.getCheckout
+);
+storeRouter.post(
+  "/checkout/add-product",
+  authMiddleware.authenticateVerifiedAccessToken,
+  storeController.addProductToCheckout
+);
 export default storeRouter;

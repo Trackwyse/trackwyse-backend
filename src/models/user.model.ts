@@ -59,6 +59,7 @@ const userSchema = new mongoose.Schema<UserSchema>(
     role: { type: String, default: "user" },
 
     customerID: { type: String, required: false },
+    checkoutID: { type: String, required: false },
 
     subscriptionDate: { type: Date, required: false },
     subscriptionActive: { type: Boolean, default: false },

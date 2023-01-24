@@ -1,0 +1,46 @@
+fragment Checkout on Checkout {
+  id
+  billingAddress {
+    ...Address
+  }
+  shippingAddress {
+    ...Address
+  }
+  lines {
+    quantity
+    variant {
+      name
+      images {
+        url
+      }
+    }
+    totalPrice {
+      net {
+        amount
+        currency
+      }
+      tax {
+        amount
+        currency
+      }
+    }
+  }
+  subtotalPrice {
+    gross {
+      amount
+      currency
+    }
+  }
+  shippingPrice {
+    gross {
+      amount
+      currency
+    }
+  }
+  totalPrice {
+    gross {
+      amount
+      currency
+    }
+  }
+}
