@@ -33583,7 +33583,7 @@ export type ProductQueryVariables = Exact<{
 }>;
 
 
-export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, description?: any | null, thumbnail?: { __typename?: 'Image', url: string } | null, images?: Array<{ __typename?: 'ProductImage', url: string }> | null, variants?: Array<{ __typename?: 'ProductVariant', id: string, name: string, channelListings?: Array<{ __typename?: 'ProductVariantChannelListing', price?: { __typename?: 'Money', amount: number, currency: string } | null }> | null }> | null } | null };
+export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Product', id: string, name: string, description?: any | null, thumbnail?: { __typename?: 'Image', url: string } | null, images?: Array<{ __typename?: 'ProductImage', url: string }> | null, variants?: Array<{ __typename?: 'ProductVariant', id: string, name: string, channelListings?: Array<{ __typename?: 'ProductVariantChannelListing', price?: { __typename?: 'Money', amount: number, currency: string } | null }> | null }> | null, media?: Array<{ __typename?: 'ProductMedia', url: string }> | null } | null };
 
 export type ProductsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
@@ -33730,6 +33730,9 @@ export const ProductDocument = gql`
           currency
         }
       }
+    }
+    media {
+      url
     }
   }
 }

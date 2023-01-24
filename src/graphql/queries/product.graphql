@@ -19,5 +19,8 @@ query Product($id: ID) {
         }
       }
     }
+    media {
+      url
+    }
   }
 }
