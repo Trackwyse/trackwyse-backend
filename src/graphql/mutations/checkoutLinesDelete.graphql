@@ -1,5 +1,5 @@
-mutation CheckoutLinesAdd($id: ID, $lines: [CheckoutLineInput!]!) {
-  checkoutLinesAdd(checkoutId: $id, lines: $lines) {
+mutation CheckoutLinesDelete($id: ID, $linesIds: [ID!]!) {
+  checkoutLinesDelete(id: $id, linesIds: $linesIds) {
     checkout {
       lines {
         id
@@ -23,10 +23,6 @@ mutation CheckoutLinesAdd($id: ID, $lines: [CheckoutLineInput!]!) {
       }
     }
     errors {
-      field
-      message
-    }
-    checkoutErrors {
       field
       message
     }

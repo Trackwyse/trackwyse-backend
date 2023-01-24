@@ -7,6 +7,7 @@ fragment Checkout on Checkout {
     ...Address
   }
   lines {
+    id
     quantity
     variant {
       name

@@ -7,9 +7,11 @@
 import express from "express";
 
 import saleor from "@/lib/saleor";
-import User from "@/models/user.model";
 import { logger } from "@/lib/logger";
 import { createCheckoutInput } from "@/utils/saleor";
+
+import User from "@/models/user.model";
+import { CountryCode } from "@/graphql/generated/api";
 
 /*
   GET /api/v1/store/products
@@ -161,6 +163,7 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
     });
 
     if (!response.checkoutCreate.checkout) {
+      logger.error(JSON.stringify(response.checkoutCreate.errors));
       return res.status(500).json({
         error: true,
         message: "Error creating checkout",
@@ -197,6 +200,7 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
   });
 
   if (!response.checkoutLinesAdd.checkout) {
+    logger.error(JSON.stringify(response.checkoutLinesAdd.errors));
     return res.status(500).json({
       error: true,
       message: "Error adding product to checkout",
@@ -210,10 +214,196 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
   });
 };
 
+/*
+  POST /api/v1/store/checkout/remove-product
+
+  Request Body:
+    - lineId: string
+
+  Response:
+    - error: boolean
+    - message: string
+    - checkout: Checkout
+*/
+const removeProductFromCheckout = async (req: express.Request, res: express.Response) => {
+  const { lineId } = req.body;
+
+  if (!lineId) {
+    return res.status(400).json({
+      error: true,
+      message: "Line ID is required",
+    });
+  }
+
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(400).json({
+      error: true,
+      message: "User not found",
+    });
+  }
+
+  if (!user.checkoutID) {
+    return res.status(400).json({
+      error: true,
+      message: "Checkout not found",
+    });
+  }
+
+  const response = await saleor.CheckoutLinesDelete({
+    id: user.checkoutID,
+    linesIds: [lineId],
+  });
+
+  if (!response.checkoutLinesDelete.checkout) {
+    logger.error(JSON.stringify(response.checkoutLinesDelete.errors));
+    return res.status(500).json({
+      error: true,
+      message: "Error removing product from checkout",
+    });
+  }
+
+  return res.status(200).json({
+    error: false,
+    message: "Product removed from checkout successfully",
+    checkout: response.checkoutLinesDelete.checkout,
+  });
+};
+
+/*
+  POST /api/v1/store/checkout/update-product
+
+  Request Body:
+    - lineId: string
+    - quantity: number
+
+  Response:
+    - error: boolean
+    - message: string
+    - checkout: Checkout
+*/
+const updateProductInCheckout = async (req: express.Request, res: express.Response) => {
+  const { lineId, quantity } = req.body;
+
+  if (!lineId || !quantity) {
+    return res.status(400).json({
+      error: true,
+      message: "Line ID and quantity are required",
+    });
+  }
+
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(400).json({
+      error: true,
+      message: "User not found",
+    });
+  }
+
+  if (!user.checkoutID) {
+    return res.status(400).json({
+      error: true,
+      message: "Checkout not found",
+    });
+  }
+
+  const response = await saleor.CheckoutLinesUpdate({
+    id: user.checkoutID,
+    lines: [
+      {
+        lineId,
+        quantity,
+      },
+    ],
+  });
+
+  if (!response.checkoutLinesUpdate.checkout) {
+    logger.error(JSON.stringify(response.checkoutLinesUpdate.errors));
+    return res.status(500).json({
+      error: true,
+      message: "Error updating product in checkout",
+    });
+  }
+
+  return res.status(200).json({
+    error: false,
+    message: "Product updated in checkout successfully",
+    checkout: response.checkoutLinesUpdate.checkout,
+  });
+};
+
+/*
+  POST /api/v1/store/checkout/update-address
+
+  Request Body:
+    - address1: string
+    - address2: string
+    - city: string
+    - country: string
+    - zip5: string
+    - firstName: string
+    - lastName: string
+
+  Response:
+    - error: boolean
+    - message: string
+    - checkout: Checkout
+*/
+const updateCheckoutAddress = async (req: express.Request, res: express.Response) => {
+  const { address1, address2, city, state, zip5 } = req.body;
+
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(400).json({
+      error: true,
+      message: "User not found",
+    });
+  }
+
+  if (!user.checkoutID) {
+    return res.status(400).json({
+      error: true,
+      message: "Checkout not found",
+    });
+  }
+
+  const response = await saleor.CheckoutShippingAddressUpdate({
+    id: user.checkoutID,
+    shippingAddress: {
+      streetAddress1: address1,
+      streetAddress2: address2,
+      city,
+      country: CountryCode.Us,
+      postalCode: zip5,
+      countryArea: state,
+    },
+  });
+
+  if (!response.checkoutShippingAddressUpdate.checkout) {
+    logger.error(JSON.stringify(response.checkoutShippingAddressUpdate.errors));
+    return res.status(500).json({
+      error: true,
+      message: "Error updating checkout address",
+    });
+  }
+
+  return res.status(200).json({
+    error: false,
+    message: "Checkout address updated successfully",
+    checkout: response.checkoutShippingAddressUpdate.checkout,
+  });
+};
+
 export default {
   getProductById,
   getProducts,
 
   getCheckout,
   addProductToCheckout,
+  removeProductFromCheckout,
+  updateProductInCheckout,
+  updateCheckoutAddress,
 };

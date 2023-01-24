@@ -5,7 +5,7 @@
  * Copyright (c) 2023 Trackwyse
  */
 
-import { UserOrderDetailsQuery, CheckoutCreateInput } from "@/graphql/generated/api";
+import { UserOrderDetailsQuery, CheckoutCreateInput, CountryCode } from "@/graphql/generated/api";
 import { toTitleCase } from "./string";
 
 export const formatTransaction = (transaction: UserOrderDetailsQuery) => {
@@ -57,6 +57,7 @@ export const createCheckoutInput = (
       streetAddress2: user.address.address2,
       city: user.address.city,
       countryArea: user.address.state,
+      country: CountryCode.Us, // TODO: Make this dynamic
       postalCode: user.address.zip5,
     };
 
@@ -67,6 +68,7 @@ export const createCheckoutInput = (
       streetAddress2: user.address.address2,
       city: user.address.city,
       countryArea: user.address.state,
+      country: CountryCode.Us, // TODO: Make this dynamic
       postalCode: user.address.zip5,
     };
   }

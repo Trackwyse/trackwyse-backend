@@ -32,4 +32,20 @@ storeRouter.post(
   authMiddleware.authenticateVerifiedAccessToken,
   storeController.addProductToCheckout
 );
+storeRouter.post(
+  "/checkout/remove-product",
+  authMiddleware.authenticateVerifiedAccessToken,
+  storeController.removeProductFromCheckout
+);
+storeRouter.post(
+  "/checkout/update-product",
+  authMiddleware.authenticateVerifiedAccessToken,
+  storeController.updateProductInCheckout
+);
+storeRouter.post(
+  "/checkout/update-address",
+  authMiddleware.authenticateVerifiedAccessToken,
+  storeController.updateCheckoutAddress
+);
+
 export default storeRouter;

@@ -1,5 +1,5 @@
-mutation CheckoutLinesAdd($id: ID, $lines: [CheckoutLineInput!]!) {
-  checkoutLinesAdd(checkoutId: $id, lines: $lines) {
+mutation CheckoutLinesUpdate($id: ID, $lines: [CheckoutLineUpdateInput!]!) {
+  checkoutLinesUpdate(id: $id, lines: $lines) {
     checkout {
       lines {
         id
