@@ -341,10 +341,8 @@ const updateProductInCheckout = async (req: express.Request, res: express.Respon
     - address1: string
     - address2: string
     - city: string
-    - country: string
+    - state: string
     - zip5: string
-    - firstName: string
-    - lastName: string
 
   Response:
     - error: boolean
