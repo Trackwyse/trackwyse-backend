@@ -16,13 +16,14 @@ import config from "@/config";
 import authRouter from "@/routes/auth.route";
 import userRouter from "@/routes/user.route";
 import adminRouter from "@/routes/admin.route";
+import storeRouter from "@/routes/store.route";
+import labelRouter from "@/routes/labels.route";
 import statusRouter from "@/routes/status.route";
 import { logger, morganLogger } from "@/lib/logger";
 import locationRouter from "@/routes/location.route";
 import rateLimit from "@/middleware/ratelimit.middleware";
 import transactionsRouter from "@/routes/transactions.route";
 import subscriptionRouter from "@/routes/subscription.route";
-import { productRouter, labelRouter } from "@/routes/product.route";
 
 const app = express();
 
@@ -46,8 +47,8 @@ const startServer = async () => {
   app.use("/status", statusRouter);
   app.use("/auth/v1", rateLimit.authLimiter, authRouter);
 
-  app.use("/api/v1", rateLimit.apiLimiter, productRouter);
   app.use("/api/v1/user", rateLimit.apiLimiter, userRouter);
+  app.use("/api/v1/store", rateLimit.apiLimiter, storeRouter);
   app.use("/api/v1/admin", rateLimit.apiLimiter, adminRouter);
   app.use("/api/v1/labels", rateLimit.apiLimiter, labelRouter);
   app.use("/api/v1/location", rateLimit.apiLimiter, locationRouter);

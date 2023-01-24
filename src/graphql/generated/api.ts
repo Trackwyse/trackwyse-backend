@@ -33538,6 +33538,10 @@ export type Resolvers<ContextType = any> = {
 };
 
 
+export type AddressFragment = { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string };
+
+export type PageInfoFragment = { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null };
+
 export type CustomerCreateMutationVariables = Exact<{
   input: UserCreateInput;
 }>;
@@ -33585,12 +33589,15 @@ export type ProductQuery = { __typename?: 'Query', product?: { __typename?: 'Pro
 
 export type ProductsQueryVariables = Exact<{
   first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<ProductFilterInput>;
+  sortBy?: InputMaybe<ProductOrder>;
 }>;
 
 
-export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'ProductCountableConnection', edges: Array<{ __typename?: 'ProductCountableEdge', node: { __typename?: 'Product', id: string, name: string, description?: any | null, channel?: string | null, defaultVariant?: { __typename?: 'ProductVariant', id: string } | null } }> } | null };
-
-export type AddressFragment = { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string };
+export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'ProductCountableConnection', edges: Array<{ __typename?: 'ProductCountableEdge', node: { __typename?: 'Product', id: string, name: string, thumbnail?: { __typename?: 'Image', url: string } | null, variants?: Array<{ __typename?: 'ProductVariant', channelListings?: Array<{ __typename?: 'ProductVariantChannelListing', price?: { __typename?: 'Money', amount: number, currency: string } | null }> | null }> | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null };
 
 export type UserOrdersQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -33601,7 +33608,7 @@ export type UserOrdersQueryVariables = Exact<{
 }>;
 
 
-export type UserOrdersQuery = { __typename?: 'Query', user?: { __typename?: 'User', orders?: { __typename?: 'OrderCountableConnection', pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null }, edges: Array<{ __typename?: 'OrderCountableEdge', node: { __typename?: 'Order', id: string, created: any, status: OrderStatus } }> } | null } | null };
+export type UserOrdersQuery = { __typename?: 'Query', user?: { __typename?: 'User', orders?: { __typename?: 'OrderCountableConnection', edges: Array<{ __typename?: 'OrderCountableEdge', node: { __typename?: 'Order', id: string, created: any, status: OrderStatus } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null } | null };
 
 export type UserOrderDetailsQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -33617,6 +33624,12 @@ export const AddressFragmentDoc = gql`
   city
   postalCode
   countryArea
+}
+    `;
+export const PageInfoFragmentDoc = gql`
+    fragment PageInfo on PageInfo {
+  hasNextPage
+  endCursor
 }
     `;
 export const CustomerCreateDocument = gql`
@@ -33712,30 +33725,42 @@ export const ProductDocument = gql`
 }
     `;
 export const ProductsDocument = gql`
-    query Products($first: Int) {
-  products(first: $first) {
+    query Products($first: Int, $last: Int, $after: String, $before: String, $filter: ProductFilterInput, $sortBy: ProductOrder) {
+  products(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    filter: $filter
+    sortBy: $sortBy
+  ) {
     edges {
       node {
         id
         name
-        description
-        channel
-        defaultVariant {
-          id
+        thumbnail {
+          url
+        }
+        variants {
+          channelListings {
+            price {
+              amount
+              currency
+            }
+          }
         }
       }
     }
+    pageInfo {
+      ...PageInfo
+    }
   }
 }
-    `;
+    ${PageInfoFragmentDoc}`;
 export const UserOrdersDocument = gql`
     query UserOrders($id: ID!, $first: Int, $last: Int, $before: String, $after: String) {
   user(id: $id) {
     orders(first: $first, last: $last, before: $before, after: $after) {
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
       edges {
         node {
           id
@@ -33743,10 +33768,13 @@ export const UserOrdersDocument = gql`
           status
         }
       }
+      pageInfo {
+        ...PageInfo
+      }
     }
   }
 }
-    `;
+    ${PageInfoFragmentDoc}`;
 export const UserOrderDetailsDocument = gql`
     query UserOrderDetails($id: ID!) {
   order(id: $id) {

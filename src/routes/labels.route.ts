@@ -8,9 +8,7 @@
 import express from "express";
 
 import authMiddleware from "@/middleware/auth.middleware";
-import productController from "@/controllers/product.controller";
-
-const productRouter = express.Router();
+import productController from "@/controllers/labels.controller";
 
 const labelRouter = express.Router();
 labelRouter.post("/create", authMiddleware.attachAccessToken, productController.createLabel); // TEMPORARY
@@ -39,4 +37,4 @@ labelRouter.post(
   productController.recoveredLabel
 );
 
-export { productRouter, labelRouter };
+export default labelRouter;
