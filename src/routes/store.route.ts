@@ -11,6 +11,7 @@ import storeController from "@/controllers/store.controller";
 
 const storeRouter = express.Router();
 
+// Storefront Product Management
 storeRouter.get(
   "/products",
   authMiddleware.authenticateVerifiedAccessToken,
@@ -22,6 +23,7 @@ storeRouter.get(
   storeController.getProductById
 );
 
+// Cart Management
 storeRouter.get(
   "/checkout",
   authMiddleware.authenticateVerifiedAccessToken,
@@ -46,6 +48,18 @@ storeRouter.post(
   "/checkout/update-address",
   authMiddleware.authenticateVerifiedAccessToken,
   storeController.updateCheckoutAddress
+);
+
+// Payment Processing
+storeRouter.post(
+  "/payment/create",
+  authMiddleware.authenticateVerifiedAccessToken,
+  storeController.createPayment
+);
+storeRouter.post(
+  "/payment/complete",
+  authMiddleware.authenticateVerifiedAccessToken,
+  storeController.completePayment
 );
 
 export default storeRouter;

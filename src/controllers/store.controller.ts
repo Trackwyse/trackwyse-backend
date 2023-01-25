@@ -419,6 +419,131 @@ const updateCheckoutAddress = async (req: express.Request, res: express.Response
   });
 };
 
+/*
+  POST /api/v1/store/payment/create
+
+  Response:
+    - error: boolean
+    - message: string
+*/
+const createPayment = async (req: express.Request, res: express.Response) => {
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(400).json({
+      error: true,
+      message: "User not found",
+    });
+  }
+
+  if (!user.checkoutID) {
+    return res.status(400).json({
+      error: true,
+      message: "Checkout not found",
+    });
+  }
+
+  const checkout = await saleor.Checkout({
+    id: user.checkoutID,
+  });
+
+  if (!checkout.checkout) {
+    return res.status(500).json({
+      error: true,
+      message: "Error getting checkout",
+    });
+  }
+
+  const response = await saleor.CheckoutPaymentCreate({
+    id: user.checkoutID,
+    input: {
+      gateway: "saleor.payments.stripe",
+      amount: checkout.checkout.totalPrice.gross.amount,
+    },
+  });
+
+  if (!response.checkoutPaymentCreate.payment) {
+    logger.error(JSON.stringify(response.checkoutPaymentCreate.errors));
+    return res.status(500).json({
+      error: true,
+      message: "Error creating payment",
+    });
+  }
+
+  return res.status(200).json({
+    error: false,
+    message: "Payment intent created",
+  });
+};
+
+/*
+  POST /api/v1/store/payment/complete
+
+  Request Body:
+    -
+
+  Response:
+    - error: boolean
+    - message: string
+    -
+*/
+const completePayment = async (req: express.Request, res: express.Response) => {
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(400).json({
+      error: true,
+      message: "User not found",
+    });
+  }
+
+  if (!user.checkoutID) {
+    return res.status(400).json({
+      error: true,
+      message: "Checkout not found",
+    });
+  }
+
+  const response = await saleor.CheckoutComplete({
+    id: user.checkoutID,
+  });
+
+  if (!response.checkoutComplete.order && !response.checkoutComplete.confirmationNeeded) {
+    logger.error(JSON.stringify(response.checkoutComplete.errors));
+    return res.status(500).json({
+      error: true,
+      message: "Error completing checkout",
+    });
+  }
+
+  if (response.checkoutComplete.confirmationNeeded) {
+    return res.status(200).json({
+      error: false,
+      message: "Confirmation needed",
+      confirmationData: response.checkoutComplete.confirmationData,
+    });
+  }
+
+  // update the user's checkout ID
+  user.checkoutID = null;
+
+  try {
+    await user.save();
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({
+      error: true,
+      message: "Error updating user checkout ID",
+    });
+  }
+
+  return res.status(200).json({
+    error: false,
+    message: "Checkout completed successfully",
+    order: response.checkoutComplete.order,
+  });
+};
+
 export default {
   getProductById,
   getProducts,
@@ -428,4 +553,7 @@ export default {
   removeProductFromCheckout,
   updateProductInCheckout,
   updateCheckoutAddress,
+
+  createPayment,
+  completePayment,
 };
