@@ -21,6 +21,24 @@ mutation CheckoutLinesDelete($id: ID, $linesIds: [ID!]!) {
           }
         }
       }
+      subtotalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      shippingPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
     }
     errors {
       field

@@ -33557,7 +33557,7 @@ export type CheckoutLinesAddMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutLinesAddMutation = { __typename?: 'Mutation', checkoutLinesAdd?: { __typename?: 'CheckoutLinesAdd', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }> } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+export type CheckoutLinesAddMutation = { __typename?: 'Mutation', checkoutLinesAdd?: { __typename?: 'CheckoutLinesAdd', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutLinesDeleteMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33565,7 +33565,7 @@ export type CheckoutLinesDeleteMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutLinesDeleteMutation = { __typename?: 'Mutation', checkoutLinesDelete?: { __typename?: 'CheckoutLinesDelete', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }> } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+export type CheckoutLinesDeleteMutation = { __typename?: 'Mutation', checkoutLinesDelete?: { __typename?: 'CheckoutLinesDelete', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutLinesUpdateMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33573,7 +33573,7 @@ export type CheckoutLinesUpdateMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutLinesUpdateMutation = { __typename?: 'Mutation', checkoutLinesUpdate?: { __typename?: 'CheckoutLinesUpdate', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }> } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+export type CheckoutLinesUpdateMutation = { __typename?: 'Mutation', checkoutLinesUpdate?: { __typename?: 'CheckoutLinesUpdate', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutShippingAddressUpdateMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33768,6 +33768,24 @@ export const CheckoutLinesAddDocument = gql`
           }
         }
       }
+      subtotalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      shippingPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
     }
     errors {
       field
@@ -33804,6 +33822,24 @@ export const CheckoutLinesDeleteDocument = gql`
           }
         }
       }
+      subtotalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      shippingPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
     }
     errors {
       field
@@ -33834,6 +33870,24 @@ export const CheckoutLinesUpdateDocument = gql`
             amount
             currency
           }
+        }
+      }
+      subtotalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      shippingPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
         }
       }
     }
