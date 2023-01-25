@@ -1,7 +1,7 @@
 mutation CheckoutCreate($input: CheckoutCreateInput!) {
   checkoutCreate(input: $input) {
     checkout {
-      ...Checkout
+      id
     }
     errors {
       field

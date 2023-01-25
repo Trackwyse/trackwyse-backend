@@ -33544,12 +33544,27 @@ export type CheckoutFragment = { __typename?: 'Checkout', id: string, billingAdd
 
 export type PageInfoFragment = { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null };
 
+export type CheckoutCompleteMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type CheckoutCompleteMutation = { __typename?: 'Mutation', checkoutComplete?: { __typename?: 'CheckoutComplete', confirmationNeeded: boolean, confirmationData?: any | null, order?: { __typename?: 'Order', id: string, userEmail?: string | null, created: any } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+
 export type CheckoutCreateMutationVariables = Exact<{
   input: CheckoutCreateInput;
 }>;
 
 
-export type CheckoutCreateMutation = { __typename?: 'Mutation', checkoutCreate?: { __typename?: 'CheckoutCreate', checkout?: { __typename?: 'Checkout', id: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+export type CheckoutCreateMutation = { __typename?: 'Mutation', checkoutCreate?: { __typename?: 'CheckoutCreate', checkout?: { __typename?: 'Checkout', id: string } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+
+export type CheckoutCustomerAttachMutationVariables = Exact<{
+  customerId?: InputMaybe<Scalars['ID']>;
+  id?: InputMaybe<Scalars['ID']>;
+}>;
+
+
+export type CheckoutCustomerAttachMutation = { __typename?: 'Mutation', checkoutCustomerAttach?: { __typename?: 'CheckoutCustomerAttach', checkout?: { __typename?: 'Checkout', id: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutLinesAddMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33574,6 +33589,14 @@ export type CheckoutLinesUpdateMutationVariables = Exact<{
 
 
 export type CheckoutLinesUpdateMutation = { __typename?: 'Mutation', checkoutLinesUpdate?: { __typename?: 'CheckoutLinesUpdate', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+
+export type CheckoutPaymentCreateMutationVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']>;
+  input: PaymentInput;
+}>;
+
+
+export type CheckoutPaymentCreateMutation = { __typename?: 'Mutation', checkoutPaymentCreate?: { __typename?: 'CheckoutPaymentCreate', payment?: { __typename?: 'Payment', id: string, chargeStatus: PaymentChargeStatusEnum } | null, paymentErrors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }>, errors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutShippingAddressUpdateMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33727,17 +33750,51 @@ export const PageInfoFragmentDoc = gql`
   endCursor
 }
     `;
+export const CheckoutCompleteDocument = gql`
+    mutation CheckoutComplete($id: ID!) {
+  checkoutComplete(id: $id) {
+    order {
+      id
+      userEmail
+      created
+    }
+    confirmationNeeded
+    confirmationData
+    errors {
+      field
+      message
+    }
+  }
+}
+    `;
 export const CheckoutCreateDocument = gql`
     mutation CheckoutCreate($input: CheckoutCreateInput!) {
   checkoutCreate(input: $input) {
     checkout {
-      ...Checkout
+      id
     }
     errors {
       field
       message
     }
     checkoutErrors {
+      field
+      message
+    }
+  }
+}
+    `;
+export const CheckoutCustomerAttachDocument = gql`
+    mutation CheckoutCustomerAttach($customerId: ID, $id: ID) {
+  checkoutCustomerAttach(customerId: $customerId, id: $id) {
+    checkout {
+      ...Checkout
+    }
+    checkoutErrors {
+      field
+      message
+    }
+    errors {
       field
       message
     }
@@ -33896,6 +33953,24 @@ export const CheckoutLinesUpdateDocument = gql`
       message
     }
     checkoutErrors {
+      field
+      message
+    }
+  }
+}
+    `;
+export const CheckoutPaymentCreateDocument = gql`
+    mutation CheckoutPaymentCreate($id: ID, $input: PaymentInput!) {
+  checkoutPaymentCreate(id: $id, input: $input) {
+    payment {
+      id
+      chargeStatus
+    }
+    paymentErrors {
+      field
+      message
+    }
+    errors {
       field
       message
     }
@@ -34130,8 +34205,14 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    CheckoutComplete(variables: CheckoutCompleteMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutCompleteMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CheckoutCompleteMutation>(CheckoutCompleteDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutComplete', 'mutation');
+    },
     CheckoutCreate(variables: CheckoutCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutCreateMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CheckoutCreateMutation>(CheckoutCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutCreate', 'mutation');
+    },
+    CheckoutCustomerAttach(variables?: CheckoutCustomerAttachMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutCustomerAttachMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CheckoutCustomerAttachMutation>(CheckoutCustomerAttachDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutCustomerAttach', 'mutation');
     },
     CheckoutLinesAdd(variables: CheckoutLinesAddMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutLinesAddMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CheckoutLinesAddMutation>(CheckoutLinesAddDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutLinesAdd', 'mutation');
@@ -34141,6 +34222,9 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     },
     CheckoutLinesUpdate(variables: CheckoutLinesUpdateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutLinesUpdateMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CheckoutLinesUpdateMutation>(CheckoutLinesUpdateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutLinesUpdate', 'mutation');
+    },
+    CheckoutPaymentCreate(variables: CheckoutPaymentCreateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutPaymentCreateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CheckoutPaymentCreateMutation>(CheckoutPaymentCreateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutPaymentCreate', 'mutation');
     },
     CheckoutShippingAddressUpdate(variables: CheckoutShippingAddressUpdateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutShippingAddressUpdateMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CheckoutShippingAddressUpdateMutation>(CheckoutShippingAddressUpdateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutShippingAddressUpdate', 'mutation');

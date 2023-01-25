@@ -8,9 +8,9 @@ import express from "express";
 
 import {
   createCheckoutInput,
-  formatCheckoutMutation,
   formatCheckoutQuery,
   formatCheckoutShippingAddressUpdate,
+  formatCheckoutCustomerAttachMutation,
 } from "@/utils/saleor";
 import saleor from "@/lib/saleor";
 import { logger } from "@/lib/logger";
@@ -177,7 +177,20 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
       });
     }
 
-    const checkout = formatCheckoutMutation(response);
+    const attachCustomerResponse = await saleor.CheckoutCustomerAttach({
+      id: response.checkoutCreate.checkout.id,
+      customerId: user.customerID,
+    });
+
+    if (!attachCustomerResponse.checkoutCustomerAttach.checkout) {
+      logger.error(JSON.stringify(attachCustomerResponse.checkoutCustomerAttach.errors));
+      return res.status(500).json({
+        error: true,
+        message: "Error attaching customer to checkout",
+      });
+    }
+
+    const checkout = formatCheckoutCustomerAttachMutation(attachCustomerResponse);
 
     user.checkoutID = checkout.id;
 

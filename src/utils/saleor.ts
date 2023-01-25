@@ -12,6 +12,8 @@ import {
   CheckoutCreateMutation,
   CheckoutQuery,
   CheckoutShippingAddressUpdateMutation,
+  CheckoutCustomerAttach,
+  CheckoutCustomerAttachMutation,
 } from "@/graphql/generated/api";
 import { toTitleCase } from "./string";
 
@@ -60,22 +62,22 @@ export const formatCheckoutQuery = (checkout: CheckoutQuery) => {
   };
 };
 
-export const formatCheckoutMutation = (checkout: CheckoutCreateMutation) => {
+export const formatCheckoutCustomerAttachMutation = (checkout: CheckoutCustomerAttachMutation) => {
   return {
-    ...checkout.checkoutCreate.checkout,
+    ...checkout.checkoutCustomerAttach.checkout,
     billingAddress: {
-      address1: checkout.checkoutCreate.checkout.billingAddress?.streetAddress1,
-      address2: checkout.checkoutCreate.checkout.billingAddress?.streetAddress2,
-      city: toTitleCase(checkout.checkoutCreate.checkout.billingAddress?.city),
-      state: checkout.checkoutCreate.checkout.billingAddress?.countryArea,
-      zip5: checkout.checkoutCreate.checkout.billingAddress?.postalCode,
+      address1: checkout.checkoutCustomerAttach.checkout.billingAddress?.streetAddress1,
+      address2: checkout.checkoutCustomerAttach.checkout.billingAddress?.streetAddress2,
+      city: toTitleCase(checkout.checkoutCustomerAttach.checkout.billingAddress?.city),
+      state: checkout.checkoutCustomerAttach.checkout.billingAddress?.countryArea,
+      zip5: checkout.checkoutCustomerAttach.checkout.billingAddress?.postalCode,
     },
     shippingAddress: {
-      address1: checkout.checkoutCreate.checkout.shippingAddress?.streetAddress1,
-      address2: checkout.checkoutCreate.checkout.shippingAddress?.streetAddress2,
-      city: toTitleCase(checkout.checkoutCreate.checkout.shippingAddress?.city),
-      state: checkout.checkoutCreate.checkout.shippingAddress?.countryArea,
-      zip5: checkout.checkoutCreate.checkout.shippingAddress?.postalCode,
+      address1: checkout.checkoutCustomerAttach.checkout.shippingAddress?.streetAddress1,
+      address2: checkout.checkoutCustomerAttach.checkout.shippingAddress?.streetAddress2,
+      city: toTitleCase(checkout.checkoutCustomerAttach.checkout.shippingAddress?.city),
+      state: checkout.checkoutCustomerAttach.checkout.shippingAddress?.countryArea,
+      zip5: checkout.checkoutCustomerAttach.checkout.shippingAddress?.postalCode,
     },
   };
 };
