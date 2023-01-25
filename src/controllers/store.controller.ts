@@ -6,9 +6,14 @@
  */
 import express from "express";
 
+import {
+  createCheckoutInput,
+  formatCheckoutMutation,
+  formatCheckoutQuery,
+  formatCheckoutShippingAddressUpdate,
+} from "@/utils/saleor";
 import saleor from "@/lib/saleor";
 import { logger } from "@/lib/logger";
-import { createCheckoutInput } from "@/utils/saleor";
 
 import User from "@/models/user.model";
 import { CountryCode } from "@/graphql/generated/api";
@@ -119,10 +124,12 @@ const getCheckout = async (req: express.Request, res: express.Response) => {
 
   const response = await saleor.Checkout({ id: user.checkoutID });
 
+  const checkout = formatCheckoutQuery(response);
+
   return res.status(200).json({
     error: false,
     message: "Checkout fetched successfully",
-    checkout: response.checkout,
+    checkout,
   });
 };
 
@@ -170,7 +177,9 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
       });
     }
 
-    user.checkoutID = response.checkoutCreate.checkout.id;
+    const checkout = formatCheckoutMutation(response);
+
+    user.checkoutID = checkout.id;
 
     try {
       await user.save();
@@ -185,7 +194,7 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
     return res.status(200).json({
       error: false,
       message: "Checkout created successfully",
-      checkout: response.checkoutCreate.checkout,
+      checkout,
     });
   }
 
@@ -388,10 +397,12 @@ const updateCheckoutAddress = async (req: express.Request, res: express.Response
     });
   }
 
+  const checkout = formatCheckoutShippingAddressUpdate(response);
+
   return res.status(200).json({
     error: false,
     message: "Checkout address updated successfully",
-    checkout: response.checkoutShippingAddressUpdate.checkout,
+    checkout,
   });
 };
 

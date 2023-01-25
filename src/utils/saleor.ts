@@ -5,7 +5,14 @@
  * Copyright (c) 2023 Trackwyse
  */
 
-import { UserOrderDetailsQuery, CheckoutCreateInput, CountryCode } from "@/graphql/generated/api";
+import {
+  UserOrderDetailsQuery,
+  CheckoutCreateInput,
+  CountryCode,
+  CheckoutCreateMutation,
+  CheckoutQuery,
+  CheckoutShippingAddressUpdateMutation,
+} from "@/graphql/generated/api";
 import { toTitleCase } from "./string";
 
 export const formatTransaction = (transaction: UserOrderDetailsQuery) => {
@@ -29,6 +36,61 @@ export const formatTransaction = (transaction: UserOrderDetailsQuery) => {
       gross: transaction.order.total.gross.amount,
       net: transaction.order.total.net.amount,
       tax: transaction.order.total.tax.amount,
+    },
+  };
+};
+
+export const formatCheckoutQuery = (checkout: CheckoutQuery) => {
+  return {
+    ...checkout.checkout,
+    billingAddress: {
+      address1: checkout.checkout.billingAddress?.streetAddress1,
+      address2: checkout.checkout.billingAddress?.streetAddress2,
+      city: toTitleCase(checkout.checkout.billingAddress?.city),
+      state: checkout.checkout.billingAddress?.countryArea,
+      zip5: checkout.checkout.billingAddress?.postalCode,
+    },
+    shippingAddress: {
+      address1: checkout.checkout.shippingAddress?.streetAddress1,
+      address2: checkout.checkout.shippingAddress?.streetAddress2,
+      city: toTitleCase(checkout.checkout.shippingAddress?.city),
+      state: checkout.checkout.shippingAddress?.countryArea,
+      zip5: checkout.checkout.shippingAddress?.postalCode,
+    },
+  };
+};
+
+export const formatCheckoutMutation = (checkout: CheckoutCreateMutation) => {
+  return {
+    ...checkout.checkoutCreate.checkout,
+    billingAddress: {
+      address1: checkout.checkoutCreate.checkout.billingAddress?.streetAddress1,
+      address2: checkout.checkoutCreate.checkout.billingAddress?.streetAddress2,
+      city: toTitleCase(checkout.checkoutCreate.checkout.billingAddress?.city),
+      state: checkout.checkoutCreate.checkout.billingAddress?.countryArea,
+      zip5: checkout.checkoutCreate.checkout.billingAddress?.postalCode,
+    },
+    shippingAddress: {
+      address1: checkout.checkoutCreate.checkout.shippingAddress?.streetAddress1,
+      address2: checkout.checkoutCreate.checkout.shippingAddress?.streetAddress2,
+      city: toTitleCase(checkout.checkoutCreate.checkout.shippingAddress?.city),
+      state: checkout.checkoutCreate.checkout.shippingAddress?.countryArea,
+      zip5: checkout.checkoutCreate.checkout.shippingAddress?.postalCode,
+    },
+  };
+};
+
+export const formatCheckoutShippingAddressUpdate = (
+  checkout: CheckoutShippingAddressUpdateMutation
+) => {
+  return {
+    ...checkout.checkoutShippingAddressUpdate.checkout,
+    shippingAddress: {
+      address1: checkout.checkoutShippingAddressUpdate.checkout.shippingAddress?.streetAddress1,
+      address2: checkout.checkoutShippingAddressUpdate.checkout.shippingAddress?.streetAddress2,
+      city: toTitleCase(checkout.checkoutShippingAddressUpdate.checkout.shippingAddress?.city),
+      state: checkout.checkoutShippingAddressUpdate.checkout.shippingAddress?.countryArea,
+      zip5: checkout.checkoutShippingAddressUpdate.checkout.shippingAddress?.postalCode,
     },
   };
 };
