@@ -22,6 +22,8 @@ query Products(
           url
         }
         variants {
+          id
+          name
           channelListings {
             price {
               amount

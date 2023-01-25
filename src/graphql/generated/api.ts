@@ -33643,7 +33643,7 @@ export type ProductsQueryVariables = Exact<{
 }>;
 
 
-export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'ProductCountableConnection', edges: Array<{ __typename?: 'ProductCountableEdge', node: { __typename?: 'Product', id: string, name: string, thumbnail?: { __typename?: 'Image', url: string } | null, variants?: Array<{ __typename?: 'ProductVariant', channelListings?: Array<{ __typename?: 'ProductVariantChannelListing', price?: { __typename?: 'Money', amount: number, currency: string } | null }> | null }> | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null };
+export type ProductsQuery = { __typename?: 'Query', products?: { __typename?: 'ProductCountableConnection', edges: Array<{ __typename?: 'ProductCountableEdge', node: { __typename?: 'Product', id: string, name: string, thumbnail?: { __typename?: 'Image', url: string } | null, variants?: Array<{ __typename?: 'ProductVariant', id: string, name: string, channelListings?: Array<{ __typename?: 'ProductVariantChannelListing', price?: { __typename?: 'Money', amount: number, currency: string } | null }> | null }> | null } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null } } | null };
 
 export type UserOrdersQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -34053,6 +34053,8 @@ export const ProductsDocument = gql`
           url
         }
         variants {
+          id
+          name
           channelListings {
             price {
               amount
