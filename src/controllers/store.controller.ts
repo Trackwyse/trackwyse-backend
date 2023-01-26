@@ -544,6 +544,63 @@ const completePayment = async (req: express.Request, res: express.Response) => {
   });
 };
 
+/*
+  POST /api/v1/store/checkout/update-delivery 
+
+  Request Body:
+    - shippingMethodId: string
+
+  Response:
+    - error: boolean
+    - message: string
+    - checkout: Checkout
+*/
+const updateCheckoutDelivery = async (req: express.Request, res: express.Response) => {
+  const { shippingMethodId } = req.body;
+
+  if (!shippingMethodId) {
+    return res.status(400).json({
+      error: true,
+      message: "Shipping method ID not provided",
+    });
+  }
+
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(400).json({
+      error: true,
+      message: "User not found",
+    });
+  }
+
+  if (!user.checkoutID) {
+    return res.status(400).json({
+      error: true,
+      message: "Checkout not found",
+    });
+  }
+
+  const response = await saleor.CheckoutShippingMethodUpdate({
+    id: user.checkoutID,
+    shippingMethodId,
+  });
+
+  if (!response.checkoutShippingMethodUpdate.checkout) {
+    logger.error(JSON.stringify(response.checkoutShippingMethodUpdate.errors));
+    return res.status(500).json({
+      error: true,
+      message: "Error updating checkout delivery",
+    });
+  }
+
+  return res.status(200).json({
+    error: false,
+    message: "Checkout delivery updated successfully",
+    checkout: response.checkoutShippingMethodUpdate.checkout,
+  });
+};
+
 export default {
   getProductById,
   getProducts,
@@ -553,6 +610,7 @@ export default {
   removeProductFromCheckout,
   updateProductInCheckout,
   updateCheckoutAddress,
+  updateCheckoutDelivery,
 
   createPayment,
   completePayment,

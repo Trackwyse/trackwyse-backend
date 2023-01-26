@@ -6,6 +6,25 @@ fragment Checkout on Checkout {
   shippingAddress {
     ...Address
   }
+  shippingMethods {
+    id
+    name
+    price {
+      amount
+      currency
+    }
+  }
+  deliveryMethod {
+    __typename
+    ... on ShippingMethod {
+      id
+      name
+      price {
+        amount
+        currency
+      }
+    }
+  }
   lines {
     id
     quantity

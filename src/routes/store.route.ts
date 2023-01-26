@@ -49,6 +49,11 @@ storeRouter.post(
   authMiddleware.authenticateVerifiedAccessToken,
   storeController.updateCheckoutAddress
 );
+storeRouter.post(
+  "/checkout/update-delivery",
+  authMiddleware.authenticateVerifiedAccessToken,
+  storeController.updateCheckoutDelivery
+);
 
 // Payment Processing
 storeRouter.post(
