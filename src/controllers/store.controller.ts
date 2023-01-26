@@ -124,6 +124,13 @@ const getCheckout = async (req: express.Request, res: express.Response) => {
 
   const response = await saleor.Checkout({ id: user.checkoutID });
 
+  if (!response.checkout) {
+    return res.status(500).json({
+      error: true,
+      message: "Error fetching checkout",
+    });
+  }
+
   const checkout = formatCheckoutQuery(response);
 
   return res.status(200).json({
@@ -479,9 +486,6 @@ const createPayment = async (req: express.Request, res: express.Response) => {
 /*
   POST /api/v1/store/payment/complete
 
-  Request Body:
-    -
-
   Response:
     - error: boolean
     - message: string
@@ -525,7 +529,7 @@ const completePayment = async (req: express.Request, res: express.Response) => {
   }
 
   // update the user's checkout ID
-  user.checkoutID = null;
+  user.checkoutID = undefined;
 
   try {
     await user.save();
