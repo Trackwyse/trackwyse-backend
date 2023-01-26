@@ -21,6 +21,14 @@ mutation CheckoutLinesUpdate($id: ID, $lines: [CheckoutLineUpdateInput!]!) {
           }
         }
       }
+      shippingMethods {
+        id
+        name
+        price {
+          amount
+          currency
+        }
+      }
       subtotalPrice {
         gross {
           amount
