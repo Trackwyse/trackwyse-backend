@@ -33594,7 +33594,7 @@ export type CheckoutPaymentCreateMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutPaymentCreateMutation = { __typename?: 'Mutation', checkoutPaymentCreate?: { __typename?: 'CheckoutPaymentCreate', paymentErrors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }>, errors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }> } | null };
+export type CheckoutPaymentCreateMutation = { __typename?: 'Mutation', checkoutPaymentCreate?: { __typename?: 'CheckoutPaymentCreate', payment?: { __typename?: 'Payment', id: string } | null, paymentErrors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }>, errors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutShippingAddressUpdateMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -34021,6 +34021,9 @@ export const CheckoutLinesUpdateDocument = gql`
 export const CheckoutPaymentCreateDocument = gql`
     mutation CheckoutPaymentCreate($id: ID, $input: PaymentInput!) {
   checkoutPaymentCreate(id: $id, input: $input) {
+    payment {
+      id
+    }
     paymentErrors {
       field
       message
