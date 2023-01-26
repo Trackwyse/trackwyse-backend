@@ -513,6 +513,8 @@ const completePayment = async (req: express.Request, res: express.Response) => {
     id: user.checkoutID,
   });
 
+  console.log(response);
+
   if (
     lodash.isEmpty(response.checkoutComplete.order) &&
     !response.checkoutComplete.confirmationNeeded
