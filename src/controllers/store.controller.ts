@@ -4,6 +4,7 @@
  *
  * Copyright (c) 2023 Trackwyse
  */
+import lodash from "lodash";
 import express from "express";
 
 import {
@@ -512,7 +513,12 @@ const completePayment = async (req: express.Request, res: express.Response) => {
     id: user.checkoutID,
   });
 
-  if (!response.checkoutComplete.order && !response.checkoutComplete.confirmationNeeded) {
+  console.log(response);
+
+  if (
+    lodash.isEmpty(response.checkoutComplete.order) &&
+    !response.checkoutComplete.confirmationNeeded
+  ) {
     logger.error(JSON.stringify(response.checkoutComplete.errors));
     return res.status(500).json({
       error: true,
