@@ -12,6 +12,18 @@ mutation CheckoutShippingMethodUpdate($id: ID, $shippingMethodId: ID!) {
           }
         }
       }
+      shippingPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
     }
     errors {
       field

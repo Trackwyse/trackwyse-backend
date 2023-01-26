@@ -33540,8 +33540,6 @@ export type Resolvers<ContextType = any> = {
 
 export type AddressFragment = { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string };
 
-export type CheckoutFragment = { __typename?: 'Checkout', id: string, billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, shippingMethods: Array<{ __typename?: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } }>, deliveryMethod?: { __typename: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } } | { __typename: 'Warehouse' } | null, lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } };
-
 export type PageInfoFragment = { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null };
 
 export type CheckoutCompleteMutationVariables = Exact<{
@@ -33572,7 +33570,7 @@ export type CheckoutLinesAddMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutLinesAddMutation = { __typename?: 'Mutation', checkoutLinesAdd?: { __typename?: 'CheckoutLinesAdd', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, shippingMethods: Array<{ __typename?: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } }>, deliveryMethod?: { __typename: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } } | { __typename: 'Warehouse' } | null, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+export type CheckoutLinesAddMutation = { __typename?: 'Mutation', checkoutLinesAdd?: { __typename?: 'CheckoutLinesAdd', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, shippingMethods: Array<{ __typename?: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } }>, deliveryMethod?: { __typename: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } } | { __typename: 'Warehouse' } | null, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutLinesDeleteMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33580,7 +33578,7 @@ export type CheckoutLinesDeleteMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutLinesDeleteMutation = { __typename?: 'Mutation', checkoutLinesDelete?: { __typename?: 'CheckoutLinesDelete', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, shippingMethods: Array<{ __typename?: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } }>, deliveryMethod?: { __typename: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } } | { __typename: 'Warehouse' } | null, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+export type CheckoutLinesDeleteMutation = { __typename?: 'Mutation', checkoutLinesDelete?: { __typename?: 'CheckoutLinesDelete', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, shippingMethods: Array<{ __typename?: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } }>, deliveryMethod?: { __typename: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } } | { __typename: 'Warehouse' } | null, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutLinesUpdateMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33588,7 +33586,7 @@ export type CheckoutLinesUpdateMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutLinesUpdateMutation = { __typename?: 'Mutation', checkoutLinesUpdate?: { __typename?: 'CheckoutLinesUpdate', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, deliveryMethod?: { __typename: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } } | { __typename: 'Warehouse' } | null, shippingMethods: Array<{ __typename?: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+export type CheckoutLinesUpdateMutation = { __typename?: 'Mutation', checkoutLinesUpdate?: { __typename?: 'CheckoutLinesUpdate', checkout?: { __typename?: 'Checkout', lines: Array<{ __typename?: 'CheckoutLine', id: string, quantity: number, variant: { __typename?: 'ProductVariant', name: string, images?: Array<{ __typename?: 'ProductImage', url: string }> | null }, totalPrice: { __typename?: 'TaxedMoney', net: { __typename?: 'Money', amount: number, currency: string }, tax: { __typename?: 'Money', amount: number, currency: string } } }>, deliveryMethod?: { __typename: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } } | { __typename: 'Warehouse' } | null, shippingMethods: Array<{ __typename?: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } }>, subtotalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutPaymentCreateMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33596,7 +33594,7 @@ export type CheckoutPaymentCreateMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutPaymentCreateMutation = { __typename?: 'Mutation', checkoutPaymentCreate?: { __typename?: 'CheckoutPaymentCreate', payment?: { __typename?: 'Payment', id: string, chargeStatus: PaymentChargeStatusEnum } | null, paymentErrors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }>, errors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }> } | null };
+export type CheckoutPaymentCreateMutation = { __typename?: 'Mutation', checkoutPaymentCreate?: { __typename?: 'CheckoutPaymentCreate', paymentErrors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }>, errors: Array<{ __typename?: 'PaymentError', field?: string | null, message?: string | null }> } | null };
 
 export type CheckoutShippingAddressUpdateMutationVariables = Exact<{
   id?: InputMaybe<Scalars['ID']>;
@@ -33612,7 +33610,7 @@ export type CheckoutShippingMethodUpdateMutationVariables = Exact<{
 }>;
 
 
-export type CheckoutShippingMethodUpdateMutation = { __typename?: 'Mutation', checkoutShippingMethodUpdate?: { __typename?: 'CheckoutShippingMethodUpdate', checkout?: { __typename?: 'Checkout', deliveryMethod?: { __typename: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } } | { __typename: 'Warehouse' } | null } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+export type CheckoutShippingMethodUpdateMutation = { __typename?: 'Mutation', checkoutShippingMethodUpdate?: { __typename?: 'CheckoutShippingMethodUpdate', checkout?: { __typename?: 'Checkout', deliveryMethod?: { __typename: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } } | { __typename: 'Warehouse' } | null, shippingPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } }, totalPrice: { __typename?: 'TaxedMoney', gross: { __typename?: 'Money', amount: number, currency: string } } } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
 
 export type CustomerCreateMutationVariables = Exact<{
   input: UserCreateInput;
@@ -33703,74 +33701,6 @@ export const AddressFragmentDoc = gql`
   countryArea
 }
     `;
-export const CheckoutFragmentDoc = gql`
-    fragment Checkout on Checkout {
-  id
-  billingAddress {
-    ...Address
-  }
-  shippingAddress {
-    ...Address
-  }
-  shippingMethods {
-    id
-    name
-    price {
-      amount
-      currency
-    }
-  }
-  deliveryMethod {
-    __typename
-    ... on ShippingMethod {
-      id
-      name
-      price {
-        amount
-        currency
-      }
-    }
-  }
-  lines {
-    id
-    quantity
-    variant {
-      name
-      images {
-        url
-      }
-    }
-    totalPrice {
-      net {
-        amount
-        currency
-      }
-      tax {
-        amount
-        currency
-      }
-    }
-  }
-  subtotalPrice {
-    gross {
-      amount
-      currency
-    }
-  }
-  shippingPrice {
-    gross {
-      amount
-      currency
-    }
-  }
-  totalPrice {
-    gross {
-      amount
-      currency
-    }
-  }
-}
-    ${AddressFragmentDoc}`;
 export const PageInfoFragmentDoc = gql`
     fragment PageInfo on PageInfo {
   hasNextPage
@@ -33815,7 +33745,70 @@ export const CheckoutCustomerAttachDocument = gql`
     mutation CheckoutCustomerAttach($customerId: ID, $id: ID) {
   checkoutCustomerAttach(customerId: $customerId, id: $id) {
     checkout {
-      ...Checkout
+      id
+      billingAddress {
+        ...Address
+      }
+      shippingAddress {
+        ...Address
+      }
+      shippingMethods {
+        id
+        name
+        price {
+          amount
+          currency
+        }
+      }
+      deliveryMethod {
+        __typename
+        ... on ShippingMethod {
+          id
+          name
+          price {
+            amount
+            currency
+          }
+        }
+      }
+      lines {
+        id
+        quantity
+        variant {
+          name
+          images {
+            url
+          }
+        }
+        totalPrice {
+          net {
+            amount
+            currency
+          }
+          tax {
+            amount
+            currency
+          }
+        }
+      }
+      subtotalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      shippingPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
     }
     checkoutErrors {
       field
@@ -33827,7 +33820,7 @@ export const CheckoutCustomerAttachDocument = gql`
     }
   }
 }
-    ${CheckoutFragmentDoc}`;
+    ${AddressFragmentDoc}`;
 export const CheckoutLinesAddDocument = gql`
     mutation CheckoutLinesAdd($id: ID, $lines: [CheckoutLineInput!]!) {
   checkoutLinesAdd(checkoutId: $id, lines: $lines) {
@@ -33872,12 +33865,6 @@ export const CheckoutLinesAddDocument = gql`
         }
       }
       subtotalPrice {
-        gross {
-          amount
-          currency
-        }
-      }
-      shippingPrice {
         gross {
           amount
           currency
@@ -33950,12 +33937,6 @@ export const CheckoutLinesDeleteDocument = gql`
           currency
         }
       }
-      shippingPrice {
-        gross {
-          amount
-          currency
-        }
-      }
       totalPrice {
         gross {
           amount
@@ -34019,12 +34000,6 @@ export const CheckoutLinesUpdateDocument = gql`
           currency
         }
       }
-      shippingPrice {
-        gross {
-          amount
-          currency
-        }
-      }
       totalPrice {
         gross {
           amount
@@ -34046,10 +34021,6 @@ export const CheckoutLinesUpdateDocument = gql`
 export const CheckoutPaymentCreateDocument = gql`
     mutation CheckoutPaymentCreate($id: ID, $input: PaymentInput!) {
   checkoutPaymentCreate(id: $id, input: $input) {
-    payment {
-      id
-      chargeStatus
-    }
     paymentErrors {
       field
       message
@@ -34112,6 +34083,18 @@ export const CheckoutShippingMethodUpdateDocument = gql`
             amount
             currency
           }
+        }
+      }
+      shippingPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
         }
       }
     }
@@ -34204,10 +34187,73 @@ export const DraftOrderCreateDocument = gql`
 export const CheckoutDocument = gql`
     query Checkout($id: ID) {
   checkout(id: $id) {
-    ...Checkout
+    id
+    billingAddress {
+      ...Address
+    }
+    shippingAddress {
+      ...Address
+    }
+    shippingMethods {
+      id
+      name
+      price {
+        amount
+        currency
+      }
+    }
+    deliveryMethod {
+      __typename
+      ... on ShippingMethod {
+        id
+        name
+        price {
+          amount
+          currency
+        }
+      }
+    }
+    lines {
+      id
+      quantity
+      variant {
+        name
+        images {
+          url
+        }
+      }
+      totalPrice {
+        net {
+          amount
+          currency
+        }
+        tax {
+          amount
+          currency
+        }
+      }
+    }
+    subtotalPrice {
+      gross {
+        amount
+        currency
+      }
+    }
+    shippingPrice {
+      gross {
+        amount
+        currency
+      }
+    }
+    totalPrice {
+      gross {
+        amount
+        currency
+      }
+    }
   }
 }
-    ${CheckoutFragmentDoc}`;
+    ${AddressFragmentDoc}`;
 export const ProductDocument = gql`
     query Product($id: ID) {
   product(id: $id) {

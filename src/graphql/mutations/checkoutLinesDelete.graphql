@@ -46,12 +46,6 @@ mutation CheckoutLinesDelete($id: ID, $linesIds: [ID!]!) {
           currency
         }
       }
-      shippingPrice {
-        gross {
-          amount
-          currency
-        }
-      }
       totalPrice {
         gross {
           amount

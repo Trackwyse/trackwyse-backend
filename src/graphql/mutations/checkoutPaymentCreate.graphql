@@ -1,9 +1,5 @@
 mutation CheckoutPaymentCreate($id: ID, $input: PaymentInput!) {
   checkoutPaymentCreate(id: $id, input: $input) {
-    payment {
-      id
-      chargeStatus
-    }
     paymentErrors {
       field
       message

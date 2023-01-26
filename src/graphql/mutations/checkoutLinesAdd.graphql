@@ -46,12 +46,6 @@ mutation CheckoutLinesAdd($id: ID, $lines: [CheckoutLineInput!]!) {
           currency
         }
       }
-      shippingPrice {
-        gross {
-          amount
-          currency
-        }
-      }
       totalPrice {
         gross {
           amount
