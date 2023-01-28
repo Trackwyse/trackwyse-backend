@@ -11,6 +11,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 import config from "@/config";
+import saleor from "@/lib/saleor";
 
 export interface UserSchema extends User, mongoose.Document {
   comparePassword: (password: string) => Promise<boolean>;
@@ -55,6 +56,10 @@ const userSchema = new mongoose.Schema<UserSchema>(
       },
       required: false,
     },
+    role: { type: String, default: "user" },
+
+    customerID: { type: String, required: false },
+    checkoutID: { type: String, required: false },
 
     subscriptionDate: { type: Date, required: false },
     subscriptionActive: { type: Boolean, default: false },
@@ -73,16 +78,15 @@ const userSchema = new mongoose.Schema<UserSchema>(
         applicationVersion: { type: String, required: false },
         originalApplicationVersion: { type: String, required: false },
       },
-      required: false,
+      default: {},
     },
     subscriptionPerks: {
       type: {
-        freeLabelsRedeemed: { type: Number, default: 0 },
         freeLabelsRedeemable: { type: Boolean, default: true },
         freeLabelsLastRedeemed: { type: Date, required: false },
         freeLabelsNextRedeemable: { type: Date, default: Date.now },
-        secureRecoveriesEnabled: { type: Boolean, default: true },
       },
+      default: {},
     },
 
     verified: { type: Boolean, default: false },
@@ -98,9 +102,8 @@ const userSchema = new mongoose.Schema<UserSchema>(
     refreshToken: { type: String, required: false },
 
     termsAccepted: { type: Boolean, default: false },
-    labels: [{ type: mongoose.Schema.Types.ObjectId, ref: "Label" }],
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
+
+    labels: [{ type: String, default: [] }],
   },
   { timestamps: true }
 );
@@ -148,6 +151,44 @@ userSchema.pre("save", function (next) {
       next();
     });
   });
+});
+
+// Update the saleor user when email is changed
+userSchema.pre("save", async function (next) {
+  let user = this;
+
+  if (!user.isModified("email")) {
+    return next();
+  }
+
+  if (user.customerID === undefined) {
+    const customer = await saleor.CustomerCreate({
+      input: {
+        email: user.email,
+      },
+    });
+
+    if (!customer.customerCreate.user) {
+      return next(new Error("Failed to create customer"));
+    }
+
+    user.customerID = customer.customerCreate.user.id;
+
+    return next();
+  }
+
+  const customer = await saleor.CustomerUpdate({
+    id: user.customerID,
+    input: {
+      email: user.email,
+    },
+  });
+
+  if (!customer.customerUpdate.user) {
+    return next(new Error("Failed to update customer"));
+  }
+
+  next();
 });
 
 // Modify the error message for duplicate email

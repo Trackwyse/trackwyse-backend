@@ -8,6 +8,7 @@
 import express from "express";
 
 import config from "@/config";
+import saleor from "@/lib/saleor";
 import { logger } from "@/lib/logger";
 
 import USPS from "@/lib/usps";
@@ -234,7 +235,7 @@ const deleteAccount = async (req: express.Request, res: express.Response) => {
 
   // first, remove all of the user's labels
   user.labels.forEach(async (label) => {
-    const labelToDelete = await Label.findById(label);
+    const labelToDelete = await Label.findOne({ uniqueID: { $eq: label } });
 
     if (labelToDelete) {
       labelToDelete.resetData();
@@ -246,6 +247,14 @@ const deleteAccount = async (req: express.Request, res: express.Response) => {
       }
     }
   });
+
+  // then, delete their saleor account
+  try {
+    await saleor.CustomerDelete({ id: user.customerID });
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error deleting account" });
+  }
 
   // then, remove the user
   try {

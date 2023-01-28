@@ -1,0 +1,65 @@
+mutation CheckoutLinesUpdate($id: ID, $lines: [CheckoutLineUpdateInput!]!) {
+  checkoutLinesUpdate(id: $id, lines: $lines) {
+    checkout {
+      lines {
+        id
+        quantity
+        variant {
+          name
+          images {
+            url
+          }
+        }
+        totalPrice {
+          net {
+            amount
+            currency
+          }
+          tax {
+            amount
+            currency
+          }
+        }
+      }
+      deliveryMethod {
+        __typename
+        ... on ShippingMethod {
+          id
+          name
+          price {
+            amount
+            currency
+          }
+        }
+      }
+      shippingMethods {
+        id
+        name
+        price {
+          amount
+          currency
+        }
+      }
+      subtotalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+    }
+    errors {
+      field
+      message
+    }
+    checkoutErrors {
+      field
+      message
+    }
+  }
+}

@@ -3,3 +3,5 @@
 /node_modules
 /logs
 production.env
+out/linecounter.json
+out/linecounter.txt

@@ -1,0 +1,15 @@
+mutation CheckoutPaymentCreate($id: ID, $input: PaymentInput!) {
+  checkoutPaymentCreate(id: $id, input: $input) {
+    payment {
+      id
+    }
+    paymentErrors {
+      field
+      message
+    }
+    errors {
+      field
+      message
+    }
+  }
+}

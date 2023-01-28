@@ -1,0 +1,78 @@
+mutation CheckoutCustomerAttach($customerId: ID, $id: ID) {
+  checkoutCustomerAttach(customerId: $customerId, id: $id) {
+    checkout {
+      id
+      billingAddress {
+        ...Address
+      }
+      shippingAddress {
+        ...Address
+      }
+      shippingMethods {
+        id
+        name
+        price {
+          amount
+          currency
+        }
+      }
+      deliveryMethod {
+        __typename
+        ... on ShippingMethod {
+          id
+          name
+          price {
+            amount
+            currency
+          }
+        }
+      }
+      lines {
+        id
+        quantity
+        variant {
+          name
+          images {
+            url
+          }
+        }
+        totalPrice {
+          net {
+            amount
+            currency
+          }
+          tax {
+            amount
+            currency
+          }
+        }
+      }
+      subtotalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      shippingPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+      totalPrice {
+        gross {
+          amount
+          currency
+        }
+      }
+    }
+    checkoutErrors {
+      field
+      message
+    }
+    errors {
+      field
+      message
+    }
+  }
+}

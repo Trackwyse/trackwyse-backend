@@ -18,6 +18,7 @@ const labelSchema = new mongoose.Schema<LabelSchema>(
     owner: { type: mongoose.Schema.Types.ObjectId, ref: "User" } as any,
     activated: { type: Boolean, default: false },
     isLost: { type: Boolean, default: false },
+    uniqueID: { type: String, required: true, unique: true },
 
     name: {
       type: String,

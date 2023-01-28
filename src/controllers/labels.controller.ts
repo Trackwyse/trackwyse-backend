@@ -6,11 +6,12 @@
  */
 
 import express from "express";
+import { v4 as uuidv4 } from "uuid";
 
 import geo from "@/utils/geo";
 import { logger } from "@/lib/logger";
 import { colors } from "@/lib/constants";
-import { getAddressString } from "@/utils/text";
+import { getAddressString } from "@/utils/string";
 
 import USPS from "@/lib/usps";
 import User from "@/models/user.model";
@@ -31,7 +32,9 @@ import NotificationService from "@/lib/notifications";
     - label
 */
 const createLabel = async (req: express.Request, res: express.Response) => {
-  const label = new Label();
+  const label = new Label({
+    uniqueID: uuidv4(),
+  });
 
   let labelDocument;
 
@@ -75,12 +78,12 @@ const getLabels = async (req: express.Request, res: express.Response) => {
     });
   }
 
-  const labelRecords = await Label.find({ _id: { $in: labels } });
+  const labelDocuments = await Label.find({ uniqueID: { $in: labels } });
 
   return res.status(200).json({
     error: false,
     message: "Labels retrieved successfully",
-    labels: labelRecords,
+    labels: labelDocuments,
   });
 };
 
@@ -106,7 +109,7 @@ const addLabel = async (req: express.Request, res: express.Response) => {
     });
   }
 
-  const label = await Label.findById(labelId);
+  const label = await Label.findOne({ uniqueID: { $eq: labelId } });
 
   if (!label) {
     return res.status(404).json({
@@ -188,7 +191,7 @@ const modifyLabel = async (req: express.Request, res: express.Response) => {
     });
   }
 
-  const label = await Label.findById(labelId);
+  const label = await Label.findOne({ uniqueID: { $eq: labelId } });
 
   if (!label) {
     return res.status(404).json({
@@ -261,7 +264,7 @@ const deleteLabel = async (req: express.Request, res: express.Response) => {
     });
   }
 
-  const label = await Label.findById(labelId);
+  const label = await Label.findOne({ uniqueID: { $eq: labelId } });
 
   if (!label) {
     return res.status(404).json({
@@ -331,7 +334,7 @@ const recoveredLabel = async (req: express.Request, res: express.Response) => {
     });
   }
 
-  const label = await Label.findById(labelId);
+  const label = await Label.findOne({ uniqueID: { $eq: labelId } });
 
   if (!label) {
     return res.status(404).json({
@@ -383,7 +386,7 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
     });
   }
 
-  const label = await Label.findById(req.params.labelId);
+  const label = await Label.findOne({ uniqueID: { $eq: req.params.labelId } });
 
   if (!label) {
     return res.status(404).json({

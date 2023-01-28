@@ -1,11 +1,26 @@
-query Product($id: ID, $slug: String, $channel: String) {
-  product(id: $id, slug: $slug, channel: $channel) {
+query Product($id: ID) {
+  product(id: $id) {
     id
     name
     description
-    channel
-    defaultVariant {
+    thumbnail {
+      url
+    }
+    images {
+      url
+    }
+    variants {
       id
+      name
+      channelListings {
+        price {
+          amount
+          currency
+        }
+      }
+    }
+    media {
+      url
     }
   }
 }

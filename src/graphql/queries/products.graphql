@@ -1,15 +1,40 @@
-query Products($first: Int) {
-  products(first: $first) {
+query Products(
+  $first: Int
+  $last: Int
+  $after: String
+  $before: String
+  $filter: ProductFilterInput
+  $sortBy: ProductOrder
+) {
+  products(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    filter: $filter
+    sortBy: $sortBy
+  ) {
     edges {
       node {
         id
         name
-        description
-        channel
-        defaultVariant {
+        thumbnail {
+          url
+        }
+        variants {
           id
+          name
+          channelListings {
+            price {
+              amount
+              currency
+            }
+          }
         }
       }
+    }
+    pageInfo {
+      ...PageInfo
     }
   }
 }

@@ -6,6 +6,7 @@
  */
 
 import express from "express";
+import User from "@/models/user.model";
 
 /*
   GET /status/validClients
@@ -20,7 +21,7 @@ import express from "express";
     - versions: string[]
 */
 const getValidClients = async (req: express.Request, res: express.Response) => {
-  const version = "011080";
+  const version = "012020";
 
   res.status(200).json({
     error: false,

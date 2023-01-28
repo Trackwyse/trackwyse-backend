@@ -11,12 +11,18 @@ declare namespace Express {
   }
 }
 
+type UserRole = "user" | "admin";
+
 interface User {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
+  role: UserRole;
   address: UserAddress;
+
+  customerID: string; // Saleor customer ID
+  checkoutID: string; // Saleor checkout ID
 
   subscriptionDate: Date;
   subscriptionActive: boolean;
@@ -34,9 +40,10 @@ interface User {
   notificationPushTokens: string[];
 
   refreshToken: string;
-
   termsAccepted: boolean;
+
   labels: string[];
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -62,6 +69,7 @@ interface Label {
   owner: string;
   activated: boolean;
   isLost: boolean;
+  uniqueID: string;
 
   name: string;
   color: Color;
@@ -102,12 +110,9 @@ interface SubscriptionReceipt {
 }
 
 interface SubscriptionPerks {
-  freeLabelsRedeemed: number;
   freeLabelsRedeemable: boolean;
   freeLabelsLastRedeemed: Date;
   freeLabelsNextRedeemable: Date;
-
-  secureRecoveriesEnabled: boolean;
 }
 
 interface Address {
