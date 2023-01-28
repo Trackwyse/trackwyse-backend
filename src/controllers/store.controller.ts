@@ -12,6 +12,7 @@ import {
   formatCheckoutQuery,
   formatCheckoutShippingAddressUpdate,
   formatCheckoutCustomerAttachMutation,
+  formatCheckoutBillingAddressUpdate,
 } from "@/utils/saleor";
 import saleor from "@/lib/saleor";
 import { logger } from "@/lib/logger";
@@ -428,6 +429,69 @@ const updateCheckoutAddress = async (req: express.Request, res: express.Response
 };
 
 /*
+  POST /api/v1/store/checkout/update-billing-address
+
+  Request Body:
+    - address1: string
+    - address2: string
+    - city: string
+    - state: string
+    - zip5: string
+
+  Response:
+    - error: boolean
+    - message: string
+    - checkout: Checkout
+*/
+const updateCheckoutBillingAddress = async (req: express.Request, res: express.Response) => {
+  const { address1, address2, city, state, zip5 } = req.body;
+
+  const user = await User.findById(req.user.id);
+
+  if (!user) {
+    return res.status(400).json({
+      error: true,
+      message: "User not found",
+    });
+  }
+
+  if (!user.checkoutID) {
+    return res.status(400).json({
+      error: true,
+      message: "Checkout not found",
+    });
+  }
+
+  const response = await saleor.CheckoutBillingAddressUpdate({
+    id: user.checkoutID,
+    billingAddress: {
+      streetAddress1: address1,
+      streetAddress2: address2,
+      city,
+      country: CountryCode.Us,
+      postalCode: zip5,
+      countryArea: state,
+    },
+  });
+
+  if (!response.checkoutBillingAddressUpdate.checkout) {
+    logger.error(JSON.stringify(response.checkoutBillingAddressUpdate.errors));
+    return res.status(500).json({
+      error: true,
+      message: "Error updating checkout billing address",
+    });
+  }
+
+  const checkout = formatCheckoutBillingAddressUpdate(response);
+
+  return res.status(200).json({
+    error: false,
+    message: "Checkout billing address updated successfully",
+    checkout,
+  });
+};
+
+/*
   POST /api/v1/store/payment/create
 
   Response:
@@ -620,6 +684,7 @@ export default {
   removeProductFromCheckout,
   updateProductInCheckout,
   updateCheckoutAddress,
+  updateCheckoutBillingAddress,
   updateCheckoutDelivery,
 
   createPayment,

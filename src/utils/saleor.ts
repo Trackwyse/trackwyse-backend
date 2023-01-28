@@ -9,11 +9,10 @@ import {
   UserOrderDetailsQuery,
   CheckoutCreateInput,
   CountryCode,
-  CheckoutCreateMutation,
   CheckoutQuery,
   CheckoutShippingAddressUpdateMutation,
-  CheckoutCustomerAttach,
   CheckoutCustomerAttachMutation,
+  CheckoutBillingAddressUpdateMutation,
 } from "@/graphql/generated/api";
 import { toTitleCase } from "./string";
 
@@ -93,6 +92,21 @@ export const formatCheckoutShippingAddressUpdate = (
       city: toTitleCase(checkout.checkoutShippingAddressUpdate.checkout.shippingAddress?.city),
       state: checkout.checkoutShippingAddressUpdate.checkout.shippingAddress?.countryArea,
       zip5: checkout.checkoutShippingAddressUpdate.checkout.shippingAddress?.postalCode,
+    },
+  };
+};
+
+export const formatCheckoutBillingAddressUpdate = (
+  checkout: CheckoutBillingAddressUpdateMutation
+) => {
+  return {
+    ...checkout.checkoutBillingAddressUpdate.checkout,
+    billingAddress: {
+      address1: checkout.checkoutBillingAddressUpdate.checkout.billingAddress?.streetAddress1,
+      address2: checkout.checkoutBillingAddressUpdate.checkout.billingAddress?.streetAddress2,
+      city: toTitleCase(checkout.checkoutBillingAddressUpdate.checkout.billingAddress?.city),
+      state: checkout.checkoutBillingAddressUpdate.checkout.billingAddress?.countryArea,
+      zip5: checkout.checkoutBillingAddressUpdate.checkout.billingAddress?.postalCode,
     },
   };
 };

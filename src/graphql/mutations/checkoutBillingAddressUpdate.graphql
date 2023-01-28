@@ -1,0 +1,36 @@
+mutation CheckoutBillingAddressUpdate($id: ID, $billingAddress: AddressInput!) {
+  checkoutBillingAddressUpdate(id: $id, billingAddress: $billingAddress) {
+    checkout {
+      billingAddress {
+        ...Address
+      }
+      deliveryMethod {
+        __typename
+        ... on ShippingMethod {
+          id
+          name
+          price {
+            amount
+            currency
+          }
+        }
+      }
+      shippingMethods {
+        id
+        name
+        price {
+          amount
+          currency
+        }
+      }
+    }
+    errors {
+      field
+      message
+    }
+    checkoutErrors {
+      field
+      message
+    }
+  }
+}

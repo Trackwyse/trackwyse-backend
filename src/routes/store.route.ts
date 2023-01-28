@@ -50,6 +50,11 @@ storeRouter.post(
   storeController.updateCheckoutAddress
 );
 storeRouter.post(
+  "/checkout/update-billing-address",
+  authMiddleware.authenticateVerifiedAccessToken,
+  storeController.updateCheckoutBillingAddress
+);
+storeRouter.post(
   "/checkout/update-delivery",
   authMiddleware.authenticateVerifiedAccessToken,
   storeController.updateCheckoutDelivery

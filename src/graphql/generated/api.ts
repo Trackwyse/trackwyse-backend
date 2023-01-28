@@ -33542,6 +33542,14 @@ export type AddressFragment = { __typename?: 'Address', streetAddress1: string, 
 
 export type PageInfoFragment = { __typename?: 'PageInfo', hasNextPage: boolean, endCursor?: string | null };
 
+export type CheckoutBillingAddressUpdateMutationVariables = Exact<{
+  id?: InputMaybe<Scalars['ID']>;
+  billingAddress: AddressInput;
+}>;
+
+
+export type CheckoutBillingAddressUpdateMutation = { __typename?: 'Mutation', checkoutBillingAddressUpdate?: { __typename?: 'CheckoutBillingAddressUpdate', checkout?: { __typename?: 'Checkout', billingAddress?: { __typename?: 'Address', streetAddress1: string, streetAddress2: string, city: string, postalCode: string, countryArea: string } | null, deliveryMethod?: { __typename: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } } | { __typename: 'Warehouse' } | null, shippingMethods: Array<{ __typename?: 'ShippingMethod', id: string, name: string, price: { __typename?: 'Money', amount: number, currency: string } }> } | null, errors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }>, checkoutErrors: Array<{ __typename?: 'CheckoutError', field?: string | null, message?: string | null }> } | null };
+
 export type CheckoutCompleteMutationVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -33707,6 +33715,44 @@ export const PageInfoFragmentDoc = gql`
   endCursor
 }
     `;
+export const CheckoutBillingAddressUpdateDocument = gql`
+    mutation CheckoutBillingAddressUpdate($id: ID, $billingAddress: AddressInput!) {
+  checkoutBillingAddressUpdate(id: $id, billingAddress: $billingAddress) {
+    checkout {
+      billingAddress {
+        ...Address
+      }
+      deliveryMethod {
+        __typename
+        ... on ShippingMethod {
+          id
+          name
+          price {
+            amount
+            currency
+          }
+        }
+      }
+      shippingMethods {
+        id
+        name
+        price {
+          amount
+          currency
+        }
+      }
+    }
+    errors {
+      field
+      message
+    }
+    checkoutErrors {
+      field
+      message
+    }
+  }
+}
+    ${AddressFragmentDoc}`;
 export const CheckoutCompleteDocument = gql`
     mutation CheckoutComplete($id: ID!) {
   checkoutComplete(id: $id) {
@@ -34380,6 +34426,9 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    CheckoutBillingAddressUpdate(variables: CheckoutBillingAddressUpdateMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutBillingAddressUpdateMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CheckoutBillingAddressUpdateMutation>(CheckoutBillingAddressUpdateDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutBillingAddressUpdate', 'mutation');
+    },
     CheckoutComplete(variables: CheckoutCompleteMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CheckoutCompleteMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CheckoutCompleteMutation>(CheckoutCompleteDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'CheckoutComplete', 'mutation');
     },
