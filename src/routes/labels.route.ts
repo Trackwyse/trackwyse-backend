@@ -11,7 +11,6 @@ import authMiddleware from "@/middleware/auth.middleware";
 import productController from "@/controllers/labels.controller";
 
 const labelRouter = express.Router();
-labelRouter.post("/create", authMiddleware.attachAccessToken, productController.createLabel); // TEMPORARY
 
 labelRouter.post("/found/:labelId", authMiddleware.attachAccessToken, productController.foundLabel);
 
