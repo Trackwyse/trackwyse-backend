@@ -25,14 +25,14 @@ const authenticateRefreshToken = async (req: Request, res: Response, next: NextF
     const user = await User.findById(payload?.id);
 
     if (!user) {
-      return res.status(401).json({ error: true, message: "Unauthorized" });
+      return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
     }
 
     // Verify that the refresh token matches the one in the database
     const isRefreshTokenValid = await user.compareRefreshToken(refreshToken);
 
     if (!isRefreshTokenValid) {
-      return res.status(401).json({ error: true, message: "Unauthorized" });
+      return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
     }
 
     // Attach the user to the request, and continue
@@ -42,7 +42,7 @@ const authenticateRefreshToken = async (req: Request, res: Response, next: NextF
     return next();
   }
 
-  return res.status(401).json({ error: true, message: "Unauthorized" });
+  return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
 };
 
 /*
@@ -75,10 +75,10 @@ const authenticateVerifiedAccessToken = async (req: Request, res: Response, next
       return next();
     }
 
-    return res.status(401).json({ error: true, message: "Unauthorized" });
+    return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
   }
 
-  return res.status(401).json({ error: true, message: "Unauthorized" });
+  return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
 };
 
 /*
@@ -120,10 +120,10 @@ const authenticateUnverifiedAccessToken = async (
       return next();
     }
 
-    return res.status(401).json({ error: true, message: "Unauthorized" });
+    return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
   }
 
-  return res.status(401).json({ error: true, message: "Unauthorized" });
+  return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
 };
 
 /*
@@ -152,10 +152,10 @@ const authenticateAccessToken = async (req: Request, res: Response, next: NextFu
       return next();
     }
 
-    return res.status(401).json({ error: true, message: "Unauthorized" });
+    return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
   }
 
-  return res.status(401).json({ error: true, message: "Unauthorized" });
+  return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
 };
 
 /*
@@ -185,17 +185,17 @@ const authenticateAdminAccessToken = async (req: Request, res: Response, next: N
       }
 
       if (user.role !== "admin") {
-        return res.status(401).json({ error: true, message: "Unauthorized" });
+        return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
       }
 
       req.user = sanitizedUser;
       return next();
     }
 
-    return res.status(401).json({ error: true, message: "Unauthorized" });
+    return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
   }
 
-  return res.status(401).json({ error: true, message: "Unauthorized" });
+  return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
 };
 
 /*
