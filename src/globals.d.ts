@@ -53,6 +53,7 @@ interface SanitizedUser {
   email: string;
   firstName: string;
   lastName: string;
+  role: UserRole;
   address: UserAddress;
 
   verified: boolean;
