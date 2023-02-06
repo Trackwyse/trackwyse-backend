@@ -97,7 +97,7 @@ const createLabel = async (req: express.Request, res: express.Response) => {
 const createLabelSheet = async (req: express.Request, res: express.Response) => {
   const labels = [];
 
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 12; i++) {
     const label = new Label({
       uniqueID: uuidv4(),
     });
