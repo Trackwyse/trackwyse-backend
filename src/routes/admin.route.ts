@@ -17,5 +17,15 @@ adminRouter.post(
   authMiddleware.authenticateAdminAccessToken,
   adminController.setPremium
 );
+adminRouter.post(
+  "/create-label",
+  authMiddleware.authenticateAdminAccessToken,
+  adminController.createLabel
+);
+adminRouter.post(
+  "/create-label-sheet",
+  authMiddleware.authenticateAdminAccessToken,
+  adminController.createLabelSheet
+);
 
 export default adminRouter;

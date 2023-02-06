@@ -6,7 +6,6 @@
  */
 
 import express from "express";
-import { v4 as uuidv4 } from "uuid";
 
 import geo from "@/utils/geo";
 import { logger } from "@/lib/logger";
@@ -18,42 +17,6 @@ import User from "@/models/user.model";
 import AppleMaps from "@/lib/applemaps";
 import Label from "@/models/label.model";
 import NotificationService from "@/lib/notifications";
-
-/*
-  POST /api/v1/labels/create
-  Creates a label (TEMPORARY)
-
-  Required Fields:
-    - none
-
-  Returns:
-    - error
-    - message
-    - label
-*/
-const createLabel = async (req: express.Request, res: express.Response) => {
-  const label = new Label({
-    uniqueID: uuidv4(),
-  });
-
-  let labelDocument;
-
-  try {
-    labelDocument = await label.save();
-  } catch (err) {
-    logger.error(err);
-    return res.status(500).json({
-      error: true,
-      message: "Error creating label",
-    });
-  }
-
-  return res.status(200).json({
-    error: false,
-    message: "Label created successfully",
-    label: labelDocument,
-  });
-};
 
 /*
   GET /api/v1/labels
@@ -522,7 +485,6 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
 export default {
   getLabels,
   foundLabel,
-  createLabel,
   addLabel,
   recoveredLabel,
   modifyLabel,

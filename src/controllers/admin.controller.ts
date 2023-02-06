@@ -1,7 +1,10 @@
 import express from "express";
+import { v4 as uuidv4 } from "uuid";
 
 import { logger } from "@/lib/logger";
+
 import User from "@/models/user.model";
+import Label from "@/models/label.model";
 
 /*
   POST /admin/set-premium
@@ -58,6 +61,62 @@ const setPremium = async (req: express.Request, res: express.Response) => {
   return res.status(200).json({ error: false, message: "Subscription saved" });
 };
 
+/*
+  POST /admin/create-label
+  Creates a single label in the database
+
+  Response Body:
+    - error: boolean
+    - message: string
+    - label: Label
+*/
+const createLabel = async (req: express.Request, res: express.Response) => {
+  const label = new Label({
+    uniqueID: uuidv4(),
+  });
+
+  try {
+    await label.save();
+  } catch (err) {
+    logger.error(err);
+    return res.status(500).json({ error: true, message: "Error saving label" });
+  }
+
+  return res.status(200).json({ error: false, message: "Label saved", label });
+};
+
+/*
+  POST /admin/create-label-sheet
+  Create 6 labels in the database
+
+  Response Body:
+    - error: boolean
+    - message: string
+    - labels: Label[]
+*/
+const createLabelSheet = async (req: express.Request, res: express.Response) => {
+  const labels = [];
+
+  for (let i = 0; i < 12; i++) {
+    const label = new Label({
+      uniqueID: uuidv4(),
+    });
+
+    try {
+      await label.save();
+    } catch (err) {
+      logger.error(err);
+      return res.status(500).json({ error: true, message: "Error saving label" });
+    }
+
+    labels.push(label);
+  }
+
+  return res.status(200).json({ error: false, message: "Labels saved", labels });
+};
+
 export default {
   setPremium,
+  createLabel,
+  createLabelSheet,
 };

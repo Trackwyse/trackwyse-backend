@@ -248,6 +248,7 @@ userSchema.methods.sanitize = function () {
     firstName: this.firstName,
     lastName: this.lastName,
     email: this.email,
+    role: this.role,
     address: this.address,
 
     verified: this.verified,
