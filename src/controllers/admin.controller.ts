@@ -17,7 +17,7 @@ import Label from "@/models/label.model";
 const setPremium = async (req: express.Request, res: express.Response) => {
   let { id, expiresIn } = req.body;
 
-  expiresIn = expiresIn || 300; // (5 minutes))
+  expiresIn = parseInt(expiresIn) || 300; // (5 minutes))
 
   if (!id) {
     return res.status(400).json({ error: true, message: "Missing id" });
