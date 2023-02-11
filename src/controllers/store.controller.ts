@@ -117,12 +117,9 @@ const getCheckout = async (req: express.Request, res: express.Response) => {
   }
 
   if (!user.checkoutID) {
-    return res.status(400).json({
-      error: {
-        traceback: "STORE_4",
-        message: "CHECKOUT_NOT_FOUND",
-        humanMessage: "Checkout not found",
-      },
+    return res.status(200).json({
+      message: "Checkout fetched successfully",
+      checkout: {},
     });
   }
 
