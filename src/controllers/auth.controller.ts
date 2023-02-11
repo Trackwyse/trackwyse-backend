@@ -364,7 +364,7 @@ const forgot = async (req: express.Request, res: express.Response) => {
   });
 
   if (!user) {
-    return res.status(404).json(Errors.UserNotFound("AUTH_19"));
+    return res.status(404).json(Errors.UserNotFound("AUTH_19", "email"));
   }
 
   try {
