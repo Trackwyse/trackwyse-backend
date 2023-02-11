@@ -27,7 +27,7 @@ const setPremium = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(id);
 
   if (!user) {
-    return res.status(404).json(Errors.UserNotFound("ADMIN_1"));
+    return res.status(404).json(Errors.UserNotFound("ADMIN_1", "id"));
   }
 
   user.subscriptionActive = true;
