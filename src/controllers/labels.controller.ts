@@ -434,7 +434,7 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
       logger.error(err);
       return res.status(400).json({
         error: {
-          field: "exactLocation.address1",
+          field: "address1",
           traceback: "LABELS_24",
           message: "INVALID_ADDRESS",
           humanMessage: "Invalid address",
@@ -477,7 +477,7 @@ const foundLabel = async (req: express.Request, res: express.Response) => {
       logger.error(err);
       return res.status(400).json({
         error: {
-          field: "recoveryLocation.address1",
+          field: "address1",
           traceback: "LABELS_25",
           message: "INVALID_ADDRESS",
           humanMessage: "Invalid address",
