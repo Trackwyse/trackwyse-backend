@@ -20,7 +20,7 @@ import express from "express";
     - versions: string[]
 */
 const getValidClients = async (req: express.Request, res: express.Response) => {
-  const version = "012020";
+  const version = "012030";
 
   res.status(200).json({
     message: "Valid clients",
