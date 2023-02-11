@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger";
 import Errors from "@/lib/errors";
 import User from "@/models/user.model";
 import Label from "@/models/label.model";
+import mongoose from "mongoose";
 
 /*
   POST /admin/set-premium
@@ -22,6 +23,17 @@ const setPremium = async (req: express.Request, res: express.Response) => {
 
   if (!id) {
     return res.status(400).json(Errors.MissingFields("ADMIN_0"));
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      error: {
+        field: "id",
+        code: "ADMIN_5",
+        message: "INVALID_ID",
+        humanMessage: "Invalid ID",
+      },
+    });
   }
 
   const user = await User.findById(id);
