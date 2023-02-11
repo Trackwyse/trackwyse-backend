@@ -199,6 +199,7 @@ const updatePassword = async (req: express.Request, res: express.Response) => {
   if (!isPasswordValid) {
     return res.status(401).json({
       error: {
+        field: "currentPassword",
         traceback: "USER_8",
         message: "INVALID_PASSWORD",
         humanMessage: "Current password is incorrect",
@@ -245,6 +246,7 @@ const deleteAccount = async (req: express.Request, res: express.Response) => {
   if (!isPasswordValid) {
     return res.status(401).json({
       error: {
+        field: "password",
         traceback: "USER_12",
         message: "INVALID_PASSWORD",
         humanMessage: "Current password is incorrect",

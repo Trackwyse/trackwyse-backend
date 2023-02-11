@@ -320,6 +320,7 @@ const reverify = async (req: express.Request, res: express.Response) => {
   if (date.getTime() < user.verificationTokenExpires?.getTime() || user.verified) {
     return res.status(401).json({
       error: {
+        field: "verificationToken",
         traceback: "AUTH_16",
         message: "VERIFICATION_TOKEN_NOT_EXPIRED",
         humanMessage: "You already have an active verification token",
