@@ -8,6 +8,7 @@
 import express from "express";
 import type { ETAResponse } from "apple-maps-server-sdk/lib/globals";
 
+import Errors from "@/lib/errors";
 import { logger } from "@/lib/logger";
 import AppleMaps from "@/lib/applemaps";
 
@@ -27,25 +28,25 @@ const getDistance = async (req: express.Request, res: express.Response) => {
   const { origin, destination } = req.body;
 
   if (!origin || !destination) {
-    return res.status(400).json({
-      error: true,
-      message: "Missing required fields",
-    });
+    return res.status(400).json(Errors.MissingFields("LOCATION_0"));
   }
 
   let response: ETAResponse;
+
   try {
     response = await AppleMaps.eta({ origin, destinations: destination });
   } catch (err) {
     logger.error(err);
     return res.status(400).json({
-      error: true,
-      message: "Invalid origin or destination",
+      error: {
+        traceback: "LOCATION_1",
+        message: "INVALID_LOCATION",
+        humanMessage: "Please enter a valid location.",
+      },
     });
   }
 
   return res.status(200).json({
-    error: false,
     message: "Success",
     distance: response.etas[0],
   });

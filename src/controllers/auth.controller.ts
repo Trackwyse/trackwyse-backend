@@ -8,9 +8,9 @@
 import express from "express";
 
 import jwt from "@/utils/jwt";
-import { logger } from "@/lib/logger";
-
+import Errors from "@/lib/errors";
 import MailService from "@/lib/mail";
+import { logger } from "@/lib/logger";
 import User from "@/models/user.model";
 
 /*
@@ -30,22 +30,29 @@ const login = async (req: express.Request, res: express.Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ error: true, message: "Missing required fields" });
+    return res.status(400).json(Errors.MissingFields("AUTH_0"));
   }
 
   // convert email to lowercase to prevent duplicate emails
   const emailLower = email.toLowerCase();
 
-  const user = await User.findOne({ email: { $eq: email } });
+  const user = await User.findOne({ email: { $eq: emailLower } });
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "User not found" });
+    return res.status(404).json(Errors.UserNotFound("AUTH_1", "email"));
   }
 
   const isPasswordValid = await user.comparePassword(password);
 
   if (!isPasswordValid) {
-    return res.status(401).json({ error: true, message: "Invalid password" });
+    return res.status(401).json({
+      error: {
+        field: "password",
+        traceback: "AUTH_2",
+        message: "INVALID_PASSWORD",
+        humanMessage: "The password you entered is incorrect.",
+      },
+    });
   }
 
   const sanitizedUser = user.sanitize();
@@ -59,11 +66,10 @@ const login = async (req: express.Request, res: express.Response) => {
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error saving user" });
+    return res.status(500).json(Errors.InternalServerError("AUTH_3"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "User logged in",
     accessToken,
     refreshToken,
@@ -85,7 +91,7 @@ const login = async (req: express.Request, res: express.Response) => {
 const refresh = (req: express.Request, res: express.Response) => {
   const accessToken = jwt.createAccessToken(req.user);
 
-  return res.status(200).json({ error: false, message: "Token refreshed", accessToken });
+  return res.status(200).json({ message: "Token refreshed", accessToken });
 };
 
 /*
@@ -107,7 +113,7 @@ const register = async (req: express.Request, res: express.Response) => {
   const { email, password, firstName, lastName } = req.body;
 
   if (!email || !password || !firstName || !lastName) {
-    return res.status(400).json({ error: true, message: "Missing required fields" });
+    return res.status(400).json(Errors.MissingFields("AUTH_4"));
   }
 
   // convert email to lowercase to prevent duplicate emails
@@ -128,7 +134,7 @@ const register = async (req: express.Request, res: express.Response) => {
     verificationToken = await userDocument.generateVerificationToken();
   } catch (err) {
     logger.error(err);
-    res.status(500).json({ error: true, message: "Error creating user" });
+    res.status(500).json(Errors.InternalServerError("AUTH_5"));
   }
 
   const sanitizedUser = userDocument.sanitize();
@@ -149,11 +155,10 @@ const register = async (req: express.Request, res: express.Response) => {
     // This is to prevent users from not being able to verify their email
     await userDocument.deleteOne();
 
-    return res.status(500).json({ error: true, message: "Error sending verification email" });
+    return res.status(500).json(Errors.InternalServerError("AUTH_6"));
   }
 
-  return res.status(201).json({
-    error: false,
+  return res.status(200).json({
     message: "User created",
     accessToken,
     refreshToken,
@@ -175,7 +180,7 @@ const logout = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "User not found" });
+    return res.status(404).json(Errors.UserNotFound("AUTH_7"));
   }
 
   // Clear the push notification subscription
@@ -186,11 +191,10 @@ const logout = async (req: express.Request, res: express.Response) => {
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error logging out user" });
+    return res.status(500).json(Errors.InternalServerError("AUTH_8"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "User logged out",
   });
 };
@@ -213,7 +217,7 @@ const checkEmail = async (req: express.Request, res: express.Response) => {
   const { email } = req.body;
 
   if (!email) {
-    return res.status(400).json({ error: true, message: "Missing required fields" });
+    return res.status(400).json(Errors.MissingFields("AUTH_9"));
   }
 
   const user = await User.findOne({
@@ -221,11 +225,10 @@ const checkEmail = async (req: express.Request, res: express.Response) => {
   });
 
   if (user) {
-    return res.status(200).json({ error: false, message: "Email in use", emailInUse: true });
+    return res.status(200).json({ message: "Email in use", emailInUse: true });
   }
 
   return res.status(200).json({
-    error: false,
     message: "Email not in use",
     emailInUse: false,
   });
@@ -247,21 +250,35 @@ const verify = async (req: express.Request, res: express.Response) => {
   const { verificationToken } = req.body;
 
   if (!verificationToken) {
-    return res.status(400).json({ error: true, message: "Missing required fields" });
+    return res.status(400).json(Errors.MissingFields("AUTH_10"));
   }
 
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "Unauthorized" });
+    return res.status(404).json(Errors.UserNotFound("AUTH_11"));
   }
 
   if (date.getTime() > user.verificationTokenExpires.getTime()) {
-    return res.status(401).json({ error: true, message: "Verification token expired" });
+    return res.status(401).json({
+      error: {
+        field: "verificationToken",
+        traceback: "AUTH_12",
+        message: "VERIFICATION_TOKEN_EXPIRED",
+        humanMessage: "Verification token expired",
+      },
+    });
   }
 
   if (user.verificationToken !== verificationToken) {
-    return res.status(401).json({ error: true, message: "Invalid verification token" });
+    return res.status(401).json({
+      error: {
+        field: "verificationToken",
+        traceback: "AUTH_13",
+        message: "VERIFICATION_TOKEN_INVALID",
+        humanMessage: "Invalid verification token",
+      },
+    });
   }
 
   user.verified = true;
@@ -272,11 +289,10 @@ const verify = async (req: express.Request, res: express.Response) => {
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error verifying user" });
+    return res.status(500).json(Errors.InternalServerError("AUTH_14"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "User verified",
   });
 };
@@ -297,14 +313,18 @@ const reverify = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "Unauthorized" });
+    return res.status(404).json(Errors.UserNotFound("AUTH_15"));
   }
 
   // If the previous verification token has not expired, do not send a new one
   if (date.getTime() < user.verificationTokenExpires?.getTime() || user.verified) {
-    return res
-      .status(401)
-      .json({ error: true, message: "User already has an active verification request" });
+    return res.status(401).json({
+      error: {
+        traceback: "AUTH_16",
+        message: "VERIFICATION_TOKEN_NOT_EXPIRED",
+        humanMessage: "You already have an active verification token",
+      },
+    });
   }
 
   const verificationToken = await user.generateVerificationToken();
@@ -313,11 +333,10 @@ const reverify = async (req: express.Request, res: express.Response) => {
     await MailService.sendVerificationEmail(user.email, verificationToken);
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error sending verification email" });
+    return res.status(500).json(Errors.InternalServerError("AUTH_17"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Verification email sent",
   });
 };
@@ -337,7 +356,7 @@ const forgot = async (req: express.Request, res: express.Response) => {
   const { email } = req.body;
 
   if (!email) {
-    return res.status(400).json({ error: true, message: "Missing required fields" });
+    return res.status(400).json(Errors.MissingFields("AUTH_18"));
   }
 
   const user = await User.findOne({
@@ -345,7 +364,7 @@ const forgot = async (req: express.Request, res: express.Response) => {
   });
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "User not found" });
+    return res.status(404).json(Errors.UserNotFound("AUTH_19"));
   }
 
   try {
@@ -354,11 +373,10 @@ const forgot = async (req: express.Request, res: express.Response) => {
     await MailService.sendResetEmail(user.email, resetToken);
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error sending password reset email" });
+    return res.status(500).json(Errors.InternalServerError("AUTH_20"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Password reset email sent",
   });
 };
@@ -381,7 +399,7 @@ const reset = async (req: express.Request, res: express.Response) => {
   const { email, password, resetToken } = req.body;
 
   if (!email || !password || !resetToken) {
-    return res.status(400).json({ error: true, message: "Missing required fields" });
+    return res.status(400).json(Errors.MissingFields("AUTH_21"));
   }
 
   const user = await User.findOne({
@@ -389,17 +407,31 @@ const reset = async (req: express.Request, res: express.Response) => {
   });
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "User not found" });
+    return res.status(404).json(Errors.UserNotFound("AUTH_22"));
   }
 
   if (user.passwordResetToken !== resetToken) {
-    return res.status(401).json({ error: true, message: "Invalid password reset token" });
+    return res.status(401).json({
+      error: {
+        field: "resetToken",
+        traceback: "AUTH_23",
+        message: "RESET_TOKEN_INVALID",
+        humanMessage: "Invalid reset token",
+      },
+    });
   }
 
   const date = new Date();
 
   if (date.getTime() > user.passwordResetTokenExpires.getTime()) {
-    return res.status(401).json({ error: true, message: "Password reset token expired" });
+    return res.status(401).json({
+      error: {
+        field: "resetToken",
+        traceback: "AUTH_24",
+        message: "RESET_TOKEN_EXPIRED",
+        humanMessage: "Reset token has expired",
+      },
+    });
   }
 
   user.password = password;
@@ -410,11 +442,10 @@ const reset = async (req: express.Request, res: express.Response) => {
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error resetting password" });
+    return res.status(500).json(Errors.InternalServerError("AUTH_25"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Password reset",
   });
 };
@@ -434,7 +465,7 @@ const acceptTerms = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "Unauthorized" });
+    return res.status(404).json(Errors.UserNotFound("AUTH_26"));
   }
 
   user.termsAccepted = true;
@@ -443,11 +474,10 @@ const acceptTerms = async (req: express.Request, res: express.Response) => {
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error accepting terms" });
+    return res.status(500).json(Errors.InternalServerError("AUTH_27"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Terms accepted",
   });
 };

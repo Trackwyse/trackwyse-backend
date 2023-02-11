@@ -17,6 +17,7 @@ import {
 import saleor from "@/lib/saleor";
 import { logger } from "@/lib/logger";
 
+import Errors from "@/lib/errors";
 import User from "@/models/user.model";
 import { CountryCode } from "@/graphql/generated/api";
 
@@ -39,15 +40,21 @@ const getProducts = async (req: express.Request, res: express.Response) => {
 
   if (first && last) {
     return res.status(400).json({
-      error: true,
-      message: "You can't use first and last at the same time",
+      error: {
+        traceback: "STORE_0",
+        message: "INVALID_QUERY",
+        humanMessage: "You can't use first and last at the same time",
+      },
     });
   }
 
   if (after && before) {
     return res.status(400).json({
-      error: true,
-      message: "You can't use after and before at the same time",
+      error: {
+        traceback: "STORE_1",
+        message: "INVALID_QUERY",
+        humanMessage: "You can't use after and before at the same time",
+      },
     });
   }
 
@@ -62,7 +69,6 @@ const getProducts = async (req: express.Request, res: express.Response) => {
   const response = await saleor.Products({ ...params, filter: { isPublished: true } });
 
   return res.status(200).json({
-    error: false,
     message: "Products fetched successfully",
     pageInfo: response.products.pageInfo,
     products: response.products.edges.map((edge) => edge.node),
@@ -84,16 +90,12 @@ const getProductById = async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
 
   if (!id) {
-    return res.status(400).json({
-      error: true,
-      message: "Product ID is required",
-    });
+    return res.status(400).json(Errors.MissingFields("STORE_2"));
   }
 
   const response = await saleor.Product({ id });
 
   return res.status(200).json({
-    error: false,
     message: "Product fetched successfully",
     product: response.product,
   });
@@ -111,32 +113,28 @@ const getCheckout = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("STORE_3"));
   }
 
   if (!user.checkoutID) {
     return res.status(400).json({
-      error: true,
-      message: "Checkout not found",
+      error: {
+        traceback: "STORE_4",
+        message: "CHECKOUT_NOT_FOUND",
+        humanMessage: "Checkout not found",
+      },
     });
   }
 
   const response = await saleor.Checkout({ id: user.checkoutID });
 
   if (!response.checkout) {
-    return res.status(500).json({
-      error: true,
-      message: "Error fetching checkout",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_5"));
   }
 
   const checkout = formatCheckoutQuery(response);
 
   return res.status(200).json({
-    error: false,
     message: "Checkout fetched successfully",
     checkout,
   });
@@ -158,19 +156,13 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
   const { quantity, variantId } = req.body;
 
   if (!quantity || !variantId) {
-    return res.status(400).json({
-      error: true,
-      message: "Quantity and variant ID are required",
-    });
+    return res.status(400).json(Errors.MissingFields("STORE_6"));
   }
 
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("STORE_7"));
   }
 
   if (!user.checkoutID) {
@@ -180,10 +172,7 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
 
     if (!response.checkoutCreate.checkout) {
       logger.error(JSON.stringify(response.checkoutCreate.errors));
-      return res.status(500).json({
-        error: true,
-        message: "Error creating checkout",
-      });
+      return res.status(500).json(Errors.InternalServerError("STORE_8"));
     }
 
     const attachCustomerResponse = await saleor.CheckoutCustomerAttach({
@@ -193,10 +182,7 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
 
     if (!attachCustomerResponse.checkoutCustomerAttach.checkout) {
       logger.error(JSON.stringify(attachCustomerResponse.checkoutCustomerAttach.errors));
-      return res.status(500).json({
-        error: true,
-        message: "Error attaching customer to checkout",
-      });
+      return res.status(500).json(Errors.InternalServerError("STORE_9"));
     }
 
     const checkout = formatCheckoutCustomerAttachMutation(attachCustomerResponse);
@@ -207,14 +193,10 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
       await user.save();
     } catch (err) {
       logger.error(err);
-      return res.status(500).json({
-        error: true,
-        message: "Error creating checkout",
-      });
+      return res.status(500).json(Errors.InternalServerError("STORE_10"));
     }
 
     return res.status(200).json({
-      error: false,
       message: "Checkout created successfully",
       checkout,
     });
@@ -232,14 +214,10 @@ const addProductToCheckout = async (req: express.Request, res: express.Response)
 
   if (!response.checkoutLinesAdd.checkout) {
     logger.error(JSON.stringify(response.checkoutLinesAdd.errors));
-    return res.status(500).json({
-      error: true,
-      message: "Error adding product to checkout",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_11"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Product added to checkout successfully",
     checkout: response.checkoutLinesAdd.checkout,
   });
@@ -260,25 +238,22 @@ const removeProductFromCheckout = async (req: express.Request, res: express.Resp
   const { lineId } = req.body;
 
   if (!lineId) {
-    return res.status(400).json({
-      error: true,
-      message: "Line ID is required",
-    });
+    return res.status(400).json(Errors.MissingFields("STORE_12"));
   }
 
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("STORE_13"));
   }
 
   if (!user.checkoutID) {
     return res.status(400).json({
-      error: true,
-      message: "Checkout not found",
+      error: {
+        traceback: "STORE_14",
+        message: "CHECKOUT_NOT_FOUND",
+        humanMessage: "Checkout not found",
+      },
     });
   }
 
@@ -289,14 +264,10 @@ const removeProductFromCheckout = async (req: express.Request, res: express.Resp
 
   if (!response.checkoutLinesDelete.checkout) {
     logger.error(JSON.stringify(response.checkoutLinesDelete.errors));
-    return res.status(500).json({
-      error: true,
-      message: "Error removing product from checkout",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_15"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Product removed from checkout successfully",
     checkout: response.checkoutLinesDelete.checkout,
   });
@@ -318,25 +289,22 @@ const updateProductInCheckout = async (req: express.Request, res: express.Respon
   const { lineId, quantity } = req.body;
 
   if (!lineId || !quantity) {
-    return res.status(400).json({
-      error: true,
-      message: "Line ID and quantity are required",
-    });
+    return res.status(400).json(Errors.MissingFields("STORE_16"));
   }
 
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("STORE_17"));
   }
 
   if (!user.checkoutID) {
     return res.status(400).json({
-      error: true,
-      message: "Checkout not found",
+      error: {
+        traceback: "STORE_18",
+        message: "CHECKOUT_NOT_FOUND",
+        humanMessage: "Checkout not found",
+      },
     });
   }
 
@@ -352,14 +320,10 @@ const updateProductInCheckout = async (req: express.Request, res: express.Respon
 
   if (!response.checkoutLinesUpdate.checkout) {
     logger.error(JSON.stringify(response.checkoutLinesUpdate.errors));
-    return res.status(500).json({
-      error: true,
-      message: "Error updating product in checkout",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_19"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Product updated in checkout successfully",
     checkout: response.checkoutLinesUpdate.checkout,
   });
@@ -386,16 +350,16 @@ const updateCheckoutAddress = async (req: express.Request, res: express.Response
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("STORE_20"));
   }
 
   if (!user.checkoutID) {
     return res.status(400).json({
-      error: true,
-      message: "Checkout not found",
+      error: {
+        traceback: "STORE_21",
+        message: "CHECKOUT_NOT_FOUND",
+        humanMessage: "Checkout not found",
+      },
     });
   }
 
@@ -413,16 +377,12 @@ const updateCheckoutAddress = async (req: express.Request, res: express.Response
 
   if (!response.checkoutShippingAddressUpdate.checkout) {
     logger.error(JSON.stringify(response.checkoutShippingAddressUpdate.errors));
-    return res.status(500).json({
-      error: true,
-      message: "Error updating checkout address",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_22"));
   }
 
   const checkout = formatCheckoutShippingAddressUpdate(response);
 
   return res.status(200).json({
-    error: false,
     message: "Checkout address updated successfully",
     checkout,
   });
@@ -449,16 +409,16 @@ const updateCheckoutBillingAddress = async (req: express.Request, res: express.R
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("STORE_23"));
   }
 
   if (!user.checkoutID) {
     return res.status(400).json({
-      error: true,
-      message: "Checkout not found",
+      error: {
+        traceback: "STORE_24",
+        message: "CHECKOUT_NOT_FOUND",
+        humanMessage: "Checkout not found",
+      },
     });
   }
 
@@ -476,16 +436,12 @@ const updateCheckoutBillingAddress = async (req: express.Request, res: express.R
 
   if (!response.checkoutBillingAddressUpdate.checkout) {
     logger.error(JSON.stringify(response.checkoutBillingAddressUpdate.errors));
-    return res.status(500).json({
-      error: true,
-      message: "Error updating checkout billing address",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_25"));
   }
 
   const checkout = formatCheckoutBillingAddressUpdate(response);
 
   return res.status(200).json({
-    error: false,
     message: "Checkout billing address updated successfully",
     checkout,
   });
@@ -502,16 +458,16 @@ const createPayment = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("STORE_26"));
   }
 
   if (!user.checkoutID) {
     return res.status(400).json({
-      error: true,
-      message: "Checkout not found",
+      error: {
+        traceback: "STORE_27",
+        message: "CHECKOUT_NOT_FOUND",
+        humanMessage: "Checkout not found",
+      },
     });
   }
 
@@ -520,10 +476,7 @@ const createPayment = async (req: express.Request, res: express.Response) => {
   });
 
   if (!checkout.checkout) {
-    return res.status(500).json({
-      error: true,
-      message: "Error getting checkout",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_28"));
   }
 
   const response = await saleor.CheckoutPaymentCreate({
@@ -536,14 +489,10 @@ const createPayment = async (req: express.Request, res: express.Response) => {
 
   if (!response.checkoutPaymentCreate.payment) {
     logger.error(JSON.stringify(response.checkoutPaymentCreate.errors));
-    return res.status(500).json({
-      error: true,
-      message: "Error creating payment",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_29"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Payment intent created",
   });
 };
@@ -560,16 +509,16 @@ const completePayment = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("STORE_30"));
   }
 
   if (!user.checkoutID) {
     return res.status(400).json({
-      error: true,
-      message: "Checkout not found",
+      error: {
+        traceback: "STORE_31",
+        message: "CHECKOUT_NOT_FOUND",
+        humanMessage: "Checkout not found",
+      },
     });
   }
 
@@ -582,15 +531,11 @@ const completePayment = async (req: express.Request, res: express.Response) => {
     !response.checkoutComplete.confirmationNeeded
   ) {
     logger.error(JSON.stringify(response.checkoutComplete.errors));
-    return res.status(500).json({
-      error: true,
-      message: "Error completing checkout",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_32"));
   }
 
   if (response.checkoutComplete.confirmationNeeded) {
     return res.status(200).json({
-      error: false,
       message: "Confirmation needed",
       confirmationData: response.checkoutComplete.confirmationData,
     });
@@ -603,14 +548,10 @@ const completePayment = async (req: express.Request, res: express.Response) => {
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({
-      error: true,
-      message: "Error updating user checkout ID",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_33"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Checkout completed successfully",
     order: response.checkoutComplete.order,
   });
@@ -631,25 +572,22 @@ const updateCheckoutDelivery = async (req: express.Request, res: express.Respons
   const { shippingMethodId } = req.body;
 
   if (!shippingMethodId) {
-    return res.status(400).json({
-      error: true,
-      message: "Shipping method ID not provided",
-    });
+    return res.status(400).json(Errors.MissingFields("STORE_34"));
   }
 
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("STORE_35"));
   }
 
   if (!user.checkoutID) {
     return res.status(400).json({
-      error: true,
-      message: "Checkout not found",
+      error: {
+        traceback: "STORE_36",
+        message: "CHECKOUT_NOT_FOUND",
+        humanMessage: "Checkout not found",
+      },
     });
   }
 
@@ -660,14 +598,10 @@ const updateCheckoutDelivery = async (req: express.Request, res: express.Respons
 
   if (!response.checkoutShippingMethodUpdate.checkout) {
     logger.error(JSON.stringify(response.checkoutShippingMethodUpdate.errors));
-    return res.status(500).json({
-      error: true,
-      message: "Error updating checkout delivery",
-    });
+    return res.status(500).json(Errors.InternalServerError("STORE_37"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Checkout delivery updated successfully",
     checkout: response.checkoutShippingMethodUpdate.checkout,
   });

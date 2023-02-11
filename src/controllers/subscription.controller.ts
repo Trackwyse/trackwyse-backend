@@ -13,6 +13,7 @@ import saleor from "@/lib/saleor";
 import { logger } from "@/lib/logger";
 import { CountryCode, AddressInput } from "@/graphql/generated/api";
 
+import Errors from "@/lib/errors";
 import User from "@/models/user.model";
 
 /*
@@ -33,14 +34,10 @@ const getSubscription = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("SUBSCRIPTION_0"));
   }
 
   return res.status(200).json({
-    error: false,
     message: "Subscription status retrieved",
     subscriptionActive: user.subscriptionActive,
     subscriptionDate: user.subscriptionDate,
@@ -65,19 +62,13 @@ const createSubscription = async (req: express.Request, res: express.Response) =
   const { receipt } = req.body;
 
   if (!receipt) {
-    return res.status(400).json({
-      error: true,
-      message: "Missing subscription receipt",
-    });
+    return res.status(400).json(Errors.MissingFields("SUBSCRIPTION_0"));
   }
 
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("SUBSCRIPTION_1"));
   }
 
   const products = await appleReceiptVerify.validate({
@@ -86,8 +77,11 @@ const createSubscription = async (req: express.Request, res: express.Response) =
 
   if (!Array.isArray(products) || products.length === 0) {
     return res.status(400).json({
-      error: true,
-      message: "INVALID_SUBSCRIPTION",
+      error: {
+        traceback: "SUBSCRIPTION_3",
+        message: "INVALID_SUBSCRIPTION",
+        humanMessage: "Invalid subscription",
+      },
     });
   }
 
@@ -107,13 +101,12 @@ const createSubscription = async (req: express.Request, res: express.Response) =
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error saving subscription" });
+    return res.status(500).json(Errors.InternalServerError("SUBSCRIPTION_4"));
   }
 
   const sanitizedUser = user.sanitize();
 
   return res.status(200).json({
-    error: false,
     message: "Subscription created",
     user: sanitizedUser,
   });
@@ -134,10 +127,7 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(401).json({
-      error: true,
-      message: "Unauthorized",
-    });
+    return res.status(401).json(Errors.UserNotFound("SUBSCRIPTION_5"));
   }
 
   // If the user has a subscription, but it's expired, set the subscription to inactive
@@ -155,12 +145,15 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
           await user.save();
         } catch (err) {
           logger.error(err);
-          return res.status(500).json({ error: true, message: "Error saving subscription" });
+          return res.status(500).json(Errors.InternalServerError("SUBSCRIPTION_6"));
         }
 
         return res.status(400).json({
-          error: true,
-          message: "Subscription expired",
+          error: {
+            traceback: "SUBSCRIPTION_7",
+            message: "SUBSCRIPTION_EXPIRED",
+            humanMessage: "Your subscription has expired",
+          },
         });
       }
     }
@@ -168,22 +161,31 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
 
   if (!user.subscriptionActive) {
     return res.status(400).json({
-      error: true,
-      message: "Subscription expired",
+      error: {
+        traceback: "SUBSCRIPTION_8",
+        message: "SUBSCRIPTION_EXPIRED",
+        humanMessage: "Your subscription has expired",
+      },
     });
   }
 
   if (!user.subscriptionPerks?.freeLabelsRedeemable) {
     return res.status(400).json({
-      error: true,
-      message: "No free labels available",
+      error: {
+        traceback: "SUBSCRIPTION_9",
+        message: "FREE_LABELS_NOT_REDEEMABLE",
+        humanMessage: "You cannot redeem free labels at this time",
+      },
     });
   }
 
   if (!user.address?.isValid) {
     return res.status(400).json({
-      error: true,
-      message: "Invalid address",
+      error: {
+        traceback: "SUBSCRIPTION_10",
+        message: "INVALID_ADDRESS",
+        humanMessage: "Please update your address before redeeming free labels",
+      },
     });
   }
 
@@ -216,10 +218,7 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
   });
 
   if (!draftOrder.draftOrderCreate?.order) {
-    return res.status(500).json({
-      error: true,
-      message: "Error creating draft order",
-    });
+    return res.status(500).json(Errors.InternalServerError("SUBSCRIPTION_11"));
   }
 
   const completeOrder = await saleor.DraftOrderComplete({
@@ -227,10 +226,7 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
   });
 
   if (!completeOrder.draftOrderComplete?.order) {
-    return res.status(500).json({
-      error: true,
-      message: "Error completing draft order",
-    });
+    return res.status(500).json(Errors.InternalServerError("SUBSCRIPTION_12"));
   }
 
   user["subscriptionPerks"]["freeLabelsRedeemable"] = false;
@@ -240,11 +236,10 @@ const claimFreeLabels = async (req: express.Request, res: express.Response) => {
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error saving subscription" });
+    return res.status(500).json(Errors.InternalServerError("SUBSCRIPTION_13"));
   }
 
   return res.json({
-    error: false,
     message: "Free labels claimed",
   });
 };
