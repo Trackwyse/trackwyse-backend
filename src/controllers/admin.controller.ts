@@ -3,8 +3,10 @@ import { v4 as uuidv4 } from "uuid";
 
 import { logger } from "@/lib/logger";
 
+import Errors from "@/lib/errors";
 import User from "@/models/user.model";
 import Label from "@/models/label.model";
+import mongoose from "mongoose";
 
 /*
   POST /admin/set-premium
@@ -20,13 +22,24 @@ const setPremium = async (req: express.Request, res: express.Response) => {
   expiresIn = parseInt(expiresIn) || 300; // (5 minutes))
 
   if (!id) {
-    return res.status(400).json({ error: true, message: "Missing id" });
+    return res.status(400).json(Errors.MissingFields("ADMIN_0"));
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({
+      error: {
+        field: "id",
+        code: "ADMIN_5",
+        message: "INVALID_ID",
+        humanMessage: "Invalid ID",
+      },
+    });
   }
 
   const user = await User.findById(id);
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "User not found" });
+    return res.status(404).json(Errors.UserNotFound("ADMIN_1", "id"));
   }
 
   user.subscriptionActive = true;
@@ -55,10 +68,10 @@ const setPremium = async (req: express.Request, res: express.Response) => {
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error saving subscription" });
+    return res.status(500).json(Errors.InternalServerError("ADMIN_2"));
   }
 
-  return res.status(200).json({ error: false, message: "Subscription saved" });
+  return res.status(200).json({ message: "Subscription saved" });
 };
 
 /*
@@ -79,10 +92,10 @@ const createLabel = async (req: express.Request, res: express.Response) => {
     await label.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error saving label" });
+    return res.status(500).json(Errors.InternalServerError("ADMIN_3"));
   }
 
-  return res.status(200).json({ error: false, message: "Label saved", label });
+  return res.status(200).json({ message: "Label saved", label });
 };
 
 /*
@@ -106,13 +119,13 @@ const createLabelSheet = async (req: express.Request, res: express.Response) => 
       await label.save();
     } catch (err) {
       logger.error(err);
-      return res.status(500).json({ error: true, message: "Error saving label" });
+      return res.status(500).json(Errors.InternalServerError("ADMIN_4"));
     }
 
     labels.push(label);
   }
 
-  return res.status(200).json({ error: false, message: "Labels saved", labels });
+  return res.status(200).json({ message: "Labels saved", labels });
 };
 
 export default {

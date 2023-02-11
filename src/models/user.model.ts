@@ -202,6 +202,10 @@ userSchema.post("save", function (err, doc, next) {
 
 // Return whether the password hash matches the password
 userSchema.methods.comparePassword = async function (password: string): Promise<boolean> {
+  if (this.password === undefined) {
+    return false;
+  }
+
   const isMatch = await bcrypt.compare(password, this.password);
 
   return isMatch;
@@ -209,6 +213,10 @@ userSchema.methods.comparePassword = async function (password: string): Promise<
 
 // Return whether the refresh token hash matches the refresh token
 userSchema.methods.compareRefreshToken = async function (refreshToken: string): Promise<boolean> {
+  if (this.refreshToken === undefined) {
+    return false;
+  }
+
   const isMatch = await bcrypt.compare(refreshToken, this.refreshToken);
 
   return isMatch;

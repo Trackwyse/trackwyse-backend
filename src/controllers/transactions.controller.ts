@@ -7,6 +7,7 @@
 
 import express from "express";
 
+import Errors from "@/lib/errors";
 import saleor from "@/lib/saleor";
 import User from "@/models/user.model";
 import { formatTransaction } from "@/utils/saleor";
@@ -31,23 +32,26 @@ const getTransactions = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("TRANSACTIONS_0"));
   }
 
   if (first && last) {
     return res.status(400).json({
-      error: true,
-      message: "You can't use first and last at the same time",
+      error: {
+        traceback: "TRANSACTIONS_1",
+        message: "INVALID_QUERY",
+        humanMessage: "You can't use first and last at the same time",
+      },
     });
   }
 
   if (after && before) {
     return res.status(400).json({
-      error: true,
-      message: "You can't use after and before at the same time",
+      error: {
+        traceback: "TRANSACTIONS_2",
+        message: "INVALID_QUERY",
+        humanMessage: "You can't use after and before at the same time",
+      },
     });
   }
 
@@ -84,19 +88,13 @@ const getTransaction = async (req: express.Request, res: express.Response) => {
   const { id } = req.params;
 
   if (!id) {
-    return res.status(400).json({
-      error: true,
-      message: "Transaction ID is required",
-    });
+    return res.status(400).json(Errors.MissingFields("TRANSACTIONS_3"));
   }
 
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(400).json({
-      error: true,
-      message: "User not found",
-    });
+    return res.status(400).json(Errors.UserNotFound("TRANSACTIONS_4"));
   }
 
   const response = await saleor.UserOrderDetails({ id });
@@ -104,7 +102,6 @@ const getTransaction = async (req: express.Request, res: express.Response) => {
   const transaction = formatTransaction(response);
 
   return res.status(200).json({
-    error: false,
     message: "Transaction fetched successfully",
     transaction,
   });

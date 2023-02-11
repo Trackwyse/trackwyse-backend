@@ -12,6 +12,7 @@ import saleor from "@/lib/saleor";
 import { logger } from "@/lib/logger";
 
 import USPS from "@/lib/usps";
+import Errors from "@/lib/errors";
 import MailService from "@/lib/mail";
 import User from "@/models/user.model";
 import Label from "@/models/label.model";
@@ -32,7 +33,7 @@ const getUser = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "Unauthorized" });
+    return res.status(404).json(Errors.UserNotFound("USER_0"));
   }
 
   // If the user has a subscription, but it's expired, set the subscription to inactive
@@ -50,7 +51,7 @@ const getUser = async (req: express.Request, res: express.Response) => {
           await user.save();
         } catch (err) {
           logger.error(err);
-          return res.status(500).json({ error: true, message: "Error updating user" });
+          return res.status(500).json(Errors.InternalServerError("USER_1"));
         }
       }
     }
@@ -59,7 +60,6 @@ const getUser = async (req: express.Request, res: express.Response) => {
   const sanitizedUser = user.sanitize();
 
   return res.status(200).json({
-    error: false,
     message: "User retrieved",
     user: sanitizedUser,
   });
@@ -83,7 +83,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "Unauthorized" });
+    return res.status(404).json(Errors.UserNotFound("USER_2"));
   }
 
   const {
@@ -121,7 +121,7 @@ const updateUser = async (req: express.Request, res: express.Response) => {
     try {
       await MailService.sendVerificationEmail(user.email, verificationToken);
     } catch (err) {
-      return res.status(500).json({ error: true, message: "Error sending verification email" });
+      return res.status(500).json(Errors.InternalServerError("USER_3"));
     }
   }
 
@@ -146,7 +146,14 @@ const updateUser = async (req: express.Request, res: express.Response) => {
       };
     } catch (err) {
       logger.error(err);
-      return res.status(400).json({ error: true, message: "Invalid address" });
+      return res.status(400).json({
+        error: {
+          field: "address1",
+          traceback: "USER_4",
+          message: "INVALID_ADDRESS",
+          humanMessage: "Invalid address",
+        },
+      });
     }
   }
 
@@ -154,12 +161,12 @@ const updateUser = async (req: express.Request, res: express.Response) => {
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error updating user" });
+    return res.status(500).json(Errors.InternalServerError("USER_5"));
   }
 
   const sanitizedUser = user.sanitize();
 
-  return res.status(200).json({ error: false, message: "User updated", user: sanitizedUser });
+  return res.status(200).json({ message: "User updated", user: sanitizedUser });
 };
 
 /*
@@ -178,19 +185,26 @@ const updatePassword = async (req: express.Request, res: express.Response) => {
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "Unauthorized" });
+    return res.status(404).json(Errors.UserNotFound("USER_6"));
   }
 
   const { currentPassword, newPassword } = req.body;
 
   if (!currentPassword || !newPassword) {
-    return res.status(400).json({ error: true, message: "Missing required fields" });
+    return res.status(400).json(Errors.MissingFields("USER_7"));
   }
 
   const isPasswordValid = await user.comparePassword(currentPassword);
 
   if (!isPasswordValid) {
-    return res.status(401).json({ error: true, message: "Incorrect current password" });
+    return res.status(401).json({
+      error: {
+        field: "currentPassword",
+        traceback: "USER_8",
+        message: "INVALID_PASSWORD",
+        humanMessage: "Current password is incorrect",
+      },
+    });
   }
 
   user.password = newPassword;
@@ -199,9 +213,9 @@ const updatePassword = async (req: express.Request, res: express.Response) => {
     await user.save();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: err.message });
+    return res.status(500).json(Errors.InternalServerError("USER_9"));
   }
-  return res.status(200).json({ error: false, message: "Password updated" });
+  return res.status(200).json({ message: "Password updated" });
 };
 
 /*
@@ -218,19 +232,26 @@ const deleteAccount = async (req: express.Request, res: express.Response) => {
   const { password } = req.body;
 
   if (!password) {
-    return res.status(400).json({ error: true, message: "Missing required fields" });
+    return res.status(400).json(Errors.MissingFields("USER_10"));
   }
 
   const user = await User.findById(req.user.id);
 
   if (!user) {
-    return res.status(404).json({ error: true, message: "Unauthorized" });
+    return res.status(404).json(Errors.UserNotFound("USER_11"));
   }
 
   const isPasswordValid = await user.comparePassword(password);
 
   if (!isPasswordValid) {
-    return res.status(401).json({ error: true, message: "Invalid password" });
+    return res.status(401).json({
+      error: {
+        field: "password",
+        traceback: "USER_12",
+        message: "INVALID_PASSWORD",
+        humanMessage: "Current password is incorrect",
+      },
+    });
   }
 
   // first, remove all of the user's labels
@@ -244,6 +265,7 @@ const deleteAccount = async (req: express.Request, res: express.Response) => {
         await labelToDelete.save();
       } catch (err) {
         logger.error(err);
+        return res.status(500).json(Errors.InternalServerError("USER_13"));
       }
     }
   });
@@ -253,7 +275,7 @@ const deleteAccount = async (req: express.Request, res: express.Response) => {
     await saleor.CustomerDelete({ id: user.customerID });
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error deleting account" });
+    return res.status(500).json(Errors.InternalServerError("USER_14"));
   }
 
   // then, remove the user
@@ -261,10 +283,10 @@ const deleteAccount = async (req: express.Request, res: express.Response) => {
     await user.remove();
   } catch (err) {
     logger.error(err);
-    return res.status(500).json({ error: true, message: "Error deleting account" });
+    return res.status(500).json(Errors.InternalServerError("USER_15"));
   }
 
-  return res.status(200).json({ error: false, message: "Account deleted" });
+  return res.status(200).json({ message: "Account deleted" });
 };
 
 export default {

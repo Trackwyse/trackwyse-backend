@@ -25,14 +25,26 @@ const authenticateRefreshToken = async (req: Request, res: Response, next: NextF
     const user = await User.findById(payload?.id);
 
     if (!user) {
-      return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+      return res.status(401).json({
+        error: {
+          traceback: "AUTH_0",
+          message: "UNAUTHORIZED_REQUEST",
+          humanMessage: "Your session has expired. Please log in again.",
+        },
+      });
     }
 
     // Verify that the refresh token matches the one in the database
     const isRefreshTokenValid = await user.compareRefreshToken(refreshToken);
 
     if (!isRefreshTokenValid) {
-      return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+      return res.status(401).json({
+        error: {
+          traceback: "AUTH_1",
+          message: "UNAUTHORIZED_REQUEST",
+          humanMessage: "Your session has expired. Please log in again.",
+        },
+      });
     }
 
     // Attach the user to the request, and continue
@@ -42,7 +54,13 @@ const authenticateRefreshToken = async (req: Request, res: Response, next: NextF
     return next();
   }
 
-  return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+  return res.status(401).json({
+    error: {
+      traceback: "AUTH_2",
+      message: "UNAUTHORIZED_REQUEST",
+      humanMessage: "Your session has expired. Please log in again.",
+    },
+  });
 };
 
 /*
@@ -59,7 +77,13 @@ const authenticateVerifiedAccessToken = async (req: Request, res: Response, next
     const payload = jwt.verifyAccessToken(accessToken);
 
     if (payload === "expired") {
-      return res.status(401).json({ error: true, message: "EXPIRED_TOKEN" });
+      return res.status(401).json({
+        error: {
+          traceback: "AUTH_3",
+          message: "UNAUTHORIZED_REQUEST",
+          humanMessage: "Your session has expired. Please log in again.",
+        },
+      });
     }
 
     const user = await User.findById(payload?.id);
@@ -68,17 +92,35 @@ const authenticateVerifiedAccessToken = async (req: Request, res: Response, next
       const sanitizedUser = user.sanitize();
 
       if (!user.verified) {
-        return res.status(401).json({ error: true, message: "Unverified Account" });
+        return res.status(401).json({
+          error: {
+            traceback: "AUTH_4",
+            message: "Unverified Account",
+            humanMessage: "Your account has not been verified.",
+          },
+        });
       }
 
       req.user = sanitizedUser;
       return next();
     }
 
-    return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+    return res.status(401).json({
+      error: {
+        traceback: "AUTH_5",
+        message: "UNAUTHORIZED_REQUEST",
+        humanMessage: "Your session has expired. Please log in again.",
+      },
+    });
   }
 
-  return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+  return res.status(401).json({
+    error: {
+      traceback: "AUTH_6",
+      message: "UNAUTHORIZED_REQUEST",
+      humanMessage: "Your session has expired. Please log in again.",
+    },
+  });
 };
 
 /*
@@ -104,7 +146,13 @@ const authenticateUnverifiedAccessToken = async (
     const payload = jwt.verifyAccessToken(accessToken);
 
     if (payload === "expired") {
-      return res.status(401).json({ error: true, message: "EXPIRED_TOKEN" });
+      return res.status(401).json({
+        error: {
+          traceback: "AUTH_7",
+          message: "UNAUTHORIZED_REQUEST",
+          humanMessage: "Your session has expired. Please log in again.",
+        },
+      });
     }
 
     const user = await User.findById(payload?.id);
@@ -113,17 +161,35 @@ const authenticateUnverifiedAccessToken = async (
       const sanitizedUser = user.sanitize();
 
       if (user.verified) {
-        return res.status(401).json({ error: true, message: "Already Verified" });
+        return res.status(401).json({
+          error: {
+            traceback: "AUTH_8",
+            message: "ALREADY_VERIFIED",
+            humanMessage: "Your account has already been verified.",
+          },
+        });
       }
 
       req.user = sanitizedUser;
       return next();
     }
 
-    return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+    return res.status(401).json({
+      error: {
+        traceback: "AUTH_9",
+        message: "UNAUTHORIZED_REQUEST",
+        humanMessage: "Your session has expired. Please log in again.",
+      },
+    });
   }
 
-  return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+  return res.status(401).json({
+    error: {
+      traceback: "AUTH_10",
+      message: "UNAUTHORIZED_REQUEST",
+      humanMessage: "Your session has expired. Please log in again.",
+    },
+  });
 };
 
 /*
@@ -140,7 +206,13 @@ const authenticateAccessToken = async (req: Request, res: Response, next: NextFu
     const payload = jwt.verifyAccessToken(accessToken);
 
     if (payload === "expired") {
-      return res.status(401).json({ error: true, message: "EXPIRED_TOKEN" });
+      return res.status(401).json({
+        error: {
+          traceback: "AUTH_11",
+          message: "UNAUTHORIZED_REQUEST",
+          humanMessage: "Your session has expired. Please log in again.",
+        },
+      });
     }
 
     const user = await User.findById(payload?.id);
@@ -152,10 +224,22 @@ const authenticateAccessToken = async (req: Request, res: Response, next: NextFu
       return next();
     }
 
-    return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+    return res.status(401).json({
+      error: {
+        traceback: "AUTH_12",
+        message: "UNAUTHORIZED_REQUEST",
+        humanMessage: "Your session has expired. Please log in again.",
+      },
+    });
   }
 
-  return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+  return res.status(401).json({
+    error: {
+      traceback: "AUTH_13",
+      message: "UNAUTHORIZED_REQUEST",
+      humanMessage: "Your session has expired. Please log in again.",
+    },
+  });
 };
 
 /*
@@ -172,7 +256,13 @@ const authenticateAdminAccessToken = async (req: Request, res: Response, next: N
     const payload = jwt.verifyAccessToken(accessToken);
 
     if (payload === "expired") {
-      return res.status(401).json({ error: true, message: "EXPIRED_TOKEN" });
+      return res.status(401).json({
+        error: {
+          traceback: "AUTH_14",
+          message: "UNAUTHORIZED_REQUEST",
+          humanMessage: "Your session has expired. Please log in again.",
+        },
+      });
     }
 
     const user = await User.findById(payload?.id);
@@ -181,21 +271,45 @@ const authenticateAdminAccessToken = async (req: Request, res: Response, next: N
       const sanitizedUser = user.sanitize();
 
       if (!user.verified) {
-        return res.status(401).json({ error: true, message: "Unverified Account" });
+        return res.status(401).json({
+          error: {
+            traceback: "AUTH_15",
+            message: "UNVERIFIED_ACCOUNT",
+            humanMessage: "Your account has not been verified.",
+          },
+        });
       }
 
       if (user.role !== "admin") {
-        return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+        return res.status(401).json({
+          error: {
+            traceback: "AUTH_16",
+            message: "UNAUTHORIZED_REQUEST",
+            humanMessage: "Your session has expired. Please log in again.",
+          },
+        });
       }
 
       req.user = sanitizedUser;
       return next();
     }
 
-    return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+    return res.status(401).json({
+      error: {
+        traceback: "AUTH_17",
+        message: "UNAUTHORIZED_REQUEST",
+        humanMessage: "Your session has expired. Please log in again.",
+      },
+    });
   }
 
-  return res.status(401).json({ error: true, message: "UNAUTHORIZED_REQUEST" });
+  return res.status(401).json({
+    error: {
+      traceback: "AUTH_18",
+      message: "UNAUTHORIZED_REQUEST",
+      humanMessage: "Your session has expired. Please log in again.",
+    },
+  });
 };
 
 /*
@@ -212,7 +326,13 @@ const attachAccessToken = async (req: Request, res: Response, next: NextFunction
     const payload = jwt.verifyAccessToken(accessToken);
 
     if (payload === "expired") {
-      return res.status(401).json({ error: true, message: "EXPIRED_TOKEN" });
+      return res.status(401).json({
+        error: {
+          traceback: "AUTH_19",
+          message: "UNAUTHORIZED_REQUEST",
+          humanMessage: "Your session has expired. Please log in again.",
+        },
+      });
     }
 
     const user = await User.findById(payload?.id);
